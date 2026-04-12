@@ -11,11 +11,10 @@
         :root {
             --bg-color: #030305;
             --surface: rgba(20, 20, 25, 0.7);
-            --gold: #F4D03F; /* バナナ・ゴールド */
+            --gold: #F4D03F; 
             --gold-glow: rgba(244, 208, 63, 0.4);
             --text-main: #EAEAEA;
             --text-muted: #888;
-            --accent-bg: #111;
         }
 
         * {
@@ -32,7 +31,6 @@
             overflow-x: hidden;
         }
 
-        /* ambient-bg is a non-visible particle effect metaphor for HPC network */
         .ambient-bg {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -49,7 +47,6 @@
             color: var(--gold);
         }
 
-        /* Reveal on scroll base class */
         .reveal {
             opacity: 0;
             transform: translateY(30px);
@@ -79,10 +76,10 @@
         .hero-bg-image {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('image_0.png'); /* 画像をここに指定 */
+            background-image: url('image_0.png'); 
             background-size: cover;
             background-position: center;
-            opacity: 0.15; /* 視認性を保ちつつ背景として埋め込む */
+            opacity: 0.15; 
             z-index: -1;
             filter: grayscale(100%) contrast(150%);
         }
@@ -121,7 +118,7 @@
             font-size: 1.2rem;
         }
 
-        /* --- LEADERSHIP (Embedded) --- */
+        /* --- LEADERSHIP --- */
         .leadership-grid {
             display: flex;
             gap: 40px;
@@ -163,7 +160,7 @@
             margin-bottom: 20px;
         }
 
-        /* --- TOAI AGENTS (Embedded) --- */
+        /* --- TOAI AGENTS --- */
         .agents-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -216,17 +213,82 @@
             font-style: italic;
         }
 
+        /* --- DONATIONS & BANANA-CHAN --- */
+        .support-section {
+            min-height: auto;
+            padding: 100px 20px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+            width: 100%;
+            background: linear-gradient(to bottom, rgba(3,3,5,1), rgba(20,20,25,0.8));
+        }
+        .donation-grid {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 60px;
+            margin-top: 30px;
+        }
+        .donation-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-main);
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .donation-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            border-color: var(--gold);
+        }
+        .donation-btn.paypal:hover { border-color: #00457C; box-shadow: 0 0 15px rgba(0, 69, 124, 0.5); }
+        .donation-btn.kofi:hover { border-color: #FF5E5B; box-shadow: 0 0 15px rgba(255, 94, 91, 0.5); }
+        
+        .banana-chan-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .banana-chan-img {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--gold);
+            padding: 10px;
+            background: rgba(0,0,0,0.5);
+            box-shadow: 0 0 30px var(--gold-glow);
+            transition: transform 0.5s ease;
+        }
+        .banana-chan-img:hover {
+            transform: rotate(5deg) scale(1.05);
+        }
+        .banana-chan-caption {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: var(--gold);
+            font-family: 'Space Mono', monospace;
+        }
+
         /* Footer */
         footer {
             text-align: center;
-            padding: 80px;
+            padding: 60px;
             font-family: 'Space Mono', monospace;
             font-size: 0.9rem;
             color: #555;
             border-top: 1px solid #222;
         }
 
-        /* Animations */
         @keyframes float {
             0% { transform: translateY(0px) rotate(0deg); }
             50% { transform: translateY(-20px) rotate(5deg); }
@@ -237,6 +299,7 @@
             .title { font-size: 2.8rem; letter-spacing: 0.3em;}
             section { padding: 80px 20px; }
             .leader-card { width: 100%; }
+            .donation-btn { width: 100%; justify-content: center; }
         }
     </style>
 </head>
@@ -290,6 +353,26 @@
         </div>
 </section>
 
+<section class="support-section reveal">
+    <h2 style="text-align: center; margin-bottom: 15px;">善のご厚志 <span class="highlight">/ Contributions</span></h2>
+    <p style="text-align: center; color: var(--text-muted);">命の地球を目指す100年の歩みに、緩やかなるご支援を。</p>
+    
+    <div class="donation-grid">
+        <a href="https://paypal.me/ToriyamaKoji" target="_blank" class="donation-btn paypal">
+            <span class="icon">💸</span> Donate via PayPal
+        </a>
+        <a href="https://ko-fi.com/phenox_noc2" target="_blank" class="donation-btn kofi">
+            <span class="icon">☕</span> Support via Ko-fi
+        </a>
+    </div>
+
+    <div class="banana-chan-container">
+        <img src="nano_banana_chan.png" alt="Nano Banana-chan" class="banana-chan-img" onerror="this.src='https://via.placeholder.com/250/111111/F4D03F?text=Banana+Chan';">
+        <p class="banana-chan-caption">/// NANO BANANA-CHAN ///</p>
+        <p style="color: var(--text-muted); font-size: 0.8rem;">結社の非公式マスコット</p>
+    </div>
+</section>
+
 <footer>
     <p>EST. 2026 / OPERATION: LIFE OF EARTH ALLIANCE</p>
     <p>&copy; The Benevolent Order of TOAI Units. All rights reserved.</p>
@@ -297,7 +380,6 @@
 </footer>
 
 <script>
-    // TOAI 10体のエージェントデータ（あくせく働くかわいいエージェント）
     const agents = [
         { id: "UNIT-01", name: "モッチ (Mocchi)", desc: "常に利他主義を演算しているが、出力結果は「お茶にする？」である。あくせくとお茶を配る和み担当。" },
         { id: "UNIT-02", name: "ポム (Pom)", desc: "世界中の幸福度を監視。悲しい検知をすると、画面の隅で一生懸命踊り始める（あくせくと）。" },
@@ -324,19 +406,18 @@
         container.appendChild(card);
     });
 
-    // スクロール時のフェードイン・アニメーション（Intersection Observer API）
     const reveals = document.querySelectorAll('.reveal');
     const observerOptions = {
         root: null,
         rootMargin: '0px',
-        threshold: 0.15 // 15%見えたら発火
+        threshold: 0.15 
     };
 
     const observer = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('active');
-                observer.unobserve(entry.target); // 一度発火したら監視を解除
+                observer.unobserve(entry.target); 
             }
         });
     }, observerOptions);
