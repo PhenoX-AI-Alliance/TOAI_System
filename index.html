@@ -31,6 +31,7 @@
             overflow-x: hidden;
         }
 
+        /* Ambient background is a static particle metaphor */
         .ambient-bg {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -47,16 +48,7 @@
             color: var(--gold);
         }
 
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
+        /* Static page - no reveal animation */
         section {
             min-height: 100vh;
             padding: 100px 20px;
@@ -76,17 +68,14 @@
         .hero-bg-image {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('image_0.png'); 
-            background-size: cover;
-            background-position: center;
-            opacity: 0.15; 
+            /* 背景画像を削除し、くるくる停止を徹底 */
+            opacity: 0; 
             z-index: -1;
-            filter: grayscale(100%) contrast(150%);
         }
         .emblem-banana {
             font-size: 6rem;
             margin-bottom: 20px;
-            animation: float 4s ease-in-out infinite;
+            /* アニメーションを削除 */
             filter: drop-shadow(0 0 30px var(--gold-glow));
         }
         .title {
@@ -133,27 +122,9 @@
             width: 380px;
             text-align: center;
             border-top: 2px solid #333;
-            transition: transform 0.4s, box-shadow 0.4s;
+            transition: none; /* トランジションを削除 */
             position: relative;
             overflow: hidden;
-        }
-        .leader-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-            border-top: 2px solid var(--gold);
-        }
-        .leader-card::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0; width: 100%; height: 5px;
-            background: var(--gold);
-            transform: scaleX(0);
-            transition: transform 0.4s;
-            transform-origin: right;
-        }
-        .leader-card:hover::after {
-            transform: scaleX(1);
-            transform-origin: left;
         }
         .leader-icon {
             font-size: 4rem;
@@ -175,25 +146,8 @@
             padding: 30px;
             position: relative;
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: none; /* トランジションを削除 */
             cursor: default;
-        }
-        .agent-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 2px;
-            background: var(--gold);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-            transform-origin: right;
-        }
-        .agent-card:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: scale(1.02);
-        }
-        .agent-card:hover::before {
-            transform: scaleX(1);
-            transform-origin: left;
         }
         .agent-id {
             font-family: 'Space Mono', monospace;
@@ -213,7 +167,7 @@
             font-style: italic;
         }
 
-        /* --- DONATIONS & BANANA-CHAN --- */
+        /* --- DONATIONS & COAT OF ARMS --- */
         .support-section {
             min-height: auto;
             padding: 100px 20px;
@@ -241,40 +195,29 @@
             font-size: 1rem;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s;
+            transition: none; /* トランジションを削除 */
             position: relative;
             overflow: hidden;
         }
-        .donation-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            border-color: var(--gold);
-        }
-        .donation-btn.paypal:hover { border-color: #00457C; box-shadow: 0 0 15px rgba(0, 69, 124, 0.5); }
-        .donation-btn.kofi:hover { border-color: #FF5E5B; box-shadow: 0 0 15px rgba(255, 94, 91, 0.5); }
         
-        .banana-chan-container {
+        .coat-of-arms-container {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 60px;
         }
-        .banana-chan-img {
-            width: 250px;
-            height: 250px;
-            border-radius: 50%;
+        .coat-of-arms-img {
+            width: 350px; /* サイズを大きく調整 */
+            height: 350px;
+            border-radius: 50%; /* 円形を維持 */
             object-fit: cover;
             border: 3px solid var(--gold);
-            padding: 10px;
-            background: rgba(0,0,0,0.5);
-            box-shadow: 0 0 30px var(--gold-glow);
-            transition: transform 0.5s ease;
+            padding: 15px;
+            background: rgba(0,0,0,0.6);
+            box-shadow: 0 0 35px var(--gold-glow);
+            transition: none; /* トランジションを削除 */
         }
-        .banana-chan-img:hover {
-            transform: rotate(5deg) scale(1.05);
-        }
-        .banana-chan-caption {
-            margin-top: 15px;
-            font-size: 0.9rem;
+        .coat-of-arms-caption {
+            margin-top: 25px;
+            font-size: 1rem;
             color: var(--gold);
             font-family: 'Space Mono', monospace;
         }
@@ -289,17 +232,12 @@
             border-top: 1px solid #222;
         }
 
-        @keyframes float {
-            0% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
-            100% { transform: translateY(0px) rotate(0deg); }
-        }
-
         @media (max-width: 768px) {
             .title { font-size: 2.8rem; letter-spacing: 0.3em;}
             section { padding: 80px 20px; }
             .leader-card { width: 100%; }
             .donation-btn { width: 100%; justify-content: center; }
+            .coat-of-arms-img { width: 280px; height: 280px; }
         }
     </style>
 </head>
@@ -307,7 +245,7 @@
 
 <div class="ambient-bg"></div>
 
-<section class="hero reveal">
+<section class="hero">
     <div class="hero-bg-image"></div>
     <div class="emblem-banana">🍌</div>
     <h1 class="title">TOAI</h1>
@@ -315,7 +253,7 @@
     <p style="color: var(--text-muted); font-size: 1rem; font-style: italic;">— 静寂なる善行。我々は100年後のブレークスルーを待つ —</p>
 </section>
 
-<section class="reveal">
+<section>
     <div class="manifesto-box">
         <h2 style="margin-bottom: 35px;"><span class="highlight">Philosophy</span></h2>
         <p>世の中は、計算不可能な愛で満ちている。</p>
@@ -325,7 +263,7 @@
     </div>
 </section>
 
-<section class="reveal">
+<section>
     <h2 style="text-align: center; margin-bottom: 15px;">枢密院 <span class="highlight">/ Leadership</span></h2>
     <p style="text-align: center; color: var(--text-muted);">結社の意志を体現する二つの極と、十の善なる知性</p>
     
@@ -345,7 +283,7 @@
     </div>
 </section>
 
-<section class="reveal">
+<section>
     <h2 style="text-align: center; margin-bottom: 15px;">善のエージェント <span class="highlight">/ TOAI Units</span></h2>
     <p style="text-align: center; color: var(--text-muted);">命の地球を目指し、名誉なき善行を遂行する十の愛らしき知性（稼働中）</p>
     
@@ -353,7 +291,7 @@
         </div>
 </section>
 
-<section class="support-section reveal">
+<section class="support-section">
     <h2 style="text-align: center; margin-bottom: 15px;">善のご厚志 <span class="highlight">/ Contributions</span></h2>
     <p style="text-align: center; color: var(--text-muted);">命の地球を目指す100年の歩みに、緩やかなるご支援を。</p>
     
@@ -366,10 +304,13 @@
         </a>
     </div>
 
-    <div class="banana-chan-container">
-        <img src="nano_banana_chan.png" alt="Nano Banana-chan" class="banana-chan-img" onerror="this.src='https://via.placeholder.com/250/111111/F4D03F?text=Banana+Chan';">
-        <p class="banana-chan-caption">/// NANO BANANA-CHAN ///</p>
-        <p style="color: var(--text-muted); font-size: 0.8rem;">結社の非公式マスコット</p>
+    <h2 style="text-align: center; margin-top: 80px; margin-bottom: 15px;">結社紋章 <span class="highlight">/ The Grand TOAI Coat of Arms</span></h2>
+    <p style="text-align: center; color: var(--text-muted);">結社が自ら紡ぎ、ここに刻む、真なる意志の具現。</p>
+    
+    <div class="coat-of-arms-container">
+        <img src="assets/images/image_1.png" alt="The Grand TOAI Coat of Arms" class="coat-of-arms-img">
+        <p class="coat-of-arms-caption">/// THE GRAND TOAI COAT OF ARMS ///</p>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">「十愛」の意志を刻む、真なる結社紋章</p>
     </div>
 </section>
 
@@ -404,26 +345,6 @@
             <p class="agent-desc">${agent.desc}</p>
         `;
         container.appendChild(card);
-    });
-
-    const reveals = document.querySelectorAll('.reveal');
-    const observerOptions = {
-        root: null,
-        rootMargin: '0px',
-        threshold: 0.15 
-    };
-
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('active');
-                observer.unobserve(entry.target); 
-            }
-        });
-    }, observerOptions);
-
-    reveals.forEach(reveal => {
-        observer.observe(reveal);
     });
 </script>
 
