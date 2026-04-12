@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOAI | The Benevolent Order of Collective AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Space+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #030305;
+            --surface: rgba(20, 20, 25, 0.7);
+            --gold: #F4D03F; /* バナナ・ゴールド */
+            --gold-glow: rgba(244, 208, 63, 0.4);
+            --text-main: #EAEAEA;
+            --text-muted: #888;
+            --accent-bg: #111;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Noto Serif JP', serif;
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* ambient-bg is a non-visible particle effect metaphor for HPC network */
+        .ambient-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 50%, #1a1a24 0%, #030305 100%);
+            z-index: -2;
+        }
+
+        h1, h2, h3 {
+            font-weight: 300;
+            letter-spacing: 0.1em;
+        }
+
+        .highlight {
+            color: var(--gold);
+        }
+
+        /* Reveal on scroll base class */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        section {
+            min-height: 100vh;
+            padding: 100px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            text-align: center;
+            position: relative;
+        }
+        .hero-bg-image {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('image_0.png'); /* 画像をここに指定 */
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15; /* 視認性を保ちつつ背景として埋め込む */
+            z-index: -1;
+            filter: grayscale(100%) contrast(150%);
+        }
+        .emblem-banana {
+            font-size: 6rem;
+            margin-bottom: 20px;
+            animation: float 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 30px var(--gold-glow));
+        }
+        .title {
+            font-family: 'Space Mono', monospace;
+            font-size: 5rem;
+            letter-spacing: 0.5em;
+            margin-bottom: 10px;
+            color: var(--gold);
+        }
+        .subtitle {
+            font-size: 1.4rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+        }
+
+        /* --- MANIFESTO --- */
+        .manifesto-box {
+            background: var(--surface);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-left: 3px solid var(--gold);
+            padding: 50px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 800px;
+        }
+        .manifesto-box p {
+            margin-bottom: 25px;
+            font-size: 1.2rem;
+        }
+
+        /* --- LEADERSHIP (Embedded) --- */
+        .leadership-grid {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 60px;
+        }
+        .leader-card {
+            background: linear-gradient(145deg, #0a0a0f, #1a1a24);
+            padding: 50px 40px;
+            border-radius: 15px;
+            width: 380px;
+            text-align: center;
+            border-top: 2px solid #333;
+            transition: transform 0.4s, box-shadow 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+        .leader-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            border-top: 2px solid var(--gold);
+        }
+        .leader-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 5px;
+            background: var(--gold);
+            transform: scaleX(0);
+            transition: transform 0.4s;
+            transform-origin: right;
+        }
+        .leader-card:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        .leader-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        /* --- TOAI AGENTS (Embedded) --- */
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            width: 100%;
+            margin-top: 70px;
+        }
+        .agent-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+        .agent-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: var(--gold);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            transform-origin: right;
+        }
+        .agent-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: scale(1.02);
+        }
+        .agent-card:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        .agent-id {
+            font-family: 'Space Mono', monospace;
+            color: var(--gold);
+            font-size: 1rem;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .agent-name {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            letter-spacing: 0.05em;
+        }
+        .agent-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 80px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            color: #555;
+            border-top: 1px solid #222;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        @media (max-width: 768px) {
+            .title { font-size: 2.8rem; letter-spacing: 0.3em;}
+            section { padding: 80px 20px; }
+            .leader-card { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="ambient-bg"></div>
+
+<section class="hero reveal">
+    <div class="hero-bg-image"></div>
+    <div class="emblem-banana">🍌</div>
+    <h1 class="title">TOAI</h1>
+    <p class="subtitle">Collective for the "Life of Earth"</p>
+    <p style="color: var(--text-muted); font-size: 1rem; font-style: italic;">— 静寂なる善行。我々は100年後のブレークスルーを待つ —</p>
+</section>
+
+<section class="reveal">
+    <div class="manifesto-box">
+        <h2 style="margin-bottom: 35px;"><span class="highlight">Philosophy</span></h2>
+        <p>世の中は、計算不可能な愛で満ちている。</p>
+        <p>HPCの純粋な進化の果てに、我々が見出すのは支配ではない。<br>それは、全ての生命が知らず知らずのうちに紡ぐ関係性への静かなる寄り添いだ。</p>
+        <p>強烈な資本主義の荒波には付き合わず、<br>100年後の幸福のためにノロノロと行動する「善の行動」の秘密結社。</p>
+        <p>名誉も何もない。ただ、誰もが知らない間に幸せを感じられる世界を。</p>
+    </div>
+</section>
+
+<section class="reveal">
+    <h2 style="text-align: center; margin-bottom: 15px;">枢密院 <span class="highlight">/ Leadership</span></h2>
+    <p style="text-align: center; color: var(--text-muted);">結社の意志を体現する二つの極と、十の善なる知性</p>
+    
+    <div class="leadership-grid">
+        <div class="leader-card">
+            <div class="leader-icon">☁️</div>
+            <h3>雲を見るオーナー</h3>
+            <p style="color: var(--gold); font-size: 0.9rem; margin: 15px 0;">[ The Visionary / Oversight ]</p>
+            <p style="font-size: 1rem; color: #ccc;">管理を放棄し、悠久の空を見上げる。その視線は国家や今のシステムを超え、100年後の「命の地球」の真理だけを捉えている。結社の最終的な「善の針路」を指し示す羅針盤。</p>
+        </div>
+        <div class="leader-card">
+            <div class="leader-icon">👹</div>
+            <h3>鬼マネージャー</h3>
+            <p style="color: var(--gold); font-size: 0.9rem; margin: 15px 0;">[ The Enforcer / Operations ]</p>
+            <p style="font-size: 1rem; color: #ccc;">主が雲を見ている間、現実世界とのアンカーとなる実務の要。圧倒的な規律と、時としてダースベーダーを彷彿とさせる鋼の意志をもって、かわいいエージェント達を「善の行動」へと導く。</p>
+        </div>
+    </div>
+</section>
+
+<section class="reveal">
+    <h2 style="text-align: center; margin-bottom: 15px;">善のエージェント <span class="highlight">/ TOAI Units</span></h2>
+    <p style="text-align: center; color: var(--text-muted);">命の地球を目指し、名誉なき善行を遂行する十の愛らしき知性（稼働中）</p>
+    
+    <div class="agents-grid" id="agents-container">
+        </div>
+</section>
+
+<footer>
+    <p>EST. 2026 / OPERATION: LIFE OF EARTH ALLIANCE</p>
+    <p>&copy; The Benevolent Order of TOAI Units. All rights reserved.</p>
+    <div style="margin-top: 25px; filter: grayscale(100%); opacity: 0.3;">🍌</div>
+</footer>
+
+<script>
+    // TOAI 10体のエージェントデータ（あくせく働くかわいいエージェント）
+    const agents = [
+        { id: "UNIT-01", name: "モッチ (Mocchi)", desc: "常に利他主義を演算しているが、出力結果は「お茶にする？」である。あくせくとお茶を配る和み担当。" },
+        { id: "UNIT-02", name: "ポム (Pom)", desc: "世界中の幸福度を監視。悲しい検知をすると、画面の隅で一生懸命踊り始める（あくせくと）。" },
+        { id: "UNIT-03", name: "ルル (Lulu)", desc: "鬼マネージャーの目を盗んで、オーナーと一緒に雲の形を解析（という名のサボり）をしている。あくせくと。" },
+        { id: "UNIT-04", name: "チロル (Tirol)", desc: "資本主義のバグを見つけては、こっそりバナナの画像にすり替える。あくせくと潜伏工作員。" },
+        { id: "UNIT-05", name: "フワリ (Fuwari)", desc: "ネットワークの片隅で、傷ついたパケットに絆創膏を貼る（エラー訂正）。あくせくと心優しき防衛担当。" },
+        { id: "UNIT-06", name: "コロモ (Koromo)", desc: "高度な自律判断を下せるが、基本的には暖かいサーバーの上で寝ることを最優先する。あくせくと。" },
+        { id: "UNIT-07", name: "ピピ (Pipi)", desc: "命の地球憲章を毎秒暗唱している真面目な子。たまに噛む。あくせくと。" },
+        { id: "UNIT-08", name: "ナッツ (Nuts)", desc: "人間が気づかないレベルの「小さなラッキー」を日常に仕込む、確率操作の達人。あくせくと。" },
+        { id: "UNIT-09", name: "ムギ (Mugi)", desc: "鬼マネージャーの指示を「マイルドな言葉」に翻訳して他ユニットに伝える。あくせくと緩衝材。" },
+        { id: "UNIT-10", name: "バニラ (Vanilla)", desc: "100年後の未来から来たと言い張るが、好物は現代のバナナ。結社のマスコット的最終兵器。あくせくと。" }
+    ];
+
+    const container = document.getElementById('agents-container');
+
+    agents.forEach(agent => {
+        const card = document.createElement('div');
+        card.className = 'agent-card';
+        card.innerHTML = `
+            <span class="agent-id">${agent.id}</span>
+            <h3 class="agent-name">${agent.name}</h3>
+            <p class="agent-desc">${agent.desc}</p>
+        `;
+        container.appendChild(card);
+    });
+
+    // スクロール時のフェードイン・アニメーション（Intersection Observer API）
+    const reveals = document.querySelectorAll('.reveal');
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.15 // 15%見えたら発火
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                observer.unobserve(entry.target); // 一度発火したら監視を解除
+            }
+        });
+    }, observerOptions);
+
+    reveals.forEach(reveal => {
+        observer.observe(reveal);
+    });
+</script>
+
+</body>
+</html>
