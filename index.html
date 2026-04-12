@@ -347,6 +347,46 @@
         container.appendChild(card);
     });
 </script>
+<div style="text-align: center; margin-top: 40px;">
+    <p style="color: var(--text-muted); font-size: 0.9rem; font-family: 'Space Mono', monospace;">/// DIRECT INQUIRY ///</p>
+    
+    <button onclick="copyToaiEmail()" id="copy-btn" style="
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-main);
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-family: 'Space Mono', monospace;
+        cursor: pointer;
+        transition: all 0.3s;
+    ">
+        phenox.ai.alliance(at)gmail.com 📋
+    </button>
+</div>
 
+<script>
+    function copyToaiEmail() {
+        // ここでもソースコード上の自動収集を防ぐため分割結合
+        const realEmail = "phenox.ai.alliance" + "@" + "gmail.com";
+        const btn = document.getElementById("copy-btn");
+
+        navigator.clipboard.writeText(realEmail).then(() => {
+            // コピー成功時の奥ゆかしいフィードバック
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "アドレスを記憶しました ✔️";
+            btn.style.borderColor = "var(--gold)";
+            btn.style.color = "var(--gold)";
+            
+            // 3秒後に元に戻す
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                btn.style.color = "var(--text-main)";
+            }, 3000);
+        }).catch(err => {
+            console.error("通信経路の確立に失敗しました:", err);
+        });
+    }
+</script>
 </body>
 </html>
