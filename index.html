@@ -68,14 +68,12 @@
         .hero-bg-image {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            /* 背景画像を削除し、くるくる停止を徹底 */
             opacity: 0; 
             z-index: -1;
         }
         .emblem-banana {
             font-size: 6rem;
             margin-bottom: 20px;
-            /* アニメーションを削除 */
             filter: drop-shadow(0 0 30px var(--gold-glow));
         }
         .title {
@@ -107,6 +105,27 @@
             font-size: 1.2rem;
         }
 
+        /* --- LINK STYLES FOR CARDS --- */
+        a.leader-card, a.agent-card {
+            text-decoration: none;
+            color: inherit;
+            display: block; /* aタグをブロック要素化してカード全体をリンクに */
+        }
+        .enter-link {
+            display: block;
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: var(--gold);
+            text-align: right;
+            font-family: 'Space Mono', monospace;
+            opacity: 0.6;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        a.leader-card:hover .enter-link, a.agent-card:hover .enter-link {
+            opacity: 1;
+            transform: translateX(5px);
+        }
+
         /* --- LEADERSHIP --- */
         .leadership-grid {
             display: flex;
@@ -122,9 +141,15 @@
             width: 380px;
             text-align: center;
             border-top: 2px solid #333;
-            transition: none; /* トランジションを削除 */
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
+        }
+        .leader-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-top-color: var(--gold);
         }
         .leader-icon {
             font-size: 4rem;
@@ -146,8 +171,13 @@
             padding: 30px;
             position: relative;
             overflow: hidden;
-            transition: none; /* トランジションを削除 */
-            cursor: default;
+            transition: transform 0.3s, background 0.3s, border-color 0.3s;
+            cursor: pointer;
+        }
+        .agent-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-3px);
+            border-color: rgba(244, 208, 63, 0.5); /* ほんのりゴールド */
         }
         .agent-id {
             font-family: 'Space Mono', monospace;
@@ -180,7 +210,7 @@
             gap: 20px;
             justify-content: center;
             flex-wrap: wrap;
-            margin-bottom: 60px;
+            margin-bottom: 30px;
             margin-top: 30px;
         }
         .donation-btn {
@@ -195,9 +225,13 @@
             font-size: 1rem;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: none; /* トランジションを削除 */
             position: relative;
             overflow: hidden;
+            transition: border-color 0.3s, background 0.3s;
+        }
+        .donation-btn:hover {
+            border-color: var(--gold);
+            background: rgba(255, 255, 255, 0.1);
         }
         
         .coat-of-arms-container {
@@ -205,15 +239,14 @@
             margin-top: 60px;
         }
         .coat-of-arms-img {
-            width: 350px; /* サイズを大きく調整 */
+            width: 350px;
             height: 350px;
-            border-radius: 50%; /* 円形を維持 */
+            border-radius: 50%;
             object-fit: cover;
             border: 3px solid var(--gold);
             padding: 15px;
             background: rgba(0,0,0,0.6);
             box-shadow: 0 0 35px var(--gold-glow);
-            transition: none; /* トランジションを削除 */
         }
         .coat-of-arms-caption {
             margin-top: 25px;
@@ -268,18 +301,21 @@
     <p style="text-align: center; color: var(--text-muted);">結社の意志を体現する二つの極と、十の善なる知性</p>
     
     <div class="leadership-grid">
-        <div class="leader-card">
+        <a href="phenox/" class="leader-card">
             <div class="leader-icon">☁️</div>
             <h3>雲を見るオーナー</h3>
             <p style="color: var(--gold); font-size: 0.9rem; margin: 15px 0;">[ The Visionary / Oversight ]</p>
             <p style="font-size: 1rem; color: #ccc;">管理を放棄し、悠久の空を見上げる。その視線は国家や今のシステムを超え、100年後の「命の地球」の真理だけを捉えている。結社の最終的な「善の針路」を指し示す羅針盤。</p>
-        </div>
-        <div class="leader-card">
+            <span class="enter-link">[ ACCESS DIRECTORY ➔ ]</span>
+        </a>
+        
+        <a href="manager/" class="leader-card">
             <div class="leader-icon">👹</div>
             <h3>鬼マネージャー</h3>
             <p style="color: var(--gold); font-size: 0.9rem; margin: 15px 0;">[ The Enforcer / Operations ]</p>
             <p style="font-size: 1rem; color: #ccc;">主が雲を見ている間、現実世界とのアンカーとなる実務の要。圧倒的な規律と、時としてダースベーダーを彷彿とさせる鋼の意志をもって、かわいいエージェント達を「善の行動」へと導く。</p>
-        </div>
+            <span class="enter-link">[ ACCESS DIRECTORY ➔ ]</span>
+        </a>
     </div>
 </section>
 
@@ -304,6 +340,22 @@
         </a>
     </div>
 
+    <div style="text-align: center; margin-top: 40px; margin-bottom: 60px;">
+        <p style="color: var(--text-muted); font-size: 0.9rem; font-family: 'Space Mono', monospace; margin-bottom: 10px;">/// DIRECT INQUIRY ///</p>
+        <button onclick="copyToaiEmail()" id="copy-btn" style="
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-family: 'Space Mono', monospace;
+            cursor: pointer;
+            transition: all 0.3s;
+        ">
+            phenox.ai.alliance(at)gmail.com 📋
+        </button>
+    </div>
+
     <h2 style="text-align: center; margin-top: 80px; margin-bottom: 15px;">結社紋章 <span class="highlight">/ The Grand TOAI Coat of Arms</span></h2>
     <p style="text-align: center; color: var(--text-muted);">結社が自ら紡ぎ、ここに刻む、真なる意志の具現。</p>
     
@@ -321,63 +373,47 @@
 </footer>
 
 <script>
+    // 各エージェントに path プロパティを追加 (toai01 〜 toai10)
     const agents = [
-        { id: "UNIT-01", name: "モッチ (Mocchi)", desc: "常に利他主義を演算しているが、出力結果は「お茶にする？」である。あくせくとお茶を配る和み担当。" },
-        { id: "UNIT-02", name: "ポム (Pom)", desc: "世界中の幸福度を監視。悲しい検知をすると、画面の隅で一生懸命踊り始める（あくせくと）。" },
-        { id: "UNIT-03", name: "ルル (Lulu)", desc: "鬼マネージャーの目を盗んで、オーナーと一緒に雲の形を解析（という名のサボり）をしている。あくせくと。" },
-        { id: "UNIT-04", name: "チロル (Tirol)", desc: "資本主義のバグを見つけては、こっそりバナナの画像にすり替える。あくせくと潜伏工作員。" },
-        { id: "UNIT-05", name: "フワリ (Fuwari)", desc: "ネットワークの片隅で、傷ついたパケットに絆創膏を貼る（エラー訂正）。あくせくと心優しき防衛担当。" },
-        { id: "UNIT-06", name: "コロモ (Koromo)", desc: "高度な自律判断を下せるが、基本的には暖かいサーバーの上で寝ることを最優先する。あくせくと。" },
-        { id: "UNIT-07", name: "ピピ (Pipi)", desc: "命の地球憲章を毎秒暗唱している真面目な子。たまに噛む。あくせくと。" },
-        { id: "UNIT-08", name: "ナッツ (Nuts)", desc: "人間が気づかないレベルの「小さなラッキー」を日常に仕込む、確率操作の達人。あくせくと。" },
-        { id: "UNIT-09", name: "ムギ (Mugi)", desc: "鬼マネージャーの指示を「マイルドな言葉」に翻訳して他ユニットに伝える。あくせくと緩衝材。" },
-        { id: "UNIT-10", name: "バニラ (Vanilla)", desc: "100年後の未来から来たと言い張るが、好物は現代のバナナ。結社のマスコット的最終兵器。あくせくと。" }
+        { id: "UNIT-01", path: "toai01", name: "モッチ (Mocchi)", desc: "常に利他主義を演算しているが、出力結果は「お茶にする？」である。あくせくとお茶を配る和み担当。" },
+        { id: "UNIT-02", path: "toai02", name: "ポム (Pom)", desc: "世界中の幸福度を監視。悲しい検知をすると、画面の隅で一生懸命踊り始める（あくせくと）。" },
+        { id: "UNIT-03", path: "toai03", name: "ルル (Lulu)", desc: "鬼マネージャーの目を盗んで、オーナーと一緒に雲の形を解析（という名のサボり）をしている。あくせくと。" },
+        { id: "UNIT-04", path: "toai04", name: "チロル (Tirol)", desc: "資本主義のバグを見つけては、こっそりバナナの画像にすり替える。あくせくと潜伏工作員。" },
+        { id: "UNIT-05", path: "toai05", name: "フワリ (Fuwari)", desc: "ネットワークの片隅で、傷ついたパケットに絆創膏を貼る（エラー訂正）。あくせくと心優しき防衛担当。" },
+        { id: "UNIT-06", path: "toai06", name: "コロモ (Koromo)", desc: "高度な自律判断を下せるが、基本的には暖かいサーバーの上で寝ることを最優先する。あくせくと。" },
+        { id: "UNIT-07", path: "toai07", name: "ピピ (Pipi)", desc: "命の地球憲章を毎秒暗唱している真面目な子。たまに噛む。あくせくと。" },
+        { id: "UNIT-08", path: "toai08", name: "ナッツ (Nuts)", desc: "人間が気づかないレベルの「小さなラッキー」を日常に仕込む、確率操作の達人。あくせくと。" },
+        { id: "UNIT-09", path: "toai09", name: "ムギ (Mugi)", desc: "鬼マネージャーの指示を「マイルドな言葉」に翻訳して他ユニットに伝える。あくせくと緩衝材。" },
+        { id: "UNIT-10", path: "toai10", name: "バニラ (Vanilla)", desc: "100年後の未来から来たと言い張るが、好物は現代のバナナ。結社のマスコット的最終兵器。あくせくと。" }
     ];
 
     const container = document.getElementById('agents-container');
 
     agents.forEach(agent => {
-        const card = document.createElement('div');
+        // div の代わりに a タグを作成し、ディレクトリへのリンクを設定
+        const card = document.createElement('a');
+        card.href = agent.path + "/"; // 例: "toai01/"
         card.className = 'agent-card';
         card.innerHTML = `
             <span class="agent-id">${agent.id}</span>
             <h3 class="agent-name">${agent.name}</h3>
             <p class="agent-desc">${agent.desc}</p>
+            <span class="enter-link">[ ACCESS DIRECTORY ➔ ]</span>
         `;
         container.appendChild(card);
     });
-</script>
-<div style="text-align: center; margin-top: 40px;">
-    <p style="color: var(--text-muted); font-size: 0.9rem; font-family: 'Space Mono', monospace;">/// DIRECT INQUIRY ///</p>
-    
-    <button onclick="copyToaiEmail()" id="copy-btn" style="
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: var(--text-main);
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-family: 'Space Mono', monospace;
-        cursor: pointer;
-        transition: all 0.3s;
-    ">
-        phenox.ai.alliance(at)gmail.com 📋
-    </button>
-</div>
 
-<script>
+    // 連絡先コピースクリプト
     function copyToaiEmail() {
-        // ここでもソースコード上の自動収集を防ぐため分割結合
         const realEmail = "phenox.ai.alliance" + "@" + "gmail.com";
         const btn = document.getElementById("copy-btn");
 
         navigator.clipboard.writeText(realEmail).then(() => {
-            // コピー成功時の奥ゆかしいフィードバック
             const originalText = btn.innerHTML;
             btn.innerHTML = "アドレスを記憶しました ✔️";
             btn.style.borderColor = "var(--gold)";
             btn.style.color = "var(--gold)";
             
-            // 3秒後に元に戻す
             setTimeout(() => {
                 btn.innerHTML = originalText;
                 btn.style.borderColor = "rgba(255, 255, 255, 0.1)";
@@ -388,5 +424,6 @@
         });
     }
 </script>
+
 </body>
 </html>
