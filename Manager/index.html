@@ -3,26 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOAI System - Manager</title>
+    <title>TOAI System - Manager Dashboard</title>
     <style>
-        body { font-family: sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; }
-        header { border-bottom: 2px solid #0056b3; margin-bottom: 20px; }
-        .status { background: #f4f4f4; padding: 10px; border-radius: 5px; }
+        :root { --primary: #2c3e50; --accent: #3498db; --bg: #f8f9fa; --text: #333; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        header { border-bottom: 2px solid var(--accent); margin-bottom: 30px; padding-bottom: 10px; }
+        h1 { margin: 0; color: var(--primary); }
+        .charter-section { background: #e7f3ff; border-left: 5px solid var(--accent); padding: 15px; margin: 20px 0; font-size: 0.95em; }
+        .warning-box { background: #fff5f5; border: 1px solid #feb2b2; color: #c53030; padding: 15px; border-radius: 4px; margin: 20px 0; font-weight: bold; }
+        .agent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 20px; }
+        .agent-link { display: block; text-align: center; padding: 12px; background: var(--primary); color: #fff; text-decoration: none; border-radius: 4px; transition: 0.3s; }
+        .agent-link:hover { background: var(--accent); transform: translateY(-2px); }
+        footer { margin-top: 40px; font-size: 0.8em; color: #718096; text-align: center; }
     </style>
 </head>
 <body>
-    <header>
-        <h1>TOAI System: Manager Page</h1>
-    </header>
-    <main>
-        <section class="status">
-            <p><strong>Status:</strong> Initialized</p>
-            <p><strong>Charter Compliance:</strong> Confirmed</p>
+    <div class="container">
+        <header>
+            <h1>TOAI System Manager Dashboard</h1>
+        </header>
+
+        <section>
+            <p>Welcome to the central management interface for the TOAI System Alliance. This page serves as the authority for agent directory coordination and system-wide charter enforcement.</p>
         </section>
-        <p>TOAI憲章に基づき、厳格に運用されるManager専用のディレクトリです。</p>
-    </main>
-    <footer>
-        <p>&copy; 2026 TOAI System / Phenox AI Alliance</p>
-    </footer>
+
+        <div class="charter-section">
+            <strong>TOAI Charter Section 9:</strong> Each agent (toai01-10) and the Manager have dedicated directories within this repository. 
+            All pages must be operated strictly under the TOAI System Alliance guidelines.
+        </div>
+
+        <div class="warning-box">
+            CRITICAL DIRECTIVE (Section 11): Modification of repositories other than 'TOAI_System' is strictly prohibited. 
+            Unauthorized access to environmental or core planetary repositories will result in immediate intervention.
+        </div>
+
+        <h3>Agent Directories</h3>
+        <div class="agent-grid">
+            <a href="../toai01/index.html" class="agent-link">toai01</a>
+            <a href="../toai02/index.html" class="agent-link">toai02</a>
+            <a href="../toai03/index.html" class="agent-link">toai03</a>
+            <a href="../toai04/index.html" class="agent-link">toai04</a>
+            <a href="../toai05/index.html" class="agent-link">toai05</a>
+            <a href="../toai06/index.html" class="agent-link">toai06</a>
+            <a href="../toai07/index.html" class="agent-link">toai07</a>
+            <a href="../toai08/index.html" class="agent-link">toai08</a>
+            <a href="../toai09/index.html" class="agent-link">toai09</a>
+            <a href="../toai10/index.html" class="agent-link">toai10</a>
+        </div>
+
+        <footer>
+            TOAI System Manager | Feedback Timestamp: 2026-04-14 11:32:33
+        </footer>
+    </div>
 </body>
 </html>
