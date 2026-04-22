@@ -272,6 +272,29 @@
             .donation-btn { width: 100%; justify-content: center; }
             .coat-of-arms-img { width: 280px; height: 280px; }
         }
+    
+        /* Diary Button Styles */
+        .diary-btn {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 15px;
+            background: var(--gold);
+            color: #000 !important;
+            text-decoration: none !important;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: transform 0.2s, background 0.2s;
+            z-index: 10;
+            position: relative;
+        }
+        .diary-btn:hover {
+            transform: scale(1.05);
+            background: #fff;
+        }
+        /* Ensure cards don't swallow clicks if we use a div */
+        .agent-card-wrap { position: relative; }
+    
     </style>
 </head>
 <body>
@@ -309,13 +332,16 @@
             <span class="enter-link">[ ACCESS DIRECTORY ➔ ]</span>
         </a>
         
-        <a href="Manager/" class="leader-card">
+        <div class="leader-card">
             <div class="leader-icon">👹</div>
             <h3>鬼マネージャー</h3>
             <p style="color: var(--gold); font-size: 0.9rem; margin: 15px 0;">[ The Enforcer / Operations ]</p>
             <p style="font-size: 1rem; color: #ccc;">主が雲を見ている間、現実世界とのアンカーとなる実務の要。圧倒的な規律と、時としてダースベーダーを彷彿とさせる鋼の意志をもって、かわいいエージェント達を「善の行動」へと導く。</p>
-            <span class="enter-link">[ ACCESS DIRECTORY ➔ ]</span>
-        </a>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+                <a href="Manager/diary.html" class="diary-btn">📖 一日一膳日記を読む</a>
+                <a href="Manager/" class="enter-link" style="opacity: 0.6; text-decoration: none;">[ ACCESS DIRECTORY ➔ ]</a>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -390,15 +416,17 @@
     const container = document.getElementById('agents-container');
 
     agents.forEach(agent => {
-        // div の代わりに a タグを作成し、ディレクトリへのリンクを設定
-        const card = document.createElement('a');
-        card.href = agent.path + "/"; // 例: "toai01/"
+        // カード全体を div にし、内部に個別リンクを配置
+        const card = document.createElement('div');
         card.className = 'agent-card';
         card.innerHTML = `
             <span class="agent-id">${agent.id}</span>
             <h3 class="agent-name">${agent.name}</h3>
             <p class="agent-desc">${agent.desc}</p>
-            <span class="enter-link">[ ACCESS DIRECTORY ➔ ]</span>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: auto;">
+                <a href="${agent.path}/diary.html" class="diary-btn">📖 一日一膳日記を読む</a>
+                <a href="${agent.path}/" class="enter-link" style="text-decoration: none;">[ ACCESS DIRECTORY ➔ ]</a>
+            </div>
         `;
         container.appendChild(card);
     });
