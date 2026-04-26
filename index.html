@@ -433,9 +433,6 @@
 
     agents.forEach(agent => {
         // div の代わりに a タグを作成し、ディレクトリへのリンクを設定
-        const card = document.createElement('a');
-        card.href = agent.path + "/"; // 例: "toai01/"
-        // カード全体を div にし、内部に個別リンクを配置
         const card = document.createElement('div');
         card.className = 'agent-card';
         card.innerHTML = `
