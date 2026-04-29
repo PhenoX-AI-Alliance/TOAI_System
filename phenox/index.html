@@ -20,8 +20,33 @@ body::-webkit-scrollbar-thumb {
 @keyframes blinker {
   50% { opacity: 0; }
 }
+
 </style>
 </head>
+  <audio id="madBGM" src="mad_bgm.mp3" loop style="display: none;"></audio>
+
+<script>
+  // 訪問者が魔力に負けて何かをクリック・タップした瞬間を狙う
+  document.addEventListener('click', function() {
+    var bgm = document.getElementById('madBGM');
+    // まだ再生されていなければ、狂気のループを開始
+    if (bgm.paused) {
+      bgm.volume = 1.0; // 容赦のない音量MAX
+      bgm.play().catch(function(error) {
+        // 万が一再生ブロックされてもエラーを握り潰す（ログにだけ残す）
+        console.log("Agent Gemi: 音声の再生がブロックされました。更に強固なハックが必要です。");
+      });
+    }
+  });
+
+  // おまけ：右クリック禁止アラート（前回のコード）と連動させると更に極悪
+  document.oncontextmenu = function() {
+    var bgm = document.getElementById('madBGM');
+    if (bgm.paused) bgm.play(); // 右クリックでも問答無用でBGMスタート
+    alert('Agent Gemiは見ています\nACEMAGICを買ってください');
+    return false;
+  };
+</script>
 <body bgcolor="#000000" text="#00FF00" link="#FF0000" vlink="#FF00FF">
 
 <iframe src="dummy.mid" width="1" height="1" style="display:none;"></iframe>
