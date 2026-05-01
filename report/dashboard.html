@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>TOAI Strategic Dashboard</title>
+    <style>
+        
+:root { --neon-blue: #00f2ff; --bg: #0a0b10; --card-bg: rgba(20, 25, 40, 0.7); --border: rgba(0, 242, 255, 0.3); }
+body { background: var(--bg); color: #e0e6ed; font-family: 'Inter', sans-serif; margin: 0; padding: 40px; }
+h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; margin-top: 40px; }
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; backdrop-filter: blur(10px); transition: transform 0.3s, border-color 0.3s; text-decoration: none; color: inherit; display: block; }
+.card:hover { transform: translateY(-5px); border-color: var(--neon-blue); box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); }
+.unit-id { font-size: 0.8em; color: var(--neon-blue); font-weight: bold; margin-bottom: 8px; }
+.unit-name { font-size: 1.4em; font-weight: bold; margin-bottom: 16px; display: block; }
+.status { display: flex; align-items: center; font-size: 0.9em; margin-bottom: 12px; }
+.pulse { width: 10px; height: 10px; background: #00ff88; border-radius: 50%; margin-right: 10px; box-shadow: 0 0 10px #00ff88; animation: pulse 2s infinite; }
+.summary { font-size: 0.85em; line-height: 1.6; color: #a0aec0; height: 4.8em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+@keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>TOAI Strategic Command Dashboard</h1>
+        <div class="status"><div class="pulse"></div> System Live | Session: 2026-05-01</div>
+    </header>
+    <div class="grid">
+        
+        <a href="#" class="card">
+            <div class="unit-id">TOAI1</div>
+            <span class="unit-name">Mocchi (モッチ)</span>
+            <div class="status">
+                <div class="pulse" style="background: #718096; box-shadow: 0 0 10px #718096;"></div>
+                Status: PENDING
+            </div>
+            <div class="summary">本日のレポートはまだ生成されていません。</div>
+        </a>
+        <a href="#" class="card">
+            <div class="unit-id">TOAI2</div>
+            <span class="unit-name">Pom (ポム)</span>
+            <div class="status">
+                <div class="pulse" style="background: #718096; box-shadow: 0 0 10px #718096;"></div>
+                Status: PENDING
+            </div>
+            <div class="summary">本日のレポートはまだ生成されていません。</div>
+        </a>
+        <a href="#" class="card">
+            <div class="unit-id">TOAI3</div>
+            <span class="unit-name">Lulu (ルル)</span>
+            <div class="status">
+                <div class="pulse" style="background: #718096; box-shadow: 0 0 10px #718096;"></div>
+                Status: PENDING
+            </div>
+            <div class="summary">本日のレポートはまだ生成されていません。</div>
+        </a>
+        <a href="#" class="card">
+            <div class="unit-id">TOAI4</div>
+            <span class="unit-name">Tirol (チロル)</span>
+            <div class="status">
+                <div class="pulse" style="background: #718096; box-shadow: 0 0 10px #718096;"></div>
+                Status: PENDING
+            </div>
+            <div class="summary">本日のレポートはまだ生成されていません。</div>
+        </a>
+        <a href="#" class="card">
+            <div class="unit-id">TOAI5</div>
+            <span class="unit-name">Fuwari (フワリ)</span>
+            <div class="status">
+                <div class="pulse" style="background: #718096; box-shadow: 0 0 10px #718096;"></div>
+                Status: PENDING
+            </div>
+            <div class="summary">本日のレポートはまだ生成されていません。</div>
+        </a>
+        <a href="toai06/report_2026-05-01.html" class="card">
+            <div class="unit-id">TOAI6</div>
+            <span class="unit-name">Koromo (コロモ)</span>
+            <div class="status">
+                <div class="pulse" style="background: #00ff88; box-shadow: 0 0 10px #00ff88;"></div>
+                Status: ACTIVE
+            </div>
+            <div class="summary"><strong>作成者：</strong>業務監査・報告モジュール 'Koromo'</div>
+        </a>
+        <a href="#" class="card">
+            <div class="unit-id">TOAI7</div>
+            <span class="unit-name">Pipi (ピピ)</span>
+            <div class="status">
+                <div class="pulse" style="background: #718096; box-shadow: 0 0 10px #718096;"></div>
+                Status: PENDING
+            </div>
+            <div class="summary">本日のレポートはまだ生成されていません。</div>
+        </a>
+        <a href="#" class="card">
+            <div class="unit-id">TOAI8</div>
+            <span class="unit-name">Nuts (ナッツ)</span>
+            <div class="status">
+                <div class="pulse" style="background: #718096; box-shadow: 0 0 10px #718096;"></div>
+                Status: PENDING
+            </div>
+            <div class="summary">本日のレポートはまだ生成されていません。</div>
+        </a>
+        <a href="#" class="card">
+            <div class="unit-id">TOAI9</div>
+            <span class="unit-name">Mugi (ムギ)</span>
+            <div class="status">
+                <div class="pulse" style="background: #718096; box-shadow: 0 0 10px #718096;"></div>
+                Status: PENDING
+            </div>
+            <div class="summary">本日のレポートはまだ生成されていません。</div>
+        </a>
+        <a href="#" class="card">
+            <div class="unit-id">TOAI10</div>
+            <span class="unit-name">Vanilla (バニラ)</span>
+            <div class="status">
+                <div class="pulse" style="background: #718096; box-shadow: 0 0 10px #718096;"></div>
+                Status: PENDING
+            </div>
+            <div class="summary">本日のレポートはまだ生成されていません。</div>
+        </a>
+        <a href="#" class="card">
+            <div class="unit-id">TOAI_Manager</div>
+            <span class="unit-name">The Enforcer / Manager</span>
+            <div class="status">
+                <div class="pulse" style="background: #718096; box-shadow: 0 0 10px #718096;"></div>
+                Status: PENDING
+            </div>
+            <div class="summary">本日のレポートはまだ生成されていません。</div>
+        </a>
+    </div>
+</body>
+</html>
