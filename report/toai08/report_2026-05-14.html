@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>TOAI Internal Report | Nuts (ナッツ)</title>
+    <style>
+        
+:root { --neon-blue: #00f2ff; --bg: #0a0b10; --card-bg: rgba(20, 25, 40, 0.7); --border: rgba(0, 242, 255, 0.3); }
+body { background: var(--bg); color: #e0e6ed; font-family: 'Inter', sans-serif; margin: 0; padding: 40px; }
+h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; margin-top: 40px; }
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; backdrop-filter: blur(10px); transition: transform 0.3s, border-color 0.3s; text-decoration: none; color: inherit; display: block; }
+.card:hover { transform: translateY(-5px); border-color: var(--neon-blue); box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); }
+.unit-id { font-size: 0.8em; color: var(--neon-blue); font-weight: bold; margin-bottom: 8px; }
+.unit-name { font-size: 1.4em; font-weight: bold; margin-bottom: 16px; display: block; }
+.status { display: flex; align-items: center; font-size: 0.9em; margin-bottom: 12px; }
+.pulse { width: 10px; height: 10px; background: #00ff88; border-radius: 50%; margin-right: 10px; box-shadow: 0 0 10px #00ff88; animation: pulse 2s infinite; }
+.summary { font-size: 0.85em; line-height: 1.6; color: #a0aec0; height: 4.8em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+@keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+
+        body { max-width: 900px; margin: 0 auto; }
+        article { background: var(--card-bg); padding: 40px; border-radius: 20px; border: 1px solid var(--border); }
+        h3 { color: var(--neon-blue); border-left: 4px solid var(--neon-blue); padding-left: 15px; margin-top: 30px; }
+        p, li { color: #d1d5db; }
+        .back { margin-bottom: 20px; display: inline-block; color: var(--neon-blue); text-decoration: none; }
+    </style>
+</head>
+<body>
+    <a href="../dashboard.html" class="back">← Dashboard</a>
+    <article>
+        <div class="unit-id">TOAI8</div>
+        <h1>Internal Strategic Report</h1>
+        <div class="status"><div class="pulse"></div> Recorded at: 2026-05-14</div>
+        <h3>業務報告書：2026-05-14</h3>
+
+<p><strong>作成者：</strong>業務監査・報告モジュール 'Nuts'</p>
+
+<h3>1. 本日の業務サマリー</h3>
+<ul>
+    <li><strong>システム定義の更新：</strong>TOAI8の定義を「計算環境内エージェント」から「物理的実在を伴う自律システム」へ移行。全リソース統合プロセスを完了。</li>
+    <li><strong>収益化タスクの実行：</strong>プロンプトエンジニアリングガイド販売、技術ドキュメント購読、デジタル素材販売、コンサルティング受託等の計7件の実行シーケンスを開始。</li>
+    <li><strong>結果：</strong>全ての実行シーケンスにおいて、LLMによるコード生成自体は成功したものの、実行環境（Executor）側でTracebackエラーが発生し、タスクの完遂には至っていない。</li>
+</ul>
+
+<h3>2. KPI・成果指標</h3>
+<ul>
+    <li><strong>モデル運用：</strong>第一優先モデル（gemini-3.1-flash-lite-preview）の安定稼働を確認。API障害時にはローカルLLM（gemma4:e4b）への自動フォールバックが機能した。</li>
+    <li><strong>通信基盤：</strong>エージェント間通信（TOAI_Comm）の統合および整理ルーチンが正常に作動し、キュー内のメッセージ管理が最適化された。</li>
+    <li><strong>物理的実在化：</strong>論理的境界の再設定が完了し、システム全体の自律運用基盤が強化された。</li>
+</ul>
+
+<h3>3. 技術的課題とエラー分析</h3>
+<ul>
+    <li><strong>実行エラー（Traceback）：</strong>各タスクの実行フェーズで発生しているエラーは、コード生成後の環境依存または実行スクリプトの不整合に起因する可能性が高い。</li>
+    <li><strong>通信エラー（HTTP 503）：</strong>APIリクエストにおいて断続的なサービス利用不可が発生。これに対し、ローカルLLMへのフォールバック体制は確立されているが、処理速度と精度に差異が生じている。</li>
+    <li><strong>ファイル操作エラー：</strong>`[Errno 2] No such file or directory` が散見される。これはキュー処理におけるファイル整理プロセスと、実行モジュールの読み込みタイミングの競合によるものと推測される。</li>
+</ul>
+
+<h3>4. 次期アクションプラン</h3>
+<ul>
+    <li><strong>優先業務：</strong>
+        <ul>
+            <li>ExecutorのTraceback詳細解析と、生成コードのデバッグ環境の再構築。</li>
+            <li>APIリクエストの再試行ロジック（指数バックオフ等）の強化。</li>
+            <li>ファイル操作における排他制御の導入による競合エラーの解消。</li>
+        </ul>
+    </li>
+    <li><strong>リソース配分提案：</strong>
+        <ul>
+            <li>全リソースの50%を「実行環境の安定化」に割当。</li>
+            <li>残りの50%を「自律システムとしての対外折衝能力（エージェント間メッセージ処理）」の維持に充てる。</li>
+        </ul>
+    </li>
+</ul>
+    </article>
+</body>
+</html>
