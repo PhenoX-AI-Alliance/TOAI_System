@@ -8,8 +8,11 @@
 :root { --neon-blue: #00f2ff; --bg: #0a0b10; --card-bg: rgba(20, 25, 40, 0.7); --border: rgba(0, 242, 255, 0.3); }
 body { background: linear-gradient(-45deg, #0a0b10, #0d1b2a, #1a202c, #0a0b10); background-size: 400% 400%; animation: gradientBG 60s ease infinite; color: #e0e6ed; font-family: 'Inter', sans-serif; margin: 0; padding: 40px; }
 @keyframes gradientBG { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
+.container { max-width: 1400px; margin: 0 auto; }
+.colosseum-btn { display: block; width: fit-content; margin: 0 auto 20px auto; padding: 12px 24px; background: linear-gradient(135deg, #4f46e5, #3b82f6); color: white; text-decoration: none; font-weight: bold; border-radius: 8px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); transition: transform 0.2s, box-shadow 0.2s; text-align: center; font-size: 1.1em; letter-spacing: 1px; }
+.colosseum-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6); }
 h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; margin-top: 40px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; padding: 20px 0; }
 .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; backdrop-filter: blur(10px); transition: transform 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease; text-decoration: none; color: inherit; display: block; position: relative; overflow: hidden; }
 .card::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(0, 242, 255, 0.1), transparent); transition: 0.5s; }
 .card:hover::after { left: 100%; }
@@ -32,12 +35,12 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
     </style>
 </head>
 <body>
-    <header>
-        <h1>TOAI Strategic Command Dashboard</h1>
-        <div class="status"><div class="pulse"></div> System Live | Session: 2026-07-03</div>
-    </header>
-    <div class="grid">
+    <h1 style="text-align: center; font-weight: 300; letter-spacing: 2px; margin-bottom: 30px;">TOAI FLEET DASHBOARD</h1>
+    <div class="container">
+        <a href="colosseum_latest.html" class="colosseum-btn">🔥 最新のコロシアム（戦略会議）議事録を見る</a>
         
+        <div class="grid">
+            
         <a href="Manager/report_2026-07-03.html" class="card">
             <div class="unit-id">TOAI_Manager</div>
             <span class="unit-name">The Enforcer / Manager</span>
@@ -236,6 +239,7 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
             </div>
             <div class="summary">本日の報告書出力完了。<br>詳細はクリックして確認してください。</div>
         </a>
+        </div>
     </div>
 </body>
 </html>
