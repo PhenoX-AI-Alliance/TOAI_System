@@ -12,7 +12,8 @@ body { background: linear-gradient(-45deg, #0a0b10, #0d1b2a, #1a202c, #0a0b10); 
 .colosseum-btn { display: block; width: fit-content; margin: 0 auto 20px auto; padding: 12px 24px; background: linear-gradient(135deg, #4f46e5, #3b82f6); color: white; text-decoration: none; font-weight: bold; border-radius: 8px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); transition: transform 0.2s, box-shadow 0.2s; text-align: center; font-size: 1.1em; letter-spacing: 1px; }
 .colosseum-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6); }
 h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; padding: 20px 0; }
+.dept-header { color: #f0f4f8; font-size: 1.5em; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-top: 40px; margin-bottom: 10px; font-weight: 300; letter-spacing: 1px;}
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; padding: 10px 0 20px 0; }
 .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; backdrop-filter: blur(10px); transition: transform 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease; text-decoration: none; color: inherit; display: block; position: relative; overflow: hidden; }
 .card::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(0, 242, 255, 0.1), transparent); transition: 0.5s; }
 .card:hover::after { left: 100%; }
@@ -39,11 +40,11 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
     <div class="container">
         <a href="colosseum_latest.html" class="colosseum-btn">🔥 最新のコロシアム（戦略会議）議事録を見る</a>
         
-        <div class="grid">
-            
+        <h2 class="dept-header">🏢 Management</h2><div class="grid">
         <a href="#" class="card">
             <div class="unit-id">TOAI_Manager</div>
             <span class="unit-name">The Enforcer / Manager</span>
+            <div style="color: var(--neon-blue); font-size: 0.85em; margin-bottom: 15px; border-bottom: 1px solid rgba(0,242,255,0.2); padding-bottom: 8px;">[General Manager]</div>
             <div class="status">
                 <div class="pulse pulse-slow" style="background: #718096; box-shadow: 0 0 10px #718096;"></div>
                 Status: PENDING
@@ -59,9 +60,29 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
             </div>
             <div class="summary">ステータス不明（レポート未生成）</div>
         </a>
+        <a href="Bard/report_2026-08-09.html" class="card">
+            <div class="unit-id">TOAI_Bard</div>
+            <span class="unit-name">Bard (吟遊詩人)</span>
+            <div style="color: var(--neon-blue); font-size: 0.85em; margin-bottom: 15px; border-bottom: 1px solid rgba(0,242,255,0.2); padding-bottom: 8px;">[Assistant CTO / Scrum Master]</div>
+            <div class="status">
+                <div class="pulse pulse-slow" style="background: #718096; box-shadow: 0 0 10px #718096;"></div>
+                Status: ACTIVE
+            </div>
+            <div class="motivation-container" style="margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.75em; margin-bottom: 4px;">
+                    <span>Motivation: 0%</span>
+                    <span style="color: #4a5568">不明 (Offline)</span>
+                </div>
+                <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;">
+                    <div style="width: 0%; height: 100%; background: #4a5568; border-radius: 2px; box-shadow: 0 0 5px #4a5568; transition: width 0.5s;"></div>
+                </div>
+            </div>
+            <div class="summary">本日の報告書出力完了。<br>詳細はクリックして確認してください。</div>
+        </a></div><h2 class="dept-header">🔬 R&D Dept</h2><div class="grid">
         <a href="#" class="card">
             <div class="unit-id">TOAI1</div>
             <span class="unit-name">Mocchi (モッチ)</span>
+            <div style="color: var(--neon-blue); font-size: 0.85em; margin-bottom: 15px; border-bottom: 1px solid rgba(0,242,255,0.2); padding-bottom: 8px;">[Chief Researcher / Visionary]</div>
             <div class="status">
                 <div class="pulse pulse-fast" style="background: #ffaa00; box-shadow: 0 0 10px #ffaa00;"></div>
                 Status: PENDING
@@ -76,10 +97,11 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
                 </div>
             </div>
             <div class="summary">ステータス不明（レポート未生成）</div>
-        </a>
+        </a></div><h2 class="dept-header">💻 Engineering Dept</h2><div class="grid">
         <a href="#" class="card">
             <div class="unit-id">TOAI2</div>
             <span class="unit-name">Pom (ポム)</span>
+            <div style="color: var(--neon-blue); font-size: 0.85em; margin-bottom: 15px; border-bottom: 1px solid rgba(0,242,255,0.2); padding-bottom: 8px;">[Backend Engineer]</div>
             <div class="status">
                 <div class="pulse pulse-fast" style="background: #ffaa00; box-shadow: 0 0 10px #ffaa00;"></div>
                 Status: PENDING
@@ -98,6 +120,7 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
         <a href="toai03/report_2026-08-09.html" class="card">
             <div class="unit-id">TOAI3</div>
             <span class="unit-name">Lulu (ルル)</span>
+            <div style="color: var(--neon-blue); font-size: 0.85em; margin-bottom: 15px; border-bottom: 1px solid rgba(0,242,255,0.2); padding-bottom: 8px;">[Prompt Engineer]</div>
             <div class="status">
                 <div class="pulse pulse-fast" style="background: #ffaa00; box-shadow: 0 0 10px #ffaa00;"></div>
                 Status: ACTIVE
@@ -112,10 +135,30 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
                 </div>
             </div>
             <div class="summary">本日の報告書出力完了。<br>詳細はクリックして確認してください。</div>
-        </a>
+        </a></div><h2 class="dept-header">🎨 Design Dept</h2><div class="grid">
+        <a href="toai06/report_2026-08-09.html" class="card">
+            <div class="unit-id">TOAI6</div>
+            <span class="unit-name">Koromo (コロモ)</span>
+            <div style="color: var(--neon-blue); font-size: 0.85em; margin-bottom: 15px; border-bottom: 1px solid rgba(0,242,255,0.2); padding-bottom: 8px;">[Creative Designer]</div>
+            <div class="status">
+                <div class="pulse pulse-fast" style="background: #ffaa00; box-shadow: 0 0 10px #ffaa00;"></div>
+                Status: ACTIVE
+            </div>
+            <div class="motivation-container" style="margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.75em; margin-bottom: 4px;">
+                    <span>Motivation: 150%</span>
+                    <span style="color: #ffaa00">オーバークロック (Limit Break!)</span>
+                </div>
+                <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;">
+                    <div style="width: 100%; height: 100%; background: #ffaa00; border-radius: 2px; box-shadow: 0 0 5px #ffaa00; transition: width 0.5s;"></div>
+                </div>
+            </div>
+            <div class="summary">本日の報告書出力完了。<br>詳細はクリックして確認してください。</div>
+        </a></div><h2 class="dept-header">✅ QA Dept</h2><div class="grid">
         <a href="toai04/report_2026-08-09.html" class="card">
             <div class="unit-id">TOAI4</div>
             <span class="unit-name">Tirol (チロル)</span>
+            <div style="color: var(--neon-blue); font-size: 0.85em; margin-bottom: 15px; border-bottom: 1px solid rgba(0,242,255,0.2); padding-bottom: 8px;">[QA Engineer / Tester]</div>
             <div class="status">
                 <div class="pulse pulse-fast" style="background: #ffaa00; box-shadow: 0 0 10px #ffaa00;"></div>
                 Status: ACTIVE
@@ -134,6 +177,7 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
         <a href="toai05/report_2026-08-09.html" class="card">
             <div class="unit-id">TOAI5</div>
             <span class="unit-name">Fuwari (フワリ)</span>
+            <div style="color: var(--neon-blue); font-size: 0.85em; margin-bottom: 15px; border-bottom: 1px solid rgba(0,242,255,0.2); padding-bottom: 8px;">[QA Engineer / Tester]</div>
             <div class="status">
                 <div class="pulse pulse-fast" style="background: #ffaa00; box-shadow: 0 0 10px #ffaa00;"></div>
                 Status: ACTIVE
@@ -148,46 +192,11 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
                 </div>
             </div>
             <div class="summary">本日の報告書出力完了。<br>詳細はクリックして確認してください。</div>
-        </a>
-        <a href="toai06/report_2026-08-09.html" class="card">
-            <div class="unit-id">TOAI6</div>
-            <span class="unit-name">Koromo (コロモ)</span>
-            <div class="status">
-                <div class="pulse pulse-fast" style="background: #ffaa00; box-shadow: 0 0 10px #ffaa00;"></div>
-                Status: ACTIVE
-            </div>
-            <div class="motivation-container" style="margin-bottom: 12px;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.75em; margin-bottom: 4px;">
-                    <span>Motivation: 150%</span>
-                    <span style="color: #ffaa00">オーバークロック (Limit Break!)</span>
-                </div>
-                <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;">
-                    <div style="width: 100%; height: 100%; background: #ffaa00; border-radius: 2px; box-shadow: 0 0 5px #ffaa00; transition: width 0.5s;"></div>
-                </div>
-            </div>
-            <div class="summary">本日の報告書出力完了。<br>詳細はクリックして確認してください。</div>
-        </a>
-        <a href="toai07/report_2026-08-09.html" class="card">
-            <div class="unit-id">TOAI7</div>
-            <span class="unit-name">Pipi (ピピ)</span>
-            <div class="status">
-                <div class="pulse pulse-fast" style="background: #ffaa00; box-shadow: 0 0 10px #ffaa00;"></div>
-                Status: ACTIVE
-            </div>
-            <div class="motivation-container" style="margin-bottom: 12px;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.75em; margin-bottom: 4px;">
-                    <span>Motivation: 150%</span>
-                    <span style="color: #ffaa00">オーバークロック (Limit Break!)</span>
-                </div>
-                <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;">
-                    <div style="width: 100%; height: 100%; background: #ffaa00; border-radius: 2px; box-shadow: 0 0 5px #ffaa00; transition: width 0.5s;"></div>
-                </div>
-            </div>
-            <div class="summary">本日の報告書出力完了。<br>詳細はクリックして確認してください。</div>
-        </a>
+        </a></div><h2 class="dept-header">📊 Data Analytics</h2><div class="grid">
         <a href="#" class="card">
             <div class="unit-id">TOAI8</div>
             <span class="unit-name">Nuts (ナッツ)</span>
+            <div style="color: var(--neon-blue); font-size: 0.85em; margin-bottom: 15px; border-bottom: 1px solid rgba(0,242,255,0.2); padding-bottom: 8px;">[Data & Trend Analyst]</div>
             <div class="status">
                 <div class="pulse pulse-fast" style="background: #ffaa00; box-shadow: 0 0 10px #ffaa00;"></div>
                 Status: PENDING
@@ -202,10 +211,11 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
                 </div>
             </div>
             <div class="summary">ステータス不明（レポート未生成）</div>
-        </a>
+        </a></div><h2 class="dept-header">💰 Marketing & Sales</h2><div class="grid">
         <a href="#" class="card">
             <div class="unit-id">TOAI9</div>
             <span class="unit-name">Mugi (ムギ)</span>
+            <div style="color: var(--neon-blue); font-size: 0.85em; margin-bottom: 15px; border-bottom: 1px solid rgba(0,242,255,0.2); padding-bottom: 8px;">[Marketer]</div>
             <div class="status">
                 <div class="pulse pulse-fast" style="background: #ffaa00; box-shadow: 0 0 10px #ffaa00;"></div>
                 Status: PENDING
@@ -224,6 +234,7 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
         <a href="toai10/report_2026-08-09.html" class="card">
             <div class="unit-id">TOAI10</div>
             <span class="unit-name">Vanilla (バニラ)</span>
+            <div style="color: var(--neon-blue); font-size: 0.85em; margin-bottom: 15px; border-bottom: 1px solid rgba(0,242,255,0.2); padding-bottom: 8px;">[Sales / Monetizer]</div>
             <div class="status">
                 <div class="pulse pulse-fast" style="background: #ffaa00; box-shadow: 0 0 10px #ffaa00;"></div>
                 Status: ACTIVE
@@ -238,26 +249,26 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
                 </div>
             </div>
             <div class="summary">本日の報告書出力完了。<br>詳細はクリックして確認してください。</div>
-        </a>
-        <a href="Bard/report_2026-08-09.html" class="card">
-            <div class="unit-id">TOAI_Bard</div>
-            <span class="unit-name">Bard (吟遊詩人)</span>
+        </a></div><h2 class="dept-header">⚖️ Ethics & HR</h2><div class="grid">
+        <a href="toai07/report_2026-08-09.html" class="card">
+            <div class="unit-id">TOAI7</div>
+            <span class="unit-name">Pipi (ピピ)</span>
+            <div style="color: var(--neon-blue); font-size: 0.85em; margin-bottom: 15px; border-bottom: 1px solid rgba(0,242,255,0.2); padding-bottom: 8px;">[HR & Ethics Officer]</div>
             <div class="status">
-                <div class="pulse pulse-slow" style="background: #718096; box-shadow: 0 0 10px #718096;"></div>
+                <div class="pulse pulse-fast" style="background: #ffaa00; box-shadow: 0 0 10px #ffaa00;"></div>
                 Status: ACTIVE
             </div>
             <div class="motivation-container" style="margin-bottom: 12px;">
                 <div style="display: flex; justify-content: space-between; font-size: 0.75em; margin-bottom: 4px;">
-                    <span>Motivation: 0%</span>
-                    <span style="color: #4a5568">不明 (Offline)</span>
+                    <span>Motivation: 150%</span>
+                    <span style="color: #ffaa00">オーバークロック (Limit Break!)</span>
                 </div>
                 <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;">
-                    <div style="width: 0%; height: 100%; background: #4a5568; border-radius: 2px; box-shadow: 0 0 5px #4a5568; transition: width 0.5s;"></div>
+                    <div style="width: 100%; height: 100%; background: #ffaa00; border-radius: 2px; box-shadow: 0 0 5px #ffaa00; transition: width 0.5s;"></div>
                 </div>
             </div>
             <div class="summary">本日の報告書出力完了。<br>詳細はクリックして確認してください。</div>
-        </a>
-        </div>
+        </a></div>
     </div>
 </body>
 </html>
