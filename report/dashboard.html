@@ -33,6 +33,17 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
 .summary strong { color: var(--neon-blue); }
 @keyframes breathe { 0% { opacity: 0.2; transform: scale(0.9); box-shadow: 0 0 2px inherit; } 50% { opacity: 1; transform: scale(1.1); box-shadow: 0 0 15px inherit; } 100% { opacity: 0.2; transform: scale(0.9); box-shadow: 0 0 2px inherit; } }
 
+/* Pipeline Visualization CSS */
+.pipeline-section { margin-top: 10px; margin-bottom: 40px; }
+.pipeline-container { display: flex; gap: 20px; flex-wrap: wrap; }
+.active-products, .pipeline-events { flex: 1; min-width: 300px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; backdrop-filter: blur(10px); }
+.active-products h3, .pipeline-events h3 { margin-top: 0; color: var(--neon-blue); border-bottom: 1px solid rgba(0, 242, 255, 0.2); padding-bottom: 10px; font-weight: normal; }
+.product-card { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 15px; margin-bottom: 10px; }
+.state-badge { display: inline-block; background: linear-gradient(135deg, #4f46e5, #3b82f6); color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85em; font-weight: bold; margin-top: 8px; box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3); }
+.pipeline-events ul { list-style-type: none; padding-left: 0; margin: 0; font-family: monospace; font-size: 0.85em; color: #a0aec0; }
+.pipeline-events li { padding: 8px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); word-break: break-all; }
+.pipeline-events li:last-child { border-bottom: none; }
+
     </style>
 </head>
 <body>
@@ -40,6 +51,7 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
     <div class="container">
         <a href="colosseum_latest.html" class="colosseum-btn">🔥 最新のコロシアム（戦略会議）議事録を見る</a>
         
+        <div class='pipeline-section'><h2 class='dept-header'>=== TOAI Corporate Pipeline Stream ===</h2><div class='pipeline-container'><div class='active-products'><h3>🚀 Active Projects</h3><p style='color: #888;'>No active projects in pipeline.</p></div><div class='pipeline-events'><h3>📜 Recent Events</h3><ul><li>[2026-08-09 14:01:01] 🌟 NEW IDEA: 'TOAI式 サイバネティック・ポエム集：コードと感情の境界線' created by TOAI (ID: PROD_20260809_140101)</li><li>[2026-08-09 13:57:41] Pipeline initialized.</li></ul></div></div></div>
         <h2 class="dept-header">🏢 Management</h2><div class="grid">
         <a href="#" class="card">
             <div class="unit-id">TOAI_Manager</div>
