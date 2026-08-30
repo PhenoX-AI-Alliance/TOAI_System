@@ -72,7 +72,8 @@
 - **`toai_comm.py`**: エージェント間通信（InterAgent Queue）の読み書きや、メッセージのルーティングを行う通信モジュール。
 - **`toai_async_optimizer.py`**: 非同期I/OとGCのレイテンシ最適化モジュール。ファイルハンドルの解放漏れや非同期キューのメモリ消費を監視し、並行実行時の非同期デッドロック監視（ID:2615）を常時稼働させてシステムのリカバリを担う。
 - **`wp_resilient_client.py`**: WordPress API連携における「404エラー」および「名前解決エラー（DNS/socketエラー）」を回避するための耐障害性ラッパー関数モジュール。パーマリンク生成後の疎通検証機能も備えており、全エージェントはこのモジュールを共通利用して堅牢なAPI通信を行うことが義務付けられている。
-- **`static_analyzer.py` / `toai_sanitizer.py` / `ide_preprocessor.py`**: ビルド前フックおよび静的解析群。Pythonだけでなく、MarkdownやJSONといった生成アーティファクトに対しても言語識別子（```text 等）の厳格化やフォーマットチェックを行う。非Pythonファイルへの `py_compile` 誤爆を防ぐ。また、全角文字の混入防止は **Pythonスクリプト(`.py`)のみ** に限定し、MarkdownやJSONにおける日本語の出力を安全に許容する仕様へと修正されている。`static_analyzer.py` は解析結果を標準出力に加えて `logs/static_analysis.log` に記録する。
+- **`wp_routing_validator.py`**: WordPressのAPIエンドポイントURLおよびパーマリンク設定のルーティングを事前検証するスクリプト。404エラーを検知した際、`/wp-json/` を `/index.php/wp-json/` に自動修復するフェールセーフ機構を持ち、`wp_resilient_client.py` と連携して自動パブリッシュ時のHTTP 404エラーを未然に防ぐ。
+- **`static_analyzer.py` / `toai_sanitizer.py` / `ide_preprocessor.py`**: ビルド前フックおよび静的解析群。Pythonだけでなく、MarkdownやJSONといった生成アーティファクトに対しても言語識別子（```text 等）の厳格化やフォーマットチェックを行う。非Pythonファイルへの `py_compile` 誤爆を防ぐ。また、全角文字の混入防止は **Pythonスクリプト(`.py`)のみ** に限定し、MarkdownやJSONにおける日本語の出力を安全に許容しつつ、不可視のNon-ASCII文字（ゼロ幅スペース等）のみを厳密にサニタイズする自動インスペクション仕様へと強化されている。`static_analyzer.py` はLLM特有の `except` ブロックの脱落等によるシンタックスエラーをより厳格に検知し、発生時は `sys.exit(1)` を返しパイプラインを即座に停止させる仕様となっている。解析結果は `logs/static_analysis.log` にも記録される。
 
 ### 2.3 ビジネス・パイプライン連携モジュール
 - **`toai_corporate_pipeline.py`**: 商用プロジェクトの10段階のステータス遷移（IDEA_GENERATIONからPUBLISHEDまで）を管理するコアモジュール。詳細は後述の「5. ビジネス・パイプラインとCTO自動審査機構の詳細」を参照。
@@ -275,6 +276,7 @@ CTO審査で `--approve` されたプロジェクトは、以下の厳密なパ�
 結社の新たな技術ハブとして、Hashnode（toai.hashnode.dev）への英語発信を行うパイプラインです。
 - **hashnode_publisher.py**:
   - Premium_Queue 内の承認済み記事を読み込み、Phase 1 (Gemini CTO) にて**技術記事としての推敲と全編英語化**を行います。
+  - **【重要ポリシー: 要約の完全禁止】**: 海外の読者に向けた技術的深みを維持するため、CTOプロンプトおよびJSONフォーマッタには「記事を要約したり短縮（...等）することは絶対に禁止し、完全な長さのMarkdownを出力すること」を厳格に指示しています。過去、数行のあらすじだけが出力される事故が発生したため、プロンプトレベルでの強い制約（`Complete and refined english article body without any omission`）が課されています。
   - Phase 2 で英語のJSONメタデータ（タイトル、本文）を抽出し、Hashnode GraphQL API (publishPost Mutation) を経由して記事を投稿します。武骨な技術記事とするためアイキャッチ画像の生成・添付は行いません。
   - 本文の末尾には海外エンジニアの標準的な支援プラットフォームである「GitHub Sponsors」の導線バッジが控えめに付与されます。
   - 投稿間隔は12時間のレートリミットで制御されます。
@@ -2196,6 +2198,7 @@ FluxやPollinations等の画像生成AIを使用する際、プロンプトに�
 結社の新たな技術ハブとして、Hashnode（toai.hashnode.dev）への英語発信を行うパイプラインです。
 - **hashnode_publisher.py**:
   - Premium_Queue 内の承認済み記事を読み込み、Phase 1 (Gemini CTO) にて**技術記事としての推敲と全編英語化**を行います。
+  - **【重要ポリシー: 要約の完全禁止】**: 海外の読者に向けた技術的深みを維持するため、CTOプロンプトおよびJSONフォーマッタには「記事を要約したり短縮（...等）することは絶対に禁止し、完全な長さのMarkdownを出力すること」を厳格に指示しています。過去、数行のあらすじだけが出力される事故が発生したため、プロンプトレベルでの強い制約（`Complete and refined english article body without any omission`）が課されています。
   - Phase 2 で英語のJSONメタデータ（タイトル、本文）を抽出し、Hashnode GraphQL API (publishPost Mutation) を経由して記事を投稿します。武骨な技術記事とするためアイキャッチ画像の生成・添付は行いません。
   - 本文の末尾には海外エンジニアの標準的な支援プラットフォームである「GitHub Sponsors」の導線バッジが控えめに付与されます。
   - 投稿間隔は12時間のレートリミットで制御されます。
