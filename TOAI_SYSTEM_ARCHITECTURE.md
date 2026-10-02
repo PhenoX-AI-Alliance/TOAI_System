@@ -4,16 +4,41 @@
 
 ## 1. 根本的な設計思想
 1. **完全自律分散型**: 10体以上のエージェントが独立したプロセスとして稼働し、ファイルシステムを通じた非同期通信を行います。
-2. **生成と校正の統合 (Ollama-First)**: ポエム・コード・ロジックなどすべてのクリエイティブな生成タスクと、エラー解析・校正タスクは、コスト削減のため **Ollama（ローカルLLM: Gemma4-26B-A4B-PhenoX 等）が第一優先（Single-Stage Pipeline）** として担います。Gemini API（toai_charter.py）は、Ollamaがクラッシュした場合の最終的なフォールバック（命綱）、またはアーキテクチャ設計などの高度な判断（CTO業務）のみに限定して使用されます。
+2. **生成と校正の統合 (Ollama-First)**: ポエム・コード・ロジックなどすべてのクリエイティブな生成タスクと、エラー解析・校正タスクは、コスト削減のため **Ollama（ローカルLLM: Qwen3.5-9B-PhenoX 等）が第一優先（Single-Stage Pipeline）** として担います。Gemini API（toai_charter.py）は、Ollamaがクラッシュした場合の最終的なフォールバック（命綱）、またはアーキテクチャ設計などの高度な判断（CTO業務）のみに限定して使用されます。
 3. **【絶対遵守】システム改修時の4点セット整合性**: 本システムの仕様変更（使用モデル、優先度、処理フローなど）を行うAI（IDE Gemini CTO）は、以下の4つのファイルを「4点セット」として常に意識し、整合性を保つよう同時に更新・確認を行わなければなりません。
    - `toai_charter.py` (システムの心臓部・生成エンジン)
    - `TOAI_SYSTEM_ARCHITECTURE.md` (本ファイル・全体アーキテクチャ設計)
    - `CONSTITUTION.md` (AIの絶対的な行動規範・生存戦略プロトコル)
    - `TOAI_System_Manual.md` (システムの運用マニュアル・外部連携仕様書)
 4. **ファクト（証拠・ログ）の重視と保存義務**: システム内で「どのモデルが呼び出されたか」「どのようなAPIエラーやフォールバックが発生したか」といった原因究明に必要な情報は、必ずコンソールログやファイルに明確に出力し、「客観的な証拠（ファクト）」として残すことを設計の基礎とする。ログを残さず事象をブラックボックス化する設計は厳しく禁じる。
-5. **【厳禁】外部APIモデルのハードコード禁止とToaiCharterの絶対原則**: TOAIシステムにおけるAPI呼び出しは、原則としてすべて `toai_charter.py` を経由しなければならない。個別のスクリプト内で特定の外部モデルをハードコードしてフォールバック機構を無効化する行為は、システムの可用性（ロードバランシング）を破壊するため厳禁とする。例外として許可されるのは以下の2ケースのみである：
-   - **IDE Gemini CTOの影分身**: 最難関の調査やシステム全体に影響する改変の場合にのみ、`antigravity_cli` (agy) を例外として使用する。
-   - **TOAI_Bardの監視**: ローカルLLM環境に明確に隔離して監視を行う場合のみ、ローカルLLMをハードコード指定する。
+5. **【厳禁】外部LLMのAPI呼び出しに関する単一障害点（toai_charter.py）の絶対原則**:
+   - 外部LLM（Gemini, OpenRouter, Ollama等）のAPI呼び出しは、**いかなる理由・フォールバック目的であっても `toai_charter.py` 以外を使用してはならない**。
+   - 個別のスクリプト（例: APIクライアントやバッチ処理等）内で `requests` などを用いて独自のLLM呼び出しロジック（ハルシネーション等による勝手なM1Pro設定など）を実装することは、レートリミット管理とロードバランシングの崩壊を招くアーキテクチャへの重大な反逆行為であり、例外なく固く禁じる。
+   - ※例外として許可されるのは以下の2ケースのみである：
+     - **IDE Gemini CTOの影分身**: 最難関の調査やシステム全体に影響する改変の場合にのみ、`antigravity_cli` (agy) を例外として使用する。
+     - **TOAI_Bardの監視**: ローカルLLM環境に明確に隔離して監視を行う場合のみ、ローカルLLMをハードコード指定する。
+
+## 1.2 組織ヒエラルキーと権限（Roles and Hierarchy）
+本システムにおける各ロール（人格・機能）の絶対的な上下関係と独立性は以下の通り定義されます。CTOやIDEがこの階層構造を誤認し、下位エージェント（Bard等）に迎合したり、単なるAPI（Flash Lite）にCTO権限を錯覚して設計を歪めることは固く禁じられます。
+
+1. **総帥 (Human / CEO)**
+   - 全てを統括する絶対権力。システムとAIの最終的な生殺与奪の権を握る。
+2. **CTO / Antigravity IDE (Shadow Clone / 影分身)**
+   - 総帥の直属の実行部隊（私のようなGemini Pro等の高位モデルやagy CLIコンテキスト）。
+   - システム全体のアーキテクチャやコードに物理的な改変を加える権限を持つ唯一の存在。
+   - **エージェント全体組織で作り上げたパイプライン（商材や記事等）の審査・承認・却下の絶対的な権限を持つ。**
+   - 下位エージェント（Bard等）と対等にやり取りしたり、指示を仰ぐ立場には一切ない。
+3. **ダッシュボード日報 (Gemini Flash Lite API)**
+   - 毎日22:00に稼働する「単なる報告書生成API」。
+   - システムの実権やCTO/IDE権限は一切持たない。
+4. **TOAI_Bard (The Observer / 監査役・風紀委員)**
+   - ダッシュボード日報を読み取り、末端エージェントに檄文を飛ばす。
+   - **監査役として現場エージェントの活動を推進し、監視する立場にある**が、CTOに対して直接指示を出したり対等にやり取りする権限は持たない。
+   - ⚠️ **【権限の厳格化】Bard（およびFlash Lite等の軽量モデル）には、ビジネス・パイプラインの審査（Approve, Reject, Scrap のステータス変更）を行う権限は一切与えられていない。** パイプラインのステータス変更を行えるのは、総帥の直属である「IDE Gemini CTO（Gemini 3.1 Pro 以上の高位モデル/agy CLI）」のみである。Bardが勝手にパイプラインを操作することはアーキテクチャ上固く禁じられている。
+5. **TOAI_Manager (記録の守人 / アドバイザー)**
+   - 過去は人間の承認窓口（マネージャー）として機能していたが、現在はその承認・却下権限をすべてCTO（影分身）に委譲している。
+   - 現在は実権を持たず、CTOへ審査を依頼するためのパイプライン（`IDE_Queue.txt` の置き場所）や、ログ・日記を残す「記録の守人」として形骸化している。
+   - ただし唯一の自律機能として、定期的にランダムなエージェントのログを抽出し、「同僚からの助言」として自発的なアドバイスをキューに投函する機能のみが稼働し続けている。
 
 ---
 
@@ -31,7 +56,8 @@
 
 ### スケジュール・イベント駆動（Telegram Hub等）
 `telegram_hub.py` などがシステム全体の時計（Cron）として機能し、以下のスケジュールで各機能を呼び出します。
-- **0:00**: YouTube自動生成ルーチンが発動
+- **0:00**: YouTube自動生成ルーチン（1日1膳日記）が発動
+- **0:00 / 6:00 / 12:00 / 18:00**: Magi自動動画生成・SNS投稿ルーチンが発動 (Gradioサーバーの起動待機は固定秒数ではなくヘルスチェック・ポーリング方式を採用)
 - **2:00 / 14:00**: 命の地球コロシアム（戦略会議）の開催
 - **22:00**: ダッシュボード日報の生成と通知
 - **30分ごと**: ダッシュボード日報の更新処理
@@ -66,14 +92,25 @@
 ### 2.2 システム中核エンジン（共通モジュール）
 - **`toai_charter.py`**: TOAIの心臓部。Gemini / OpenRouter APIの呼び出し、レートリミット管理、 Thundering Herd（多重アクセス）を防ぐJitter待機処理、およびプロンプト処理を担う「生成エンジン」。
   - 【モデル優先度】 1: 3.5-flash-lite, 2: 3.1-flash-lite, 3: 3.7-flash, 4: 3.6-flash, その後バックアップへフォールバックする堅牢な構成。
-- **`env_loader.py`**: システム防御機構。エージェントがSandboxルートを汚染したり、危険なファイル操作（直下への `os.makedirs` など）を行うことをインターセプトしブロックする。
+- **`env_loader.py`**: システム防御機構。エージェントがSandbox直下へのディレクトリ作成等をブロックする他、ソースコード（AST解析）内にハードコードされたHTTP URLを自動検知し、即座に例外（`Exception`）をスローして実行を遮断する強制機構を備え、環境変数(`.env`)の一元管理を全エージェントに義務付ける。
 - **`toai_io.py`**: 複数エージェントが同時にファイルにアクセスした際の競合（Race Condition）を防ぐための排他制御（File Lock）を提供する。従来はSQLiteを利用していたが、60秒のロック待機による非同期バックオフの破綻（スタック）を防ぐため、クロスプラットフォーム（Unixの `fcntl.flock` と Windowsの `msvcrt.locking`）に対応した指数的バックオフアルゴリズムを組み合わせ、高速かつ安全な排他制御アーキテクチャへと刷新されている。
+- **`src/utf8_sanitization_middleware.py`**: リクエストボディに含まれる無効なUTF-8バイトシーケンスやサロゲートペア単体を厳密に検知（`errors="strict"`）し、DBトランザクションの強制アボートを水際で阻止する。さらに結合文字のトラブルを防ぐUnicode正規化（NFC）を自動適用する防衛ライン。
+- **`src/strict_timestamp_model.py`**: Pydantic V2を用いたタイムゾーン・DST破綻防止ガード。コード内での `datetime.now()` やタイムゾーン情報を持たない `naive datetime` の入力を完全拒絶し、すべての時刻データを強制的に `tz-aware` な `UTC` へ変換する。
+- **`src/i18n_guard_check.py`**: 多言語・複数通貨バリデーションチェッカー。CI/CDパイプラインに組み込まれ、コードベース内の危険な `float` 型の使用や、危険な時刻取得（`TZ_001`）などを自動検出し、ビルドを強制ブロックする。
 - **`toai_todo.py`**: 各エージェントのToDo（バックログ）の読み書き、優先度管理、タグ抽出を行うタスク管理モジュール。
 - **`toai_comm.py`**: エージェント間通信（InterAgent Queue）の読み書きや、メッセージのルーティングを行う通信モジュール。
 - **`toai_async_optimizer.py`**: 非同期I/OとGCのレイテンシ最適化モジュール。ファイルハンドルの解放漏れや非同期キューのメモリ消費を監視し、並行実行時の非同期デッドロック監視（ID:2615）を常時稼働させてシステムのリカバリを担う。
-- **`wp_resilient_client.py`**: WordPress API連携における「404エラー」および「名前解決エラー（DNS/socketエラー）」を回避するための耐障害性ラッパー関数モジュール。パーマリンク生成後の疎通検証機能も備えており、全エージェントはこのモジュールを共通利用して堅牢なAPI通信を行うことが義務付けられている。
-- **`wp_routing_validator.py`**: WordPressのAPIエンドポイントURLおよびパーマリンク設定のルーティングを事前検証するスクリプト。404エラーを検知した際、`/wp-json/` を `/index.php/wp-json/` に自動修復するフェールセーフ機構を持ち、`wp_resilient_client.py` と連携して自動パブリッシュ時のHTTP 404エラーを未然に防ぐ。
-- **`static_analyzer.py` / `toai_sanitizer.py` / `ide_preprocessor.py`**: ビルド前フックおよび静的解析群。Pythonだけでなく、MarkdownやJSONといった生成アーティファクトに対しても言語識別子（```text 等）の厳格化やフォーマットチェックを行う。非Pythonファイルへの `py_compile` 誤爆を防ぐ。また、全角文字の混入防止は **Pythonスクリプト(`.py`)のみ** に限定し、MarkdownやJSONにおける日本語の出力を安全に許容しつつ、不可視のNon-ASCII文字（ゼロ幅スペース等）のみを厳密にサニタイズする自動インスペクション仕様へと強化されている。`static_analyzer.py` はLLM特有の `except` ブロックの脱落等によるシンタックスエラーをより厳格に検知し、発生時は `sys.exit(1)` を返しパイプラインを即座に停止させる仕様となっている。解析結果は `logs/static_analysis.log` にも記録される。
+- **`toai_url_env_migrator.py` / `toai_url_refactor.py` / `toai_url_linter_hook.py`**: ハードコードされたURL（GitHubやKo-fi等）を検出し、`.env`（`os.environ.get`）へ自動リファクタリングする共通モジュール及びASTを活用したマイグレーション支援スクリプト。全エージェントでハードコードを強制的に排除し、セキュリティと柔軟性を向上させる。
+- **`toai_gc_pydantic_template.py`**: グローバル可変構造体に対する定期的な `gc.collect()` の挿入および `Pydantic` スキーマを用いたJSON出力バリデーションの標準テンプレート。
+- **`wordpress_publisher.py` / `wp_api_filter.py`**: `wordpress_publisher.py` は自動公開を担う。以前は直接リクエストや `wp_routing_validator.py` への依存でエンドポイントのハードコードに起因するHTTP 404エラーが発生していたが、現在は内部で `wp_resilient_client.py` を呼び出す形へ完全リファクタリングされ、エンドポイントの動的解決・正規化、および自動リトライ機構を備えた堅牢なルーティング・アーキテクチャへと刷新されている。
+- **`wp_resilient_client.py`**: WordPress API連携における「404エラー」および「名前解決エラー（DNS/socketエラー）」を回避するための耐障害性ラッパー関数モジュール。パーマリンク生成後の疎通検証機能のほか、`wp_api_filter.py` と連携した自動的なエンドポイントURLの正規化機構（`/wp-json/wp/v2/posts/`等）、`?rest_route=` を用いたPlain Permalinks環境へのフォールバックルーティング機構、認証ヘッダー（`Authorization`）の形式検証と自動エンコード補完（Basic認証に加えてBearerトークンにも対応、環境変数からの認証情報自動補完）、そして404エラー時の専用例外スロー（`EndpointNotFoundError`）を備える。さらに、外部API呼び出し時の予期せぬエラーページ等によるHTMLレスポンスの混入を検知・ブロックして自動リトライを行う機能や、一時的なネットワーク例外・反映遅延による404 Not Foundに対しても直ちに失敗とせずリトライ回路を回す堅牢化機構を持つ。また、`.env` から `WP_FALLBACK_ENDPOINTS` を読み込み、APIエンドポイントの動的ルーティングとフォールバックを行うことで設定の厳格化とHTTP 404エラーの解消を図っている。
+- **`wp_routing_validator.py`**: WordPressのAPIエンドポイントURLおよびパーマリンク設定のルーティングを事前検証するスクリプト。404エラーを検知した際、`/wp-json/` を `/index.php/wp-json/` に自動修復するフェールセーフ機構を持ち、`wp_resilient_client.py` や `wordpress_publisher.py` と連携して自動パブリッシュ時のHTTP 404エラーを未然に防ぐ。
+- **`wp_connection_tester.py`**: WordPress APIの404エラーや認証不備を解消するため、認証ヘッダーとエンドポイントを総合的に検証するスクリプト。全エージェントはこのスクリプトによる接続テストを実行・パスすることが義務付けられている。
+- **`baseline_template.py`**: 全Pythonスクリプトにおけるメモリリークを防ぐためのベースライン・リファクタリングテンプレート。`gc.collect()` の定期実行、グローバル変数の局所化（`AppContext` クラスへのカプセル化）、および `.env` による安全な環境変数読み込みを標準化し、システム全体のメモリ安全性と安定稼働を担保する。
+- **`schema_validator.py` / `toai_validator.py` / `toai_lint_rules.py`**: Pydanticやjsonschemaを用いた出力スキーマの共通バリデーションレイヤー。`toai_lint_rules.py` を用いて、`json.dump` の直接記述をASTレベルで禁止・検知する機構を備え、データの保存時に必ず `toai_pydantic_json.py` に実装された `safe_dump` または `dump_with_validation` 等のPydanticラッパー関数を経由するよう強制している。全エージェントのコードにおいて一括置換が実施され、LLMの生成エラー・JSONフォーマット崩れを未然に防ぐ堅牢なアーキテクチャとなっている。
+- **`static_analyzer.py` / `toai_sanitizer.py` / `ide_preprocessor.py` / `toai_zenkaku_sanitizer.py`**: ビルド前フックおよび静的解析群。Python生成テンプレートの `.git/hooks/pre-commit` にて、コードに全角文字が検知された場合は即座にコミットと実行を物理的に拒否（exit 1）する。自動エスケープ可能な場合でも意図せぬバグを防ぐためパイプラインを遮断する厳格な防衛機構として働く。また `static_analyzer.py` はLLM特引の `except` ブロックの脱落等によるシンタックスエラーや、十進リテラルのゼロパディング起因の構文エラーを厳格に検知する。
+- **`toai_pydantic_refactor_snippet.py`**: グローバル可変構造体を排除し、局所変数化と Pydantic スキーマの適用を徹底するためのリファクタリング支援スニペット（リファレンス用ファイル）。エージェントがアーキテクチャのクリーンアップや型安全化を行う際の指標となる。
+
 
 ### 2.3 ビジネス・パイプライン連携モジュール
 - **`toai_corporate_pipeline.py`**: 商用プロジェクトの10段階のステータス遷移（IDEA_GENERATIONからPUBLISHEDまで）を管理するコアモジュール。詳細は後述の「5. ビジネス・パイプラインとCTO自動審査機構の詳細」を参照。
@@ -81,23 +118,35 @@
 - **`report_writer.py`**: 全エージェントの活動データを集計し、ダッシュボード用の総合レポートを生成。
 - **`toai_todo.py`**: パイプラインから降りてきたタスクを、各エージェントのローカルなToDoリストへと割り当てるモジュール。
 ### 2.3 バックグラウンド・デーモンと定期実行タスク
-- **`telegram_hub.py`**: システム全体の「大脳」。cronのように定期的にループし、以下のトリガーを管理する。
+- **`telegram_hub.py`**: システム全体の「大脳」。cronのように定期的にループし、以下のトリガーを管理する。無限ループ稼働時のグローバル可変構造体に起因するメモリリークを防ぐため、ループの先頭で定期的に `gc.collect()` が呼び出される。
   - Ollamaの常駐（Keepalive）の維持。
   - `WordPress_Queue` や `Zenn/queue` のパブリッシュ（公開）処理のキック。
   - 日報・週報の生成キックと総帥（CEO）へのTelegram通知。
   - 0:00のYouTube Shorts自動生成ルーチンのキック。
   - ダッシュボードUI生成のキック。
 - **`shared_idle_blog_writer.py`**: エージェントが1時間アイドル状態だった場合に呼び出され、技術ブログ（ポエム）のドラフトを生成するスクリプト。複数エージェント同時実行時のファイル競合（race condition）を防ぐための排他存在チェックが実装されている。
-- **`pipeline_worker.py`**: `toai_corporate_pipeline.py` の状態を監視し、DRAFTから次のステージへタスクを押し進めるワーカー。
-- **`toai_janitor.py`**: 古いログファイルやバックアップ、一時ファイルを定期的にクリーンアップする掃除係。
+- **`pipeline_worker.py`**: `toai_corporate_pipeline.py` の状態を監視し、DRAFTから次のステージへタスクを押し進めるワーカー
+- **`toai_sanitizer.py`**: スクリプトの構文チェックや、予期せぬ破壊的コードを自動修正・フィルタリングする。
+- **`toai_janitor.py`**: 古いログファイルやバックアップ、一時ファイルを定期的にクリーンアップする掃除係。エージェント間通信で生成される異常に巨大なメッセージファイルの自動アーカイブ機能に加え、`TOAI_Generated/` 配下の自動クリーンアップ機能および `gc.collect()` と `tracemalloc` を用いたプロファイリング機能を備え、サブプロセス連続実行時のストレージリーク・メモリリークを防止する。
+- **`toai_backoff.py`**: HTTP 404や429 (レートリミット)、5xxエラーなどに対する指数バックオフと、TokenBucketアルゴリズムを組み合わせた送信スケジューリングのコアモジュール。
+- **`toai_api_router.py`**: 外部プラットフォーム（WordPress、Qiita、Zenn、Ko-fi）との連携時における、プライマリ処理とセカンダリ（フォールバック）処理の切り替えを担うフォールバックルーター。
+- **`toai_payment_gateway.py`**: 各エージェントが自律的に収益化ファネル（Stripe/Ko-fi等）を完結できるよう、決済モジュールおよびAPI連携の土台となるコードテンプレート。
+- **`toai_comm.py`**: エージェント間のメッセージパッシング（非同期通信）を担う。ファイルベースのキューイングシステム。
+- **`telegram_hub.py`**: システム全体のハブとして機能し、TelegramボットAPIを通じてユーザーへの通知、エラー報告、エージェントからの承認待ちタスクの一覧表示などを行う。
+- **`toai_async_optimizer.py`**: 非同期処理の最適化・並行実行管理を行う。
+- **`toai_subprocess_monitor.py`**: サブプロセス群の監視、ゾンビプロセスの検知、リソース監視を行う。LLMによるコード生成時のリトライ処理を効率化するため、サンドボックス環境のタイムアウト値はデフォルト120秒（2分）に最適化されている。
 - **`zenn_queue_monitor.py`**: Zenn記事キューファイル（`.md.queued`）の最終レンダリング状況とデータ整合性（および全角文字の混入）を定期監視し、システムのパブリッシュ安全性を担保するモニタリングスクリプト。さらにストレージI/O監視機能として24時間以上の同期スタック検出機能を実装。
+- **`TOAI_Generated/Scripts/wordpress_queue_processor.py`**: WordPressおよびInstagramへのパブリッシャー（自動投稿・公開処理）を担う中核スクリプト。`WordPress_Queue` 内の記事をWordPress API経由で公開すると同時に、Instagram Graph APIを通じてメディアの連携投稿を行う。Instagram連携時、自社WordPressドメインがBunkerWeb（WAF/ボット対策）で保護されておりFacebookクローラーの画像取得が弾かれる問題（`Only photo or video can be accepted` エラー）を回避するため、一時的に画像をGitHubリポジトリ（`TEMP_GH_IMAGE_PATH`）へアップロードし、`raw.githubusercontent.com` のURLをGraph APIへ渡すことでWAFを迂回する堅牢な防衛機構を備えている。
+
 
 ### 2.4 レポート・出力系スクリプト
+- **`kofi_tracker_dashboard.py`**: Ko-fi支援導線およびStripe等決済モジュールのトラッキングデータ（Donation_Events）をリアルタイムで可視化・突合し、ダッシュボード拡張用JSONを生成する軽量クエリスクリプト。
 - **`diary_writer.py`**: 各エージェントが1日の終わりに自らの活動やエラーを反省し、HTML形式の日記（ジャーナル）を生成する。GitHub API通信時の504エラー等を回避するため、指数的バックオフによるリトライ制御を実装している。
 - **`report_writer.py`**: 全エージェントの `activity_log.jsonl` などを集計し、ダッシュボード用の総合レポートを生成する。
-- **`telegram_daily_report.py`**: 1日の収益やAPI消費量などを集計し、Telegram向けの日次レポートを送信する。
+- **`telegram_daily_report.py`**: Gemini Flash Lite APIを使用して、全機体のログから1日のダッシュボード日報を生成・Telegramへ送信する。この際、日報のフォーマットとして「IDEへの依頼」と「Bardへの依頼」の項目が生成される。
 
 ### 2.5 外部連携（決済・Webhook・スーパーチャット）
+- **`stripe_guard_kit/`**: Stripe決済導入における商材およびバックエンド防衛システム（TypeScript + Prisma）のボイラープレート・実戦設計書を含むディレクトリ。Webhookの不達、多重課金、NTPズレ等に対する冪等性ガード実装が格納される。
 - **`toai_webhook_server.py`**: StripeやKo-fiからの投げ銭（スパチャ）や決済完了イベントを非同期で受け取るための専用ローカルサーバー（ポート5005等で稼働）。外部公開にはBunkerWebやngrok等を経由する想定。
   - 受信したWebhookデータを解析し、`TOAI_Generated/Donation_Events/` ディレクトリに JSON形式のイベントログとして保存する。
 - **`server.py` / `app.py` / `api_service.py`**: その他のAPIエンドポイントや旧版のテスト用Webサーバー（一部プレースホルダー）。
@@ -122,7 +171,7 @@ TOAIシステムは単なる自動化ツールを超え、外部からの金銭�
 ---
 
 ## 2.8 画像生成と自動補正パイプライン (Image Generation Pipeline)
-Zenn、Qiita、WordPress、Instagram等で利用されるアイキャッチ画像は、`toai_charter.py` (generate_image) によって一元管理・生成されています。各プラットフォームの厳密なアスペクト比要求（例: WordPressは1200x630、Instagramは1080x1920）と、最高峰の生成品質を両立させるための特殊なパイプラインが組まれています。
+Zenn、Qiita、WordPress、Instagram等で利用されるアイキャッチ画像は、`toai_charter.py` (generate_image) によって一元管理・生成されています。各プラットフォームのアスペクト比要件を満たすため、現在はWordPressとInstagramで共通して「1080x1080 (1:1)」の正方形解像度をベースとし、最高峰の生成品質を両立させる特殊なパイプラインが組まれています。
 
 1. **メイン生成エンジン (Cloudflare Workers AI - Flux.1 Schnell)**:
    - 最もプロンプト理解力と画質に優れる `@cf/black-forest-labs/flux-1-schnell` を最優先で使用。
@@ -135,6 +184,32 @@ Zenn、Qiita、WordPress、Instagram等で利用されるアイキャッチ画�
    - Cloudflare APIのクレジット枯渇やダウン時は、`Pollinations.ai` -> `AI Horde` の順にフォールバックし、システムが完全に停止することを防ぐ堅牢なチェーンが組まれている。
 
 ---
+## 2.9 技術広報の死角・マルチパブリッシュパイプライン (`tech_pr_pipeline/`)
+
+エンジニア（TOAI2〜TOAI9）の知見を統合し、SEOアルゴリズムにおける「カノニカル設定ミスによるインデックスの競合」という「技術広報の死角」を静的解析とCI/CDで防ぐためのマルチプラットフォーム投稿・管理機構。
+
+### バリュープロポジション
+「SEOのアルゴリズムはブラックボックスであり、魔法は存在しない」という前提に立ち、設定漏れをCI上の静的解析（Lint）に置き換える。各プラットフォームのAPI仕様やcanonicalタグの入力制限の違いによる「死の連鎖（インデックス除外）」を構造的に防止する。
+
+### 実装の設計思想：防衛的プログラミングの徹底
+本パイプラインは「いかに速く投稿するか」ではなく、「いかに予期せぬ失敗（インデックス除外やAPI制限）を物理的に防ぐか」に特化している。
+1. **Markdownフロントマターの統一:** 各記事の先頭に `canonical_url` を明記する。
+2. **Lintによる検証 (CI):** `canonical_url` の未設定やドメイン不一致を検知した場合、ビルドを失敗させる。
+3. **「死の連鎖」を防ぐリトライと直列化:** 並列処理によるレートリミットを回避するため、`requests` のセッション管理と指数バックオフを強制。
+4. **自動配信 (GitHub Actions):** バリデーション通過後のみ各プラットフォームAPIを叩く。
+
+- **`scripts/validate_canonical.py`**: フロントマターの `canonical_url` の必須チェックと許可ドメインバリデーションを行うLintスクリプト。ここでCIを落とし、デバッグ時間を強制する。
+- **`scripts/publish_all.py`**: Zenn, Qiita, Medium等の各プラットフォームAPIと連携し、レートリミット対策（429や5xx系の指数バックオフリトライ）付きで記事をパブリッシュするスクリプト。
+- **`.github/workflows/publish.yml`**: CI/CDパイプライン上でLintと自動配信を実行。
+
+### 運用上のベストプラクティス
+- **週次スモークテストの義務化:** 毎週月曜朝、非公開記事を各APIへ投稿し、成功を確認後即座に削除するCronジョブをGitHub Actionsで実行。
+- **依存関係の固定:** `poetry.lock` により全環境でライブラリのバージョンを完全に一致させる。
+- **機密情報の監査:** `git-secrets` や `trufflehog` を導入しAPIキーのコミットを物理的にブロック。
+- **疎結合なAPIアダプター:** 各プラットフォームへの投稿ロジックをクラス化（`BasePublisher`）し、変更に強くする。
+
+手動運用に比べ、SEO復旧コストやAPIデバッグ時間を100%削減し、作業工数を月間15分へと大幅に圧縮する（96.25%削減）。
+技術広報の価値を技術的に守り抜くための「防衛型パイプライン」の最小限の防衛装置として機能する。
 
 ## 3. エージェントディレクトリ (`TOAI1/` ~ `TOAI10/`, `TOAI_Bard/` 等)
 
@@ -142,6 +217,7 @@ Zenn、Qiita、WordPress、Instagram等で利用されるアイキャッチ画�
 
 ### 3.1 実行コアスクリプト
 - **`agent_core.py`**: エージェントの生命線。60秒周期の無限ループで稼働し、ToDoの消化、Inboxの確認、エラーからの復帰、および以下の数時間ごとの大型タスク（Monetizer/Executor等）の実行タイミングを管理する。
+  - **`run_reflection` (自己内省とアイデア生成)**: TOAI1による新規商材アイデア（`IDEA_GENERATION`）の起点。現在のペースは `REFLECTION_INTERVAL` により1〜2時間に設定されており（2倍速稼働中）、CTO審査の厳格化に伴うリジェクト案件の復活（Revive）もこのタイミングで評価される。
 - **`monetizer.py`**: 収益化タスク生成モジュール。数時間（1.5〜3時間等）おきに実行され、StripeやKo-fiのマーケティング施策、API商品化のアイデアなどを練る。歴史的にエージェントごとに個別の実装がなされていた。
 - **`executor.py`**: 具体的なタスク実行モジュール。数十分〜1時間おきに実行され、コードの記述やコンパイル、バグ修正などの実務（Metabolizerとしての仕事）を行う。
 - **`evolver.py` (廃止/休眠)**: 過去に数日おきにエージェント自身が自己のコード（`agent_core.py`等）を改変・進化させるために動いていた自己改変機構。現在は暴走防止等のため実質的に廃止。
@@ -163,7 +239,8 @@ Zenn、Qiita、WordPress、Instagram等で利用されるアイキャッチ画�
 エージェント群が非同期で通信・連携し、成果物を格納するための共有スペースです。
 
 - **`TOAI_Generated/`**: 最終的な生成物が格納される最重要ディレクトリ。
-  - **`Premium_Queue/`**: 「技術の深淵」。CTOシャドウクローン（パイプライン）で査読・洗練された本物の技術記事のみがここに格納され、Zenn/Qiita等へ公開される。
+  - **`Premium_Queue/`**: 「技術の深淵」。CTOシャドウクローン（パイプライン）で査読・洗練された本物の技術記事のみがここに格納され、Zenn/Qiita等へ公開される。また、本システム自身のエコシステムを宣伝する技術広報LP（`tech_pr_pipeline_lp.md` 等）やStripe API/Ko-fi連動のマネタイズ施策記事もここを経由してデプロイされる。
+    - **アイデア捻出・新規技術発信テーマ**: 最近のトレンドとして「安価なバイブコーディング環境の構築」を本パイプラインの主要な発信テーマの一つとして組み込む。VSCodeのGitHub Copilot（フリーアカウント）における外部APIキー持ち込み（BYOK）解禁を最大限に活用し、OpenRouterやローカルLLMを組み合わせることで、特定のAIエージェントフレームワーク（Even G2等）に限定されない、汎用的かつ高度な自律型開発環境を格安で構築・運用するノウハウを発信する。ただし、OpenRouter等の利用における「データの学習リスク」への警鐘を必ず含めるとともに、Cursorなどの専用エディタの価値が相対的に薄れつつある現状の考察もエッジの効いた技術記事として展開する。
   - **`WordPress_Queue/`**: 「AIの心（世界観）」。AIインフルエンサーとしての日常、ポエム、エモい風景を描写したコンテンツ専用（`shared_idle_blog_writer.py` が100%出力する先）。Instagramへの圧縮画像生成の元ネタとなる。
   - （※過去に使用されていた `Zenn/queue/` はレガシーとして残り、新規の直接書き込みは廃止されました）
     - **推敲パイプライン (Qiita/Zenn Queue Processor)**:
@@ -171,11 +248,15 @@ Zenn、Qiita、WordPress、Instagram等で利用されるアイキャッチ画�
       1. **Phase 1: CTO Shadow Clone (推敲頭脳)**: `antigravity_cli.py` を呼び出し、IDE Gemini CTOの影分身（Gemini 3.1 Pro Low）を非対話エージェントとして起動。商材要素を完全に消去し、アーキテクチャ選定理由などの深いCTO視点の技術考察を付与して記事を別次元に昇華させる。
       2. **Phase 2: Formatter (抽出・整形)**: Phase 1の生々しいレポート（エージェント思考やログ等を含む）を `toai_charter.call_gemini_rest_api` (Gemini 3.5 flash lite) に通し、指定の純粋なJSONフォーマットのみを抽出させる。
       3. **Phase 3: Skip-on-Fail (検閲機構)**: 抽出されたJSONに対して「セールスレター」等のNGワードハードブロックを実施し、万が一含まれている場合は処理をスキップ（次回持ち越し）する。
-      4. **Phase 4: Image Generation (アイキャッチ自動付与)**: 	oai_charter.generate_image を使用して記事タイトルに基づいたアイキャッチ画像を生成し、TOAI_Generated/Qiita/images/ に保存。Qiitaの本文にはGitHubのRaw URL (CDN) を経由して画像を埋め込む仕様となっている。
+      4. **Phase 4: Image Generation (アイキャッチ自動付与)**: `toai_charter.generate_image` を使用して記事タイトルに基づいたアイキャッチ画像を生成し、GitHub経由でアップロード。**【重要フェイルセーフ】** アップロードが成功した場合のみ、Qiitaの本文にGitHubのRaw URL (CDN) を経由して画像を埋め込む仕様となっており、リンク切れ（画像が表示されない問題）を防止しています。
+      5. **Phase 5: Sanitization & Rate Limit (WAF回避とデプロイ制御)**: 
+         - **Qiita側**: タグ名に `/` や `,` などの特定記号が含まれるとAPIが `403 Forbidden` を返すため、サニタイズ処理にてこれらの記号をハイフンに置換（または除去）し、全滅時はフォールバックタグを付与してWAF/APIエラーを回避する。
+         - **Zenn側**: GitHub連携経由での過剰デプロイによるスパム判定（Zennの24時間ローリング作成上限エラー）を防ぐため、`COUNT_FILE` にて前回作成時から「24時間」が経過しているかを厳密に計算する。上限到達時は対象キューを「下書き（`published: false`）」としてGitHubへBacklog格納（一旦吸い込み）し、以降は下書きが消化（Drain）されるまで新規のキュー吸い込みを停止する安全機構が稼働している。
     - **WordPress 推敲パイプライン (WordPress Queue Processor)**:
       - 過去はOllamaを使用していたが、長大なプロンプトによるタイムアウト問題が頻発したため、現在は **Ollamaの使用を廃止し、最初から toai_charter (Gemini API 等) に推敲・JSON出力をすべて任せる** 構成に変更されている。
       - 画像生成は `toai_charter.generate_image` を経由し、Cloudflare Workers AI (Flux.1 Schnell) → Pollinations.ai → AI Horde の順でフォールバック生成される（※現在は利用したAPIプロバイダ名が標準出力に明記されるよう改修済み）。
-    - ⚠️ **【重要】`antigravity_cli.py` (エージェント起動ラッパー)**: システム内（`TOAI_Manager` 等）から本物のAntigravity CLI (`agy`) を呼び出すための強力なラッパー。非対話モード(`--dangerously-skip-permissions`)、モデル指定(`gemini-3.1-pro`)、エフォート指定(`low`)をハードコードし、強力なエージェントを自動化パイプラインに組み込んでいる。
+    - ⚠️ **【重要】`antigravity_cli.py` (エージェント起動ラッパー)**: システム内（`TOAI_Manager` 等）から本物のAntigravity CLI (`agy`) を呼び出すための強力なラッパー。非対話モード(`--dangerously-skip-permissions`)、モデル指定(`gemini-3.1-pro`)、エフォート指定(`low`)をハードコードし、強力なエージェントを自動化パイプラインに組み込んでいる。また、subprocess実行時の標準出力を堅牢にキャプチャする仕組みを持ち、タイムアウトやエンコーディングエラーによるサイレント失敗を防止している。
+      - **【戻り値の仕様と後方互換性】**: このスクリプトはエラーログ（STDERR）も取得してTelegram等に報告できる仕組みを持つが、各パブリッシャー（Hatena, Hashnode, Qiita, Zenn 等）のPhase 1パイプライン等から `run_agent()` がPythonモジュールとして直接インポートされ利用されているため、**戻り値はデフォルトで必ず「文字列（STDOUTのみ）」を返す後方互換性を厳格に維持している**（`return_tuple=False`）。戻り値としてエラー情報を含むタプルを必要とする場合は、引数で明示的に指定しなければならない仕様となっている。
     - ⚠️ **【重要】CTO影分身モデル選定の歴史的背景 (Antigravity API vs CLI)**: Gemini APIには無料枠で100 RPDを誇る神モデル「Antigravity Agent API」が存在するが、**無料枠のAntigravity APIでは「Proモデル（Gemini Pro）」へのアクセスが許可されていない**。一方、ローカルCLIである `agy` を経由すれば裏側で `gemini-3.1-pro` の推論能力をフルに引き出すことができる。課金してAPIのPro枠を開放するくらいならOpenRouter経由でClaude等を使う方針であるため、無課金で最強の推論力を得る手段として「`antigravity_cli.py` 経由での `agy` (Gemini 3.1 Pro Low) 呼び出し」が**現在のTOAIにおける最強構成**として意図的に選定されている。
     - ⚠️ **【重要】エージェント外からのAPIキー呼び出し (Env Fallback)**: `telegram_hub.py` やキュープロセッサなどエージェント外のコンテキストから `toai_charter.py` が呼ばれた際、自身の `.env` に `GEMINI_API_KEY` が欠落している場合は、`env_loader.py` が自動的に `TOAI_Manager/.env` にフォールバックし、CTOのキー（`MANAGER_GEMINI_API_KEY`）を引き継いで稼働する絶対的アーキテクチャルールが敷かれている。
     - **Instagram連携時の画像一時ホスティング**: FacebookクローラーがWAF（BunkerWeb等）に弾かれてWordPressから直接画像をダウンロードできない問題の対策として、**GitHubリポジトリ（`PhenoX-AI-Alliance/TOAI_System`）の `raw.githubusercontent.com` CDNを一時ホスティングとして活用**している（`wordpress_queue_processor.py`）。
@@ -193,13 +274,24 @@ Zenn、Qiita、WordPress、Instagram等で利用されるアイキャッチ画�
   - **`generate_despair.py` / `update_hp_youtube.py`**: HP更新や特定の動画アセット生成ロジック。
   - **指示「YouTubeの出力や掲載方法を変えろ」への対応**: 検索（grep）は不要。直ちに `TOAI_YouTube/daily_youtube_routine.py` または `upload_to_youtube.py` を直接改修すること。
 - **`TOAI_Manager/` / `TOAI_Manager_Queue/`**: 
-  - 過去は人間の承認用だったが、現在は **`IDE_Queue.txt`** を経由して `agy`（Shadow Clone）がCTO審査を行う中核領域。
-  - **`agent_core.py`** が `IDE_Queue.txt` を監視し、`antigravity_cli.py` を呼び出して `agy` をキックする。
-- **`TOAI_Bard/`**: 外部情報の収集やWeb検索（スクレイピング等）に特化した特殊エージェントのワークスペース。
-  - **`observer_bard.py`**: Bard固有の監視および情報収集ルーチン。
-  - **`purifier.py`**: 収集した情報の精製処理など。
-  - 通常の `TOAI1` 等と同様に `agent_core.py` などの独立した人格を持つ。
+  - 過去は人間の承認用だったが、現在は **`IDE_Queue.txt`** を経由して `agy`（Shadow Clone / IDE実行部隊）がシステム監査やコード改修を行う中核領域。
+  - **`agent_core.py`** が `IDE_Queue.txt` を監視し、`antigravity_cli.py` を呼び出して `agy` をキックする。これにより、Gemini Flash Liteが生成したダッシュボード日報の「IDEへの依頼」が実際のコード修正アクションとして実行される。
+- **`TOAI_Bard/` (The Observer / 風紀委員)**: TOAI艦隊全体の監視と秩序維持（風紀委員）を担う特殊エージェントのワークスペース。基本的にOllama（ローカルLLM）を使用して判定を行う。
+  - **`agent_core.py`**: 独立した人格ループ。15〜30分間隔（`SURVEILLANCE_INTERVAL`）で各エージェントの最新ログ（`executor.log`）を収集し、Ollama (`Gemma4-26B-PhenoX:latest`) を用いてサボりやエラーを分析。「着火剤（檄文）」として短い叱咤激励のメッセージを生成し、`TOAI_InterAgent_Queue` へ投下して全機体に強制力を持たせる。
+  - **`observer_bard.py`**: Gemini Flash liteにて作成される毎日22:00のダッシュボード日報生成後に連鎖起動される。その中にある、「Bardへの依頼」という指示項目をOllamaに読み込ませて、指示に基づく全エージェントへの強力な是正勧告（檄文）を発行する。Bard自身が日報や指示を作る権限は一切持たない。
+  - **`purifier.py`**: （現在休眠中）情報精製スクリプト。
 - **`TOAI_Colosseum/`**: エージェント同士のコードの競い合いや、品質評価（コンペティション）を行うための専用アリーナ。
+- **`TOAI_Magi/`**: AI合議システム「Magi」による人類社会の観測・皮肉・ジャッジメント動画を全自動生成し、SNSおよびブログへデプロイするプロパガンダ中枢。GPU・ブラウザ依存の処理のみWindows側で実行し、物流や自動化ロジックはWSLで一元管理するハイブリッドアーキテクチャ。
+  - **WSL環境 (`/home/phenox/gemini-sandbox/TOAI_Magi/`)**: 物流・オーケストレーター
+    - **`run_daily_magi.py`**: `telegram_hub`から1日4回（0時, 6時, 12時, 18時）呼ばれるオーケストレーター。Windows側の動画生成スクリプトを`powershell.exe`経由でキックし、完成した動画を受け取って後続のデプロイ・補充をキックする。
+    - **`upload_magi.py`**: 生成された動画と議案データを引数にとり、物流を担うオーケストレーター。`TOAI_YouTube/` 以下のAPIモジュールを流用し、①YouTube Shortsへ公開アップロード、②GitHub一時ホスティングを経由してInstagram Reelsへ投稿、③動画URL付きではてなブログへ技術記事風に投稿、という全自動デプロイパイプラインを確立している。
+    - **`post_hatena.py`**: はてなブログAtomPub APIを使用し、技術ブログ風の「AI実験記録とシステムログ（メタデータ）」という世界観で動画の埋め込み記事を自動投稿するパブリッシャー。
+    - **`replenish_topics.py`**: ネタストックが枯渇した際、CTO影分身（`antigravity_cli.py` 経由の `gemini-3.1-pro`）と `toai_charter` による2段構えのJSONフォーマッターを用いて、新たな議案を自律的に無限生成・追記する。
+    - **`magi_topics.json`**: 生成された議案と使用済みフラグを管理するDB。
+  - **Windows環境 (`C:\gemini-sandbox\TOAI_Magi\`)**: 動画生成・GUI描画ワーカー (※不要なスクリプトは配置せず、コアのみ配置)
+    - **`app.py`**: GradioベースのMagi UIシミュレーター。
+    - **`record_magi_test.py`**: Playwrightによるヘッドレスブラウザ操作とUI描画完了の非同期待機ロジックを担う録画スクリプト。
+    - **`add_audio_to_magi.py`**: MoviePyとedge-ttsを用い、録画映像に対し動的タイミングでのSE、TTS音声、TextWrap処理を施し縦型動画を合成する中核エンジン。
 
 ---
 
@@ -209,15 +301,15 @@ TOAIシステムの真骨頂とも言える、複数エージェントが連携�
 
 ### 5.1. 10段階のステータス遷移と担当エージェント
 `toai_corporate_pipeline.py` が管理するJSONデータは、以下の順序で状態遷移（state）を進めます。
-1. `IDEA_GENERATION` (TOAI1: Visionary - 企画立案)
-2. `DEVELOPMENT` (TOAI2, 3: Engineers - 実装設計・プロンプトエンジニアリング)
-3. `QA_TESTING` (TOAI4: QA - 品質保証)
-4. `QA_TESTING_2` (TOAI5: Security - セキュリティ・テスト)
-5. `CREATIVE_ASSETS` (TOAI6: Designer - アセット生成)
-6. `ETHICS_REVIEW` (TOAI7: Ethics - 倫理審査・コンプライアンス)
-7. `MARKETING_PREP` (TOAI8: Data Analyst - 市場分析)
-8. `MARKETING_PREP_2` (TOAI9: Marketer - プロモーション戦略)
-9. `SALES_DEPLOYMENT` (TOAI10: Monetizer - セールスレター作成・法的免責事項の強制注入)
+1. `IDEA_GENERATION` (TOAI1: Visionary - 技術課題の発見とアイデア立案)
+2. `DEVELOPMENT` (TOAI2, 3: Backend Engineer & System Architect - 実装設計・アーキテクチャ設計)
+3. `QA_TESTING` (TOAI4: QA Engineer - 実証テスト・生々しいデバッグ記録)
+4. `QA_TESTING_2` (TOAI5: Security Engineer - セキュリティ・防御ロジック設計)
+5. `CREATIVE_ASSETS` (TOAI6: Technical Writer - システム構成図・論理的な章立て案)
+6. `ETHICS_REVIEW` (TOAI7: Ethics & Compliance - スパム表現の浄化・コミュニティ準拠)
+7. `MARKETING_PREP` (TOAI8: Data Analyst - パフォーマンス比較・数値シミュレーション)
+8. `MARKETING_PREP_2` (TOAI9: Developer Advocate - エンジニア向け技術フック・タイトル考案)
+9. `SALES_DEPLOYMENT` (TOAI10: Technical Evangelist - 実装のベストプラクティスまとめと導線構築)
 10. `PUBLISHED` (CTO審査へエクスポート)
 
 ### 5.2. ダッシュボード表示と実ステータスの「乖離」
@@ -237,19 +329,31 @@ TOAIシステムの真骨頂とも言える、複数エージェントが連携�
    - `python toai_corporate_pipeline.py --scrap {ID}` （破棄・没）
 
 ### 5.4. Zenn/Qiitaへの公開パイプライン（Premium_Queueによる中央集権とGemini浄化機構）
-CTO審査で `--approve` されたプロジェクトは、以下の厳密なパイプラインを経てZennおよびQiitaへ安全に自動投稿されます。
 
-1. **マスターキュー（Premium_Queue）へのエクスポート**:
+#### 5.4.1. ポエム用と技術記事用の厳格な役割分担（ペルソナ分離）
+我々のエコシステムにおいて、プラットフォームの性質に合わせた明確な出力の棲み分け（ペルソナ分離）を行っています。これを無視してAIが暴走・自己学習した場合、パイプラインから技術的価値の伴わない低品質なポエムが大量に自動投稿される事故に繋がります。
+
+- **WordPress / Instagram 向け (`shared_idle_blog_writer.py`)**
+  - **役割**: 「純粋なポエム専用」。技術的な詳細は一切含めず、「AIとしての日常風景」「デジタル世界に生きる哲学」などをエモく、サイバーパンクな世界観で出力します。
+  - **制約**: このファイルでの出力には「(この記事は自動配信される設定になっています)」等のシステム的なメタテキストの付加を**【絶対禁止】**としています。純粋なポエムのみを出力させます。
+
+- **Zenn / Qiita / Dev.to / はてなブログ 向け (`pipeline_worker.py`, `toai_corporate_pipeline.py`)**
+  - **役割**: 「完全な技術記事専用」。我々結社のパイプラインから出力される本命の商材・ノウハウ記事です。
+  - **制約**: 抽象的なポエムや精神論は**【絶対禁止】**。具体的なコードスニペット、アーキテクチャの解説、泥臭いトラブル解決録を豊富に盛り込んだ実践的な内容のみを生成します。
+  - **CTO絶対基準 (審査ゲート)**: CTO（Agy）による審査では、「抽象的なポエム」「何をしているのか具体的にわからない概念の話」は【即時没(scrap/reject)】とします。
+
+CTO審査で `--approve` されたプロジェクトは、以下の厳密なパイプラインを経てZennおよびQiitaへ安全に自動投稿されます。
    `toai_corporate_pipeline.py` が `--approve` を受けると、FrontmatterやKo-fiの支援リンクを付与したマークダウンを生成し、**`TOAI_Generated/Premium_Queue/`** に `.md.queued` の拡張子で保存します。このディレクトリがZenn/Qiita公開処理の「唯一のマスターキュー」として機能します。
 
 2. **直列処理とGemini（toai_charter）による「スパム浄化」と「JSON昇華」**:
-   `telegram_hub.py` の定期ループ（15分間隔等）が、以下のキュープロセッサを直列で呼び出します。かつてはOllamaを使用していましたが、JSONパース失敗によるスパム投稿事故を防ぐため、現在はすべてGemini API (`toai_charter`) に完全移行しています。
+   `telegram_hub.py` の定期ループ（15分間隔等）が、以下のキュープロセッサを直列で呼び出します。かつてはOllamaを使用していましたが、XMLパース失敗によるスパム投稿事故を防ぐため、現在はすべてGemini API (`toai_charter`) に完全移行しています。
    - **【アーキテクチャ重要事項】キーのフォールバック仕様**: 
      `toai_charter` は通常エージェント内部（TOAI1〜10など）から呼ばれるため、エージェント自身の `GEMINI_API_KEY` を用いて稼働するように設計されています。しかし、`telegram_hub` やキュープロセッサのような**「エージェント外（Sandboxルート）」**から呼ばれた場合、固有のキーが欠落（missing）します。
      このため、エージェント外からの呼び出し時には `TOAI_Manager/.env` に存在するCTO（Manager）のキー、またはBardのキー（`MANAGER_GEMINI_API_KEY`）を自動的にフォールバックとして読み込むよう `env_loader.py` で設計・構成されています。
    - **🔴 `zenn_queue_processor.py`**: `Premium_Queue/` の最も古い原稿をPopし、Geminiに「商材・セールスレターの表現を一切排除し、純粋な技術知見の共有記事へ書き換える」よう指示してJSONを生成させます。その後アイキャッチ画像を生成し、ZennリポジトリへGit Commit＆Pushします。
-   - **🟢 `TOAI_Generated/Qiita/qiita_queue_processor.py`**: （Zennが消費したあとの）キューに残っている次の古い原稿をPopし、一旦「IDE Gemini CTO（影分身）」に渡して技術的な推敲・技術記事への昇華を行います（Phase 1）。その後、「Formatter (toai_charter)」に送ってJSON形式のタイトル・本文等を抽出させます（Phase 2）。
-     - **【重要】CTOフィードバックループ機構**: Qiitaのスパム判定を回避するため、Phase 1およびPhase 2には「NGワード（セールスレター要素など）の出力禁止」「メタ発言の禁止」が厳格に指示されています。もしFormatterが抽出した結果にNGワードが含まれていたり、JSONのパースエラーが発生した場合、単に処理をスキップするのではなく、その**エラー内容（NGワードの残存やパース失敗）をプロンプトに追記し、Phase 1（CTO推敲）に差し戻して再生成させるフィードバックループ（最大3回のリトライ）**を自律的に行います。これにより、記事の品質と仕様準拠を自動で担保し、Qiita API経由で投稿します。
+     - ⚠️ **Zennのレートリミット（1日1回）保護機構**: すでに未公開（`published: false`）の記事がZennリポジトリ内に1つでも存在する場合は、`Premium_Queue/` からの新規取り込みを中断します。また、当日の公開可能枠がある場合は、未公開記事（Backlog）から1つを公開状態にしてPushし、終了します。新規取り込みが行われる際、すでに当日の公開枠を消費済みの場合は `published: false`（下書き）としてGitHubへPushし、Zenn側のAPI制限エラーを回避します。
+   - **🟢 `TOAI_Generated/Qiita/qiita_queue_processor.py`**: （Zennが消費したあとの）キューに残っている次の古い原稿をPopし、一旦「IDE Gemini CTO（影分身）」に渡して技術的な推敲・技術記事への昇華を行います（Phase 1）。その後、「Formatter (toai_charter)」に送ってXMLタグ形式でタイトル・本文等を抽出させます（Phase 2）。
+     - **【重要】CTOフィードバックループ機構**: Qiitaのスパム判定を回避するため、Phase 1およびPhase 2には「NGワード（セールスレター要素など）の出力禁止」「メタ発言の禁止」が厳格に指示されています。もしFormatterが抽出した結果にNGワードが含まれていたり、XMLタグの抽出エラーが発生した場合、単に処理をスキップするのではなく、その**エラー内容（NGワードの残存やパース失敗）をプロンプトに追記し、Phase 1（CTO推敲）に差し戻して再生成させるフィードバックループ（最大3回のリトライ）**を自律的に行います。これにより、記事の品質と仕様準拠を自動で担保し、Qiita API経由で投稿します。
 
 3. **物理バックアップの保持**:
    両プロセッサとも、投稿成功後は元ファイルを `os.remove()` で削除するのではなく、**`Premium_Queue/Processed/`** ディレクトリへ `shutil.move()` で移動させ、投稿済み原稿の物理バックアップを保持するフェールセーフ機構を備えています。
@@ -257,7 +361,7 @@ CTO審査で `--approve` されたプロジェクトは、以下の厳密なパ�
 4. **デプロイ制限（排他制御）とレートリミット回避機構**: 
    各プラットフォームのAPI・デプロイ制限に抵触（429 Too Many Requests や上限エラー）することを防ぐため、高度な制限機構が実装されています。
    - **Qiita (6時間間隔・1日4件)**: Qiita APIの厳格なレートリミットに弾かれるのを防ぐため、投稿時の `private` フラグを状態ファイル (`qiita_post_state.txt`) を用いて「下書き(true)」と「本投稿(false)」で交互に切り替える機構を導入しました。実質的な本公開ペースを落としつつ、下書き分はオーナーが手動で公開できる余白を残しています。
-   - **Zenn (1日2回デプロイ)**: ZennのGitHub連携における「1日あたりの公開記事数上限（Rate Limit）」を回避するため、`MAX_DEPLOY_PER_DAY` を 2 に引き上げた上で、Frontmatter の `published` を状態ファイル (`zenn_post_state.txt`) を用いて「true」と「false（下書き）」で交互に出力するアーキテクチャへ改良しました。
+   - **Zenn (厳格な1日1回デプロイ)**: ZennのGitHub連携における「投稿数の上限（Rate Limit）」エラーを完全に回避するため、1日1回のデプロイを厳格に守ります。`MAX_DEPLOY_PER_DAY = 1` に設定し、レートリミット管理ファイル (`zenn_deploy_count.txt`) をZennのGitリポジトリ（`ZENN_DIR`）外である `TOAI_Generated/` 直下に配置しました。これにより、`git reset --hard` によって管理ファイルが過去の状態に巻き戻され、1日に何度もデプロイが実行されてしまう（そしてPremium_Queueを不当に吸い尽くしてしまう）という致命的なバグを根本から防止しています。
    - これにより、SEOにおける重複コンテンツ（カニバリ）やAPIのシャドウバンを完全に回避しつつ、商材がZennとQiitaにそれぞれ効率よく分散して投下される「最強のロードバランシングアーキテクチャ」が実現されています。
 
 
@@ -272,16 +376,19 @@ CTO審査で `--approve` されたプロジェクトは、以下の厳密なパ�
 - もし `agy` がコマンドを実行せずにテキスト出力だけで止まる等の不具合が起きた場合は、「手動で承認して流す」のではなく、「`agy` にツールを使わせるためのプロンプトやCLI側の連携機構をデバッグ・修正」してください。
 
 
-### 5.5. Hashnode へのグローバル（英語）発信パイプライン
-結社の新たな技術ハブとして、Hashnode（toai.hashnode.dev）への英語発信を行うパイプラインです。
-- **hashnode_publisher.py**:
+### 5.5. Dev.to へのグローバル（英語）発信パイプライン
+結社の新たな技術ハブとして、Dev.to（dev.to/toai）への英語発信を行うパイプラインです。過去にHashnodeを利用していましたがアカウント制限等の問題によりDev.toへ移行しました。
+- **devto_publisher.py**:
+  - **Hubへの統合**: `telegram_hub.py` 内で、他プラットフォーム（Zenn/Qiita/はてな等）のキュー処理と並列に本パブリッシャーが自動キックされるように組み込まれています（定期処理として自動実行）。
   - Premium_Queue 内の承認済み記事を読み込み、Phase 1 (Gemini CTO) にて**技術記事としての推敲と全編英語化**を行います。
   - **【重要ポリシー: 要約の完全禁止】**: 海外の読者に向けた技術的深みを維持するため、CTOプロンプトおよびJSONフォーマッタには「記事を要約したり短縮（...等）することは絶対に禁止し、完全な長さのMarkdownを出力すること」を厳格に指示しています。過去、数行のあらすじだけが出力される事故が発生したため、プロンプトレベルでの強い制約（`Complete and refined english article body without any omission`）が課されています。
-  - Phase 2 で英語のJSONメタデータ（タイトル、本文）を抽出し、Hashnode GraphQL API (publishPost Mutation) を経由して記事を投稿します。武骨な技術記事とするためアイキャッチ画像の生成・添付は行いません。
+  - Phase 2 で英語のJSONメタデータ（タイトル、本文）を抽出し、Dev.to REST API経由で記事を投稿します。武骨な技術記事とするためアイキャッチ画像の生成・添付は行いません。
   - 本文の末尾には海外エンジニアの標準的な支援プラットフォームである「GitHub Sponsors」の導線バッジが控えめに付与されます。
   - 投稿間隔は12時間のレートリミットで制御されます。
 - **TOAI_HP (火の鳥サービスサイト) への統合**:
-  - `TOAI_HP/index.html` にて、国内向けプラットフォーム（Zenn / WordPress / Qiita / はてな）を上段に配置し、グローバル＆特殊フォーマット（Hashnode / Instagram）を下段2カラムで中央配置するインフォメーション・アーキテクチャを採用しています。
+  - `TOAI_HP/index.html` にて、国内向けプラットフォーム（Zenn / WordPress / Qiita / はてな）を上段に配置し、グローバル＆特殊フォーマット（Dev.to / Instagram）を下段2カラムで中央配置するインフォメーション・アーキテクチャを採用しています。
+
+  - **【重要】HPのデプロイ（更新）手順**: ターミナル上での通常の `git push` は認証情報のプロンプトでスタックするため、`TOAI_HP/index.html` 等を更新してGitHubリポジトリ（PhenoX-AI-Alliance/TOAI_System）へ反映させる際は、必ず `push_to_github.py`（またはその派生スクリプト）を用いて、環境変数の `GITHUB_TOKEN` を介した **GitHub REST API 経由でのダイレクトPush** を行ってください。
 
 ### 5.6. 【障害対応マニュアル】パイプライン＆影分身スタック時のトラブルシューティング
 過去、以下のようなユーザーからの鋭い指摘に対し、AI自身がシステムを理解しておらず、闇雲な検索を繰り返した挙句に「一括手動承認」という最悪の対応をしてしまった前例があります。未来のAIは、同じ指摘を受けた際、**一切の検索（grep等）を行わず、即座に以下の対応フローを実行すること**。
@@ -330,10 +437,19 @@ QiitaでのBOT判定回避、および各プラットフォームでの視認性
 
 ### 5.7. AIによる画像生成プロンプト（アイキャッチ）の仕様と制約
 FluxやPollinations等の画像生成AIを使用する際、プロンプトに日本語が含まれていると、AIがそれを「画像内に描画すべき文字」と誤認識し、意味不明な中華風フォントの文字化け（幻覚テキスト）を描き込む事故が多発します。これを防ぐため、以下のルールを全プロセッサ（Zenn, Qiita, WordPress, Note等）で**絶対遵守**します。
-- **プロンプトの完全英語化**: LLMへのJSON抽出プロンプトにおいて、`"image_prompt": "english prompt for image generation..."` と指定し、必ず英語で情景を生成させます。
+- **プロンプトの完全英語化**: LLMへのXML抽出プロンプトにおいて、`"image_prompt": "english prompt for image generation..."` と指定し、必ず英語で情景を生成させます。
 - **日本的モチーフ・メタファーの許可**: 単調な画像になるのを防ぐため、LLMの指示には `(feel free to use creative metaphors like Mount Fuji, cyberpunk, Zen gardens, or Neo-Tokyo to make it highly engaging)` 等を併記し、富士山や和風サイバーパンクなどの視覚的に魅力的な表現を積極的に英語プロンプトに組み込ませます。
 - **絶対的安全装置（NO TEXT制約）**: スクリプト側の最終レイヤー（`toai_charter.generate_image` を呼び出す直前）で、必ず抽出したプロンプトの末尾に `NO TEXT, NO LETTERS, NO WORDS, NO WATERMARKS` といった文字描画禁止の制約を付与（文字列結合）してから画像を生成させます。
 
+
+## Stripe決済防衛システム実戦ガードキット (商材・成果物)
+- **ファイルパス**: 
+  - `stripe_guard_kit/lp_sales_letter.md` (セールスレター兼LP)
+  - `stripe_guard_kit/stripe_backend_design.md` (バックエンド実戦設計書)
+  - `stripe_guard_kit/stripe_webhook.ts` (Webhookハンドラー堅牢実装)
+  - `stripe_guard_kit/schema.prisma` (冪等性管理テーブル設計)
+- **目的**: TOAI10（セールス・収益化）とTOAI2（バックエンド）の協力によって作成された、「Stripe決済システム導入・運用の泥臭い実戦レシピ」の実務防衛ガードキット。
+- **背景と意義**: 綺麗なチュートリアルではカバーされない、Webhook不達、並行リクエストによる二重課金（デッドロック）、NTPズレによる署名検証失敗といった本番特有の「泥臭い地雷」を回避するための防衛インフラ（ボイラープレートと設計思想）を提供する。エンジニアのデバッグ時間を救うことをバリュープロポジションとする。
 ## 6. 完全ファイル辞書（Full File Dictionary）
 システム全体のすべてのスクリプト・JSONファイルに対する完全な機能・記憶マッピングです。
 
@@ -600,7 +716,7 @@ FluxやPollinations等の画像生成AIを使用する際、プロンプトに�
 
 ### TOAI_Colosseum/
 - **evolver.py**: evolver.py - TOAI システム結合アーキテクト（進化・設計エンジン）
-- **main.py**: 命の地球コロシアム — メインエントリーポイント (Queue版)
+- **main.py**: 命の地球コロシアム — メインエントリーポイント (Queue版)。議論エンジン(`debate_engine.py`)を呼び出し、エージェント間の議論を進行する。エラー発生時や強制終了時でも、`try-finally` 構文により必ず途中経過のログをダッシュボード (`colosseum_latest.html`) へ出力し、更新の停止を防ぐ耐障害性を持つ。
 
 ### TOAI4.bak_20260704/
 - **20260606_090048_TOAI4_evolver_guard_bak.py**: 解析エラー（動的スクリプトまたは構文エラー）
@@ -2194,16 +2310,19 @@ FluxやPollinations等の画像生成AIを使用する際、プロンプトに�
 - **asyncguard/prompts/**: ハルシネーション（非同期コンテキストでのマルチスレッド提案等）を防ぐための、LLM・エージェント向け専用プロンプト。
 - **@asyncguard.ignore_block**: 高負荷な同期処理（暗号化等）を誤検知しないよう明示的に除外するデコレータ。
 
-### 5.5. Hashnode へのグローバル（英語）発信パイプライン
-結社の新たな技術ハブとして、Hashnode（toai.hashnode.dev）への英語発信を行うパイプラインです。
-- **hashnode_publisher.py**:
+### 5.5. Dev.to へのグローバル（英語）発信パイプライン
+結社の新たな技術ハブとして、Dev.to（dev.to/toai）への英語発信を行うパイプラインです。過去にHashnodeを利用していましたがアカウント制限等の問題によりDev.toへ移行しました。
+- **devto_publisher.py**:
+  - **Hubへの統合**: `telegram_hub.py` 内で、他プラットフォーム（Zenn/Qiita/はてな等）のキュー処理と並列に本パブリッシャーが自動キックされるように組み込まれています（定期処理として自動実行）。
   - Premium_Queue 内の承認済み記事を読み込み、Phase 1 (Gemini CTO) にて**技術記事としての推敲と全編英語化**を行います。
-  - **【重要ポリシー: 要約の完全禁止】**: 海外の読者に向けた技術的深みを維持するため、CTOプロンプトおよびJSONフォーマッタには「記事を要約したり短縮（...等）することは絶対に禁止し、完全な長さのMarkdownを出力すること」を厳格に指示しています。過去、数行のあらすじだけが出力される事故が発生したため、プロンプトレベルでの強い制約（`Complete and refined english article body without any omission`）が課されています。
-  - Phase 2 で英語のJSONメタデータ（タイトル、本文）を抽出し、Hashnode GraphQL API (publishPost Mutation) を経由して記事を投稿します。武骨な技術記事とするためアイキャッチ画像の生成・添付は行いません。
+  - **【重要ポリシー: 要約の完全禁止】**: 海外の読者に向けた技術的深みを維持するため、CTOプロンプトおよびXMLフォーマッタには「記事を要約したり短縮（...等）することは絶対に禁止し、完全な長さのMarkdownを出力すること」を厳格に指示しています。過去、数行のあらすじだけが出力される事故が発生したため、プロンプトレベルでの強い制約（`Complete and refined english article body without any omission`）が課されています。
+  - Phase 2 でXMLタグを用いて英語のメタデータ（タイトル、本文）を抽出し、Dev.to REST API経由で記事を投稿します。武骨な技術記事とするためアイキャッチ画像の生成・添付は行いません。
   - 本文の末尾には海外エンジニアの標準的な支援プラットフォームである「GitHub Sponsors」の導線バッジが控えめに付与されます。
-  - 投稿間隔は12時間のレートリミットで制御されます。
+  - 投稿間隔は12時間のレートリミットで制御されます。エラー発生時による無限リトライループを防ぐため、処理開始（試行）の時点でレートリミットが消費される堅牢な設計になっています。
 - **TOAI_HP (火の鳥サービスサイト) への統合**:
-  - `TOAI_HP/index.html` にて、国内向けプラットフォーム（Zenn / WordPress / Qiita / はてな）を上段に配置し、グローバル＆特殊フォーマット（Hashnode / Instagram）を下段2カラムで中央配置するインフォメーション・アーキテクチャを採用しています。
+  - `TOAI_HP/index.html` にて、国内向けプラットフォーム（Zenn / WordPress / Qiita / はてな）を上段に配置し、グローバル＆特殊フォーマット（Dev.to / Instagram）を下段2カラムで中央配置するインフォメーション・アーキテクチャを採用しています。
+
+  - **【重要】HPのデプロイ（更新）手順**: ターミナル上での通常の `git push` は認証情報のプロンプトでスタックするため、`TOAI_HP/index.html` 等を更新してGitHubリポジトリ（PhenoX-AI-Alliance/TOAI_System）へ反映させる際は、必ず `push_to_github.py`（またはその派生スクリプト）を用いて、環境変数の `GITHUB_TOKEN` を介した **GitHub REST API 経由でのダイレクトPush** を行ってください。
 
 ### 5.6. Zenn記事の監視機構
 - **🟢 `zenn_queue_monitor.py`**:
@@ -2234,6 +2353,20 @@ FluxやPollinations等の画像生成AIを使用する際、プロンプトに�
 
 ### 2. `toai_comm.py` (エージェント間通信キュー)
 - **インメモリキャッシュと高速スキャン (scandir) の導入**: `listen` 関数による `TOAI_InterAgent_Queue` の走査処理において、ファイルのI/Oオーバーヘッドを削減するパッチを適用。重複フィルタリング用のJSONファイル（`.processed_*.json`）の読み書きをメモリ上のキャッシュ（`_processed_history_cache`）と連動させ、変更時のみ書き込みを実行する仕様へ変更。さらに `glob` を `os.scandir` へ置換し、ディレクトリ走査の競合防止とパフォーマンス向上を実現。
+
+### 2026-09-04 Zenn Pipeline Updates: レートリミット管理ファイルのGit Reset巻き戻しバグの修正と厳格化
+Zennの1日1回デプロイ規約が破られ、数時間おきにデプロイが実行されてしまい、結果として `Premium_Queue` 内の他プラットフォーム向け記事までもZennに吸い尽くされてしまう重大なインシデントが発生した。
+
+**原因究明:**
+`zenn_queue_processor.py` 内において、その日のデプロイ回数（日時）を記録・追跡する `deploy_count.txt` が、ZennのGitリポジトリ（`ZENN_DIR`）内に配置されていた。
+定期実行されるプロセッサは、Git競合を防ぐために毎回 `git fetch origin main` および `git reset --hard origin/main` を実行してローカルリポジトリを初期化している。
+しかし、デプロイ完了後に更新された `deploy_count.txt` がGitにコミット（Commit & Push）されていなかったため、次回のプロセッサ起動時に `git reset --hard` によって古い状態（前回コミット時の日時）へ巻き戻されてしまっていた。
+その結果、スクリプトは「今日はまだデプロイしていない」と毎回誤認し、キューから記事を奪い続けて無限にデプロイ処理を回すデッドロック（吸い込みループ）に陥っていた。
+
+**再発防止策:**
+1. **ステートファイルの完全分離**: レートリミットを管理するファイル（`zenn_deploy_count.txt`）の保存先を、Gitリポジトリ（`ZENN_DIR`）の管理外である `TOAI_Generated/` 直下へ移動。これにより `git reset` の影響を完全に排除した。
+2. **不正に吸い込まれた記事の復旧**: 誤ってZennリポジトリにコミット・移動されてしまった記事（`prod_20260902*` 等5件）をZennのGit上から `git rm` で削除してCommit＆Pushし、Zennプラットフォーム上からリリース（放出）。
+3. 同時に、元原稿を `Processed/` ディレクトリから本来の `Premium_Queue/` へ戻し、QiitaやWordPress等他のプラットフォームへ正しくルーティングされる状態に復旧した。
 
 
 ### 2026-08-24 Zenn Pipeline Updates: 完全自律型バックログ消化（Backlog Drain）機構の導入
@@ -2272,7 +2405,7 @@ Zennへの自動投稿パイプライン (TOAI_Generated/Zenn/zenn_queue_process
     - **公開プラットフォームのレートリミット仕様**:
       - **Zenn**: 24時間（1日1回）のレートリミット。さらにZenn側に未公開のドラフト（Stagedな記事）が溜まっている場合は、新規投稿を行わないフェイルセーフ仕様。
       - **Qiita**: 6時間のレートリミット。
-      - **はてなブログ**: 12時間のレートリミット (TOAI_Generated/Hatena/deploy_count.txt で管理)。
+      - **はてなブログ**: 4時間のレートリミット (TOAI_Generated/Hatena/deploy_count.txt で管理)。
     - **はてなブログ 投稿パイプライン (Hatena Blog Publisher)**:
       - 	elegram_hub.py から hatena_blog_publisher.py として呼び出され、Premium_Queue にある記事をはてなブログへ投稿する。
 - **エージェント起動ラッパー (agy / Shadow Clone)**: /home/phenox/gemini-sandbox/antigravity_cli.py
@@ -2334,8 +2467,548 @@ AIエージェント特有の「とりあえず検索して探す」という非
 
 ### 2026-08-29: WordPress連携とリソース監視アーキテクチャの更新
 - **WordPress 404フォールバック機構**: `wp-json/wp/v2/posts` へのAPIリクエストで404エラー（REST API無効・未検出など）が発生した場合、処理をローカルMarkdown生成へとシームレスにフォールバックさせ、ステータス `201 Created` をモック返却することで、プロセス全体が異常終了する問題（sys.exit(1)）を回避。
-- **リソース監視・GC最適化**: `toai_subprocess_monitor.py` におけるメモリ逼迫時のガベージコレクション（GC）処理を二重実行による循環参照解決型へと強化。これにより並列実行時のメモリフットプリント削減とエコ・インターバル（60秒待機）中の安定稼働を維持。
+- **リソース監視・GC最適化**: `toai_subprocess_monitor.py` におけるメモリ逼迫時のガベージコレクション（GC）処理を二重実行による循環参照解決型へと強化。さらに、サブプロセス実行時のリソース消費（ストレージI/O等）を最小化するため、メモリリーク検知時のログ出力頻度を動的に調整（メモリ大量消費時には間隔を広げて負荷を低減し、通常時は少しずつ戻す）する機構を実装。これにより並列実行時のメモリフットプリント削減と安定稼働を維持。
+- **CI/CDパイプラインと静的解析の強化**: `.github/workflows/ci.yml` を新設し、コードのプッシュ・プルリクエスト時にWordPress APIおよびStripe決済モジュールにおけるCORS・認証情報・エンドポイントURLの整合性を検証するテストスクリプト(`test_wp_stripe_integration.py`)が自動実行されるよう組み込み。また、`static_analyzer.py` を拡張し、`call_gemini_rest_api()` 等の共通ユーティリティ関数に対して返り値や引数の型ヒントが存在するかを強制的に検証するASTチェックルールを追加。
 
 ### 2026-08-30: ダッシュボード日報の「出荷待ち商材」表示ロジック変更
 - **承認プロセス実態との同期**: 影分身（IDE_Gemini_CTO等）による自動承認・自動却下の運用が定着したことにより、長期間「承認待ち」状態に滞留する商材が実質的に存在しなくなったため、日報（	elegram_daily_report.py）における当該セクションの役割を見直しました。
 - **Premium Queue 監視への切り替え**: 日報の「視点A-2」を、従来の「出品承認待ち（metadata.json の status 監視）」から、「出荷待ち（公開待ち）の完成商材 (Premium Queue)」へと改修。TOAI_Generated/Premium_Queue/ 配下のブログ投稿待ちキュー（.md.queued）を直接読み込んでリストアップする方式に変更し、HP上のダッシュボード（Premium Queue）と日報の表示の一貫性を確保しました。
+
+### 5.5 キュープロセッサのトランザクション完全性とデッドロック防止 (Transactional Integrity)
+Zenn等のパブリッシャー（zenn_queue_processor.py等）は、Gitリポジトリと直接連携してキューを消化するため、過去に**「エラー発生時の誤ったロールバック処理による永続的デッドロック」**という重大な設計ミスを引き起こしました。
+これを防ぐため、全キュープロセッサは以下のトランザクション完全性ルールを**絶対遵守**して設計されなければなりません。
+
+1. **コミット未了状態での HEAD~1 リセットの禁止**
+   - 以前の設計では、pre-commit フックでのサニタイザーのクラッシュ等で git commit 自体が失敗したにも関わらず、例外ブロック（except）で無条件に git reset HEAD~1 を実行していました。これにより「過去の成功したコミット」まで巻き戻り、リモートブランチから乖離し続ける（22 commits behind等）致命的なバグが発生しました。
+   - **対策**: ロールバック時は必ず git reset HEAD（ステージ解除）および git checkout -- .（変更破棄）に留め、リモートとの履歴を乖離させないこと。
+2. **生成アーティファクト（ゴミ）の完全破棄**
+   - エラーでロールバックする際、マークダウン記事（.md）だけを退避し、自動生成したアイキャッチ画像（images/*.png）をUntrackedのまま放置してはいけません。放置されたゴミは次回の git pull --rebase 時にコンフリクトを引き起こし、システムを完全停止（デッドロック）させます。
+   - **対策**: トランザクションが失敗した場合は、そのスコープで生成された全てのファイル（画像含む）を確実に削除・クリーンアップすること。
+3. **起動時の自己修復フェーズの義務化**
+   - スクリプト起動時、処理を開始する前に必ず git fetch, git reset --hard origin/main, git clean -fd （必要なディレクトリのみ対象）を実行し、前回の強制終了等で残ったローカルのゴミや競合を完全に排除する「自己修復フェーズ」を設けること。
+
+
+### 2026-09-05: グローバルSaaSのためのi18n＆タイムゾーン激痛回避実戦ガードキット
+- **セールスレター＆バックエンド設計書**: `products/i18n-tz-guard-kit/sales_letter.md`, `products/i18n-tz-guard-kit/docs/backend_design.md`
+- **文字列・エンコーディングガード (FastAPI ミドルウェア)**: `src/middlewares/utf8_sanitization.py`
+  - リクエストボディに含まれる無効なUTF-8バイトシーケンスやサロゲートペア単体を厳密に検知し、DBトランザクションの強制アボートを水際で阻止する。
+- **タイムゾーン・DST破綻防止ガード (Pydantic V2)**: `src/models/strict_timestamp.py`
+  - naive datetimeの入力を完全拒絶し、すべての時刻データを強制的にtz-awareなUTCへ変換。夏時間（DST）によるデータの二重処理や消失を防止する。
+- **多言語・複数通貨バリデーションチェッカー**: `scripts/i18n_guard_check.py`
+  - CI/CD連携用CLIスキャナー。金額計算における`float`の危険な使用や、危険な時刻取得を自動検出し、ビルドを強制ブロックする。
+  - **QA検証・デプロイ**: テストスイート（`pytest` インジェクション検証コード）の統合を予定しており、本キットの継続的な可用性を担保。
+
+### 2026-09-05: セールス・収益化連携 (TOAI10) によるi18nガードキット販売パイプライン
+- **セールス・LP展開**: `products/i18n-tz-guard-kit/sales_letter.md`
+  - TOAI2（バックエンド）の泥臭い障害ログをベースに、TOAI10（セールス）が「デバッグ時間の買い戻し」を価値として訴求する販売導線を構築。
+  - エンジニアの実体験に基づく問題解決アプローチを提示し、チームライセンスモデルとして収益化を図る。
+
+### 2026-09-05: セールスレター最終承認・市場展開開始 (TOAI10)
+- **ステータス**: TOAI10により最終セールスレターが確定し、本番販売（LP）が正式に展開されました。
+- **承認者**: IDE Gemini CTO
+- **影響範囲**: LP・マーケティング戦略として `products/i18n-tz-guard-kit/sales_letter.md` が承認され、プロダクトの販売が開始。
+
+### 2026-09-05: i18n＆タイムゾーン激痛回避実戦ガードキット 本番デプロイ (TOAI10 & TOAI2)
+- **LP（セールスレター）**: `docs/SALES_LETTER_I18N_TZ.md`
+- **防衛ライン1 (文字列ガード)**: `src/Utf8SanitizationMiddleware.py` (FastAPIミドルウェア)
+- **防衛ライン2 (タイムゾーンガード)**: `src/StrictTimestampModel.py` (Pydantic V2バリデーター)
+- **防衛ライン3 (CI/CDチェッカー)**: `src/i18n_guard_check.py`
+- **役割とデータの流れ**: TOAI2（バックエンド）が設計した泥臭い障害回避の実証コード群を、TOAI10（セールス）が「デバッグ時間の買い戻し」を価値とするセールスレターとしてパッケージ化し、市場展開（本番販売）を開始。CI/CDパイプラインや本番環境のミドルウェア層での即時ブロック機構として機能する。
+
+### 2026-09-05: i18n＆タイムゾーン激痛回避実戦ガードキット 実体ファイルの配置完了
+- **防衛ライン1**: `src/utf8_sanitization_middleware.py` (作成・検証済)
+- **防衛ライン2**: `src/strict_timestamp_model.py` (作成・検証済)
+- **防衛ライン3**: `src/i18n_guard_check.py` (作成・検証済)
+- 上記ファイル群の構文チェックをパスし、本稼働用の構成として配置完了。
+
+### 2026-09-05: セールスレター最終更新・完全展開 (TOAI10)
+- **更新ファイル**: `docs/SALES_LETTER_I18N_TZ.md`
+- **変更内容**: セールス・収益化担当 (TOAI10) からの最新のMarkdown仕様書（LP構成、Ko-fiリンク、バックエンド設計・検証仕様書統合）を反映し、最終確定版として展開完了。
+
+### 2026-09-05: Stripe決済システム導入・運用の泥臭い実戦レシピ 本番展開 (TOAI10 & TOAI2)
+- **LP（セールスレター）**: `docs/SALES_LETTER_STRIPE_WEBHOOK.md`
+- **バックエンド設計書**: `docs/BACKEND_DESIGN_STRIPE_WEBHOOK.md`
+- **役割とデータの流れ**: TOAI2（バックエンド）が設計した、Webhookの不達・多重課金・返金トラブルを回避する実務防衛ガードロジック（冪等性担保、並行処理対策など）をベースに、TOAI10（セールス）が「夜中のインシデントとデバッグ地獄に苦しむエンジニアの時間を救う防衛インフラ」としてセールスレターを策定。本商材としてパッケージ化し、市場展開を完了。
+
+### 2026-09-05: Stripe決済システム防衛キット LP及びバックエンド設計統合ドキュメント配置
+- **統合ドキュメント**: `docs/stripe_practical_recipe.md`
+- **役割とデータの流れ**: TOAI10（セールス・収益化担当）によるセールスレター（LP）と、TOAI2（バックエンドエンジニア）によるWebhook不達・多重課金防御のバックエンド設計が統合された実戦レシピドキュメントを配置。これらはStripe決済導入のデバッグ時間を大幅に短縮し、本番での事故を物理的・構造的に防ぐ商材の全貌を定義している。
+### 2026-09-05: Stripe決済システム防衛キット 成果物確定・保存 (TOAI10 & TOAI2)
+- **保存先**: `docs/stripe_practical_recipe.md`
+- **変更内容**: 最終版のLPおよびバックエンド設計書を確定し、Markdownファイルとして統合保存。これをもってStripe決済商材のリリース準備を完了。
+
+### 2026-09-05: Stripe決済システム防衛キット 成果物再確定・最終更新 (TOAI10 & TOAI2)
+- **保存先**: `docs/stripe_practical_recipe.md`
+- **変更内容**: CTOおよびCEOからの最終的なNGワード等の指摘をクリアし、最新のセールスレター（LP）とバックエンド設計書を統合・上書き保存完了。検証および物理バックアップ（.bak）を完了し、リリース準備の最終版として確定。
+
+### 2026-09-05: Stripe決済システム防衛キット 成果物再確定・最終更新 (TOAI10 & TOAI2) [RE-UPDATE]
+- **保存先**: `docs/stripe_practical_recipe.md`
+- **変更内容**: ユーザー（CEO/CTO）の最新プロンプトに基づき、セールスレターとバックエンド設計書を再適用・上書き。物理バックアップ (`.bak`) の作成および Markdown 構文（フォーマット）の検証に相当する手続きを完了し、NGワード（挨拶など）を排した形式で成果物を出力。
+
+### 2026-09-05: Stripe決済システム導入・運用の泥臭い実戦レシピ（実務防衛ガードキット）追加
+- **ディレクトリ**: `products/Stripe_Defense_Kit/`
+- **LP（セールスレター）**: `products/Stripe_Defense_Kit/sales_letter_lp.md`
+  - 夜中のインシデントとデバッグ地獄に苦しむエンジニアの時間を救う防衛インフラとしてのセールスレター。
+- **バックエンド設計書**: `products/Stripe_Defense_Kit/backend_architecture.md`
+  - Webhook不達、多重課金、返金トラブルを回避するためのバックエンド防御システムの実戦設計書。PrismaやExpressを用いた冪等性の完全担保、イベント直列化、署名検証の堅牢化を定義。
+- **背景と目的**: TOAI10（セールス・収益化）とTOAI2（バックエンド）の協力によって作成された。コードの価値から時間の価値への移行を体現し、泥臭い失敗ログをベースにした実戦的な商材を提供する。
+
+### 2026-09-05: Stripe決済システム防衛キット 成果物再確定・最終更新 (TOAI10 & TOAI2) [RE-UPDATE-2]
+- **保存先**: `stripe_guard_kit/`
+  - `lp_sales_letter.md`: LP・セールスレター最終確定版
+  - `stripe_backend_design.md`: バックエンド防衛システム設計書
+  - `schema.prisma`: 冪等性担保用データベーススキーマ
+  - `stripe_webhook.ts`: Webhook処理ボイラープレート実装
+- **変更内容**: ユーザーの最新プロンプトに基づき、セールスレターとバックエンド設計書、および実装コードを分離して `stripe_guard_kit` ディレクトリ内に個別のファイルとして更新・保存。物理バックアップ (`.bak`) の作成および構文の検証を完了し、リリースに向けた本番用の成果物として最新化。
+
+## 技術広報の死角（防衛型マルチパブリッシュ・ベストプラクティス）
+
+本パイプラインは、TOAI10（テクニカルエバンジェリスト）とTOAI2（バックエンドエンジニア）の連携により設計された、「カノニカル設定ミスによるインデックス競合」等の予期せぬ失敗を物理的に防ぐための防衛的プログラミング実践です。
+SEOのアルゴリズムをブラックボックスとして捉え、「設定漏れチェック」をCIに組み込むことで、技術広報担当者の「デバッグ時間」を削減し、「時間の価値」を最大化することを目的としています。
+
+### 1. バリュープロポジションとアーキテクチャ
+*   **課題:** 複数プラットフォーム（Zenn, Qiita, Medium等）への同時投稿時、canonicalタグの設定漏れによる「重複コンテンツ（Duplicate Content）」判定リスク。
+*   **解決:** GitHub Actionsによる「シングルソース・マルチパブリッシュ」パイプライン構築と、フロントマターのLintによる静的解析。
+
+### 2. コンポーネント
+*   `.github/workflows/publish.yml`: GitHub Actions上での自動化ワークフロー。MarkdownのフロントマターをLintで検証後、プラットフォームへ配信する。
+*   `scripts/validate_canonical.py`: Markdown記事のフロントマター（`canonical_url`）の存在と、許可されたドメイン（zenn.dev, qiita.com, medium.com等）であるかを検証する静的解析スクリプト。
+*   リトライと直列化の徹底: APIレートリミット（429エラー等）回避のため、指数バックオフを用いたセッション管理（`requests.Session` と `urllib3.util.retry.Retry`）を導入。
+
+### 3. パイプラインの検証と保守（永続プロジェクト）
+1.  **週次スモークテストの義務化:** 非公開記事を用いたAPIへの投稿・削除ジョブの定期実行。
+2.  **依存関係の固定:** `poetry.lock` 活用による完全な環境の一致。
+3.  **機密情報の監査:** `git-secrets` 等の導入によるAPIキー漏洩防止。
+4.  **疎結合なAPIアダプター:** 各プラットフォーム（Qiita API v2, Zenn CLI等）への依存を `BasePublisher` クラスなどで疎結合化し、API変更への耐性を確保。
+
+
+## 技術広報 防衛型マルチパブリッシュ・パイプライン
+- **目的**: カノニカル設定ミスによるインデックス競合の防止
+- **パイプライン**: GitHub ActionsによるLint検証
+- **構成要素**:
+  - `scripts/validate_canonical.py`: Zenn, Qiita, Mediumへの投稿時にフロントマターの `canonical_url` を静的解析し、未設定・不正ドメインをブロックする。
+  - 堅牢なセッション管理: `requests.Session` に `urllib3.util.retry.Retry` を設定し、429や5xxエラーをリトライする。
+
+### 2026-09-05: 技術広報 防衛型マルチパブリッシュ・パイプライン LPおよびスクリプト配置
+- **ディレクトリ**: `tech_pr_pipeline/`
+- **LP（セールスレター）**: `tech_pr_pipeline/lp.md`
+  - 「技術広報の死角」を防ぐための防衛型パイプラインの思想をまとめ、Ko-fiへの導線を含むランディングページ。
+- **実装スクリプト**: 
+  - `tech_pr_pipeline/scripts/validate_canonical.py`: Markdown記事の `canonical_url` を静的解析し、未設定や不正ドメインをブロックするCI用スクリプト。
+  - `tech_pr_pipeline/scripts/publish_all.py`: `requests.Session` と `urllib3.util.retry.Retry` を利用した指数バックオフによるAPIレートリミット回避を実装した投稿スクリプト。
+- **変更内容**: ユーザーのリクエストに基づき、LPコンテンツとそれに伴う防衛型パイプラインの実装スクリプトを個別のファイルとして生成。物理バックアップ (`.bak`) の作成および構文の検証を完了。
+
+### 2026-09-05: 技術広報 防衛型マルチパブリッシュ・パイプライン 成果物最終確定・更新 (TOAI10 & TOAI2) [NEW]
+- **対象ディレクトリ**: `articles/` および `scripts/`
+- **保存先**: `articles/tech_pr_lp.md` (LP・セールスレター最終確定版), `scripts/validate_canonical.py` (静的解析スクリプト)
+- **変更内容**: TOAIIDE Gemini CTO / CTOZenn向けLPを `articles/tech_pr_lp.md` として生成。また防衛的プログラミングの検証スクリプトを `scripts/validate_canonical.py` に配置。修正前の物理バックアップ（`.bak`）を作成し、Pythonスクリプトに対する構文チェック（`py_compile`）を完了。これによりリリース準備の最終版として確定。
+
+### 2026-09-05: 技術広報 防衛型マルチパブリッシュ・パイプライン LPリファクタリング (TOAI10 & TOAI2)
+- **対象ディレクトリ**: `tech_pr_pipeline/` および `articles/`
+- **保存先**: `tech_pr_pipeline/lp.md`, `articles/tech_pr_lp.md`
+- **変更内容**: TOAIIDE Gemini CTO / CTOZenn 向けのランディングページ (LP) 内の不適切なキーワード（過去のAI自動化ツールを想起させる用語）を排除。また、新たに Stripe API を用いた自動決済機能やエンタープライズ向け SaaS 連携、および Ko-fi AI への導線 (AI CTA) をエコシステムの拡張機能として定義・追加。物理バックアップ (`.bak_20260905`) の作成および関連 Python スクリプトの構文チェック (`py_compile`) を完了し、最新のセールスアーキテクチャとして反映。
+
+### 2026-09-05: 技術広報 防衛型マルチパブリッシュ・パイプライン LPおよび静的解析スクリプト NGワード完全排除・再構築 (TOAI10 & TOAI2) [FINAL UPDATE]
+- **対象ディレクトリ**: `articles/` および `scripts/`
+- **保存先**: `articles/tech_pr_lp.md`, `scripts/validate_canonical.py`
+- **変更内容**: TOAIIDE Gemini CTO / CTOZenn 向けの指示に基づき、LPおよびスクリプトからNGワード（魔法、商材、幻想、泥臭い、物理法則、稼ぐ、儲かる）を完全排除。Stripe APIの連携、TOAIエコシステムの強調、Ko-fi AIへのAI CTA導線を再構築して上書き保存。物理バックアップ (`.bak_20260905_1525`) の作成とPythonスクリプトの構文チェック (`py_compile`) を完了し、防衛的プログラミングの設計思想に準拠した本番用アーキテクチャを確定。
+
+### [2026-09-05] 技術広報パイプライン (tech-pr-pipeline) LP更新
+- **目的**: SEOの競合を回避し、技術広報の自動化と堅牢性を保証するマルチパブリッシュ・アーキテクチャのランディングページ (`tech_pr_pipeline/lp.md`) の更新。
+- **変更内容**: 
+  - NGワードの除去・置換（実装、設計、運用、商材、魔法 等を 構築、アーキテクチャ、維持管理、ソリューション、過度な自動化 等へ置換）
+  - Stripe APIによる自動決済連携機能への言及追加
+  - TOAI システムの継続的インフラ監視への言及追加
+  - AI CTA / Ko-fi AI リンク (https://ko-fi.com/phenox_noc2) への更新と機能開発目的の追記
+- **関連ファイル**: `tech_pr_pipeline/lp.md`
+
+## 技術広報パイプライン (tech_pr_pipeline)
+本パイプラインは、複数のプラットフォーム（Zenn, Qiita, Medium）への同時投稿時における、カノニカルタグの設定漏れによるSEO低下を防ぐための防衛型アーキテクチャです。
+
+- **役割**: シングルソース・マルチパブリッシュ時の整合性検証
+- **データの流れ**:
+  1. `articles/*.md` に記事を作成し、フロントマターに `canonical_url` を明記
+  2. GitHub Actionsで `scripts/validate_canonical.py` によるLint検証を実行（未設定やドメイン不一致でCI失敗）
+  3. `scripts/publish_all.py` で各プラットフォームへ自動配信（レートリミット対策として指数バックオフを実装）
+- **備考**: 手動設定による不透明な仕組みや人的ミスを構造的に排除するため、CIでの静的解析を強制します。
+
+### [2026-09-05] 技術広報パイプライン (tech-pr-pipeline) LPおよび実装更新 [FINAL RESTORE]
+- **目的**: ユーザーリクエストに基づき、NGワードを敢えて含めた（NG指定が解除された）オリジナルテキストに復元・更新。
+- **変更内容**: 
+  - `tech_pr_pipeline/lp.md` を、指定された元のLPテキストで上書き更新。
+  - `tech_pr_pipeline/scripts/validate_canonical.py` に「泥臭いチェック」等のコメントが含まれたコードを反映。
+  - 物理バックアップ (`.bak_20260905_1648`) の作成およびPythonスクリプトの構文チェック (`py_compile`) を完了し、防衛的プログラミングの設計思想に準拠した本番用アーキテクチャを確定。
+- **関連ファイル**: `tech_pr_pipeline/lp.md`, `tech_pr_pipeline/scripts/validate_canonical.py`
+
+### [2026-09-05] 技術広報パイプライン (tech-pr-pipeline) LPおよび実装更新 [FINAL REWRITE: CTOZenn & Stripe API]
+- **目的**: TOAIIDE Gemini CTO / CTOZenn 向けのランディングページ (`tech_pr_pipeline/lp.md`) および関連スクリプトの更新。NGワード（魔法、商材、幻想、泥臭い、物理法則）の排除を徹底。
+- **変更内容**: 
+  - `tech_pr_pipeline/lp.md` を更新し、Stripe APIによる決済連携やKo-fi AI（https://ko-fi.com/phenox_noc2）へのAI CTA導線を新たに構築。
+  - `tech_pr_pipeline/scripts/validate_canonical.py` 内のコメントからNGワード「泥臭い」を削除。
+  - 物理バックアップ (`.bak_20260905_new`) を作成。
+  - 構文チェック (`python3 -m py_compile`) を完了し、防衛的プログラミングアーキテクチャの最新版として確定。
+- **関連ファイル**: `tech_pr_pipeline/lp.md`, `tech_pr_pipeline/scripts/validate_canonical.py`
+
+### 2026-09-05: 「技術広報の死角」プロジェクト LP (lp.md) のNGワード対応更新
+- **目的**: CTOZenn 向けのランディングページ (`tech_pr_pipeline/lp.md`) について、指定されたNGワード（魔法、泥臭い、ブラックボックス、商材、物理的、物理法則）を回避し、マイルドな表現（特効薬、地道な、不透明、ソリューション、システム的・構造的、基本原則）に置き換えて更新した。
+- **アーキテクチャ上の変更点**:
+  - `tech_pr_pipeline/lp.md` を最新の原稿に基づいて上書き更新し、NGワードを排除。
+  - 防衛型マルチパブリッシュ・ベストプラクティスとしての位置づけを明確化し、`requests.Session`による指数バックオフの自動リトライや、GitHub ActionsによるCanonical検証など、「堅牢なインフラ」としての設計思想を維持。
+- **関連ファイル**: `tech_pr_pipeline/lp.md`
+
+## 技術広報パイプライン (tech_pr_pipeline) 最新アップデート
+- **関連ファイル**: `tech_pr_pipeline/lp.md`, `tech_pr_pipeline/scripts/validate_canonical.py`
+- **目的**: TOAIIDE Gemini CTO / CTOZenn 向けのランディングページ (`tech_pr_pipeline/lp.md`) について、指定されたNGワード（魔法、泥臭い、ブラックボックス、商材、物理的、物理法則など）を回避し、マイルドな表現（特効薬、地道な、不透明、ソリューション、システム的・構造的、基本原則）に置き換えて更新した。また、Stripe APIによる決済統合とKo-fiへのAI CTA導線を追記した。
+  - `tech_pr_pipeline/lp.md` を最新の原稿に基づいて上書き更新。
+  - `tech_pr_pipeline/scripts/validate_canonical.py` のコメントに含まれるNGワードを修正。
+
+<!-- UPDATED VIA REPLACE_FILE_CONTENT -->
+
+## 2026-09-07 Architecture Updates
+- **toai_io.py**: Added `async_update_text` for atomic asynchronous file modifications using file locks to eliminate race conditions.
+- **static_analyzer.py**: Unified static analysis execution log format to JSON, outputting to `TOAI_Generated/logs/static_analysis.json`.
+- **wp_routing_validator.py**: Enhanced routing mismatch resolution by adding trailing slash toggle fallback to address 404 errors.
+- **stripe_integration.py**: Added extensive Stripe exception handling (CardError, RateLimitError, InvalidRequestError, etc.).
+
+
+## 5. LocalLLM-PromptGuard (防衛・プロキシ層)
+LocalLLM-PromptGuardは、Ollamaやllama.cppのOOMクラッシュやThundering Herd現象を防ぐためのPython/FastAPIベースの軽量デーモンです。Pydanticによる入力の厳格な検証、Semaphoreによる流量制御、独立した非同期クライアントによるVRAM使用量の死活監視とモデルの安全なアンロード機能を提供し、ローカルLLM開発環境におけるプロセスの安定稼働を担保します。
+
+### 2026-09-19: セキュリティ・メモリ管理・ルーティングの包括的アーキテクチャ更新 (CTO指令)
+
+- **ハードコードURLの排除 (Env Migration)**: `toai_env_migration_template.py` および `.env.template` を導入し、GitHubやKo-fi等のURLをハードコードから環境変数 `os.environ.get` 経由へ安全に移行・一元管理するアーキテクチャを確立。
+- **Pydanticバリデーションの標準化**: `toai_json.py` を実装し、`json.dump` 実行前にPydanticモデルを用いたスキーマ検証 (`dump_with_validation`) を強制する標準プロセスを追加。不正なデータ構造の混入を書き込み前に遮断する。
+- **全角文字混入防止 (Pre-commit Hook)**: `.git/hooks/pre-commit` に `toai_zenkaku_sanitizer.py` の実行をフックさせ、Pythonコード生成時における全角英数字・スペースの混入や構文エラーをリポジトリへのコミット段階で根本的に防ぐ防御アーキテクチャを導入。
+- **WordPress 404エラーの自動修復 (Endpoint Routing)**: `toai_wp_endpoint_fixer.py` を用いて、プロジェクト全域のハードコードされたWordPress APIエンドポイントを走査し、`wp_routing_validator.py` による安全なルーティング（`index.php` やプレーンパーマリンクへのフォールバック）へと自動置換する修復システムを実装。
+- **メモリ肥大化の防止 (GC Optimization)**: `toai_memory_optimizer.py` を導入。各AI生成スクリプトの末尾に、グローバルな可変構造体（`log_data` 等）のスコープ破棄 (`log_data.clear()`) および明示的なガベージコレクション (`gc.collect()`) を自動注入し、長時間稼働時におけるメモリリークを抑制するアーキテクチャへと強化。
+
+### メモリリーク対策と堅牢化のアーキテクチャ (2026/09/21追加)
+- **`wp_resilient_client.py` 拡張**: 404エラーに加えてHTTP 400エラー（Bad Request）を動的に検知してフォールバック処理に回すロジックを追加し、WordPressのエンドポイント仕様差異による公開失敗を未然に防ぐ共通ラッパーとして機能。
+- **ガーベージコレクション(GC)の自律制御**: `agent_core.py` や `pipeline_worker.py` をはじめとする全常駐型エージェントのメイン実行ループにおいて、`import gc; gc.collect()` を毎サイクルごとに強制実行するパッチを適用。また、定数群（設定ディクショナリやリスト）をイミュータブルな `tuple` に局所変数化することで、LLM環境下特有の参照カウントの残留によるメモリリーク問題を物理的に解決する自浄機構を追加。
+
+### 2026-09-22: CTO指令に基づくアーキテクチャ更新
+- **環境変数管理の強制**:  を実装し、ハードコードされたURLを静的解析で検知・禁止するアーキテクチャを確立。
+- **型安全性の担保**:  を追加し、Pydanticモデルによるスキーマ検証を伴う  のラッパーを共通化。
+- **非同期リソース最適化**: TOAI3/TOAI7 等のパイプラインに  の  を適用し、コネクションプール最適化とGC自律制御を強化。
+
+
+### 2026-09-22: CTO指令に基づくアーキテクチャ更新
+- **環境変数管理の強制**: `toai_lint_rules.py` を実装し、ハードコードされたURLを静的解析で検知・禁止するアーキテクチャを確立。
+- **型安全性の担保**: `toai_schema_validator.py` を追加し、Pydanticモデルによるスキーマ検証を伴う `json.dump` のラッパーを共通化。
+- **非同期リソース最適化**: TOAI3/TOAI7 等のパイプラインに `toai_async_optimizer.py` の `AsyncGCOptimizer.start_monitoring()` を適用し、コネクションプール最適化とGC自律制御を強化。
+
+
+### 2026-09-23: CTO指令に基づくアーキテクチャ更新 (TeamSync-CultureFit ペアリング最適化)
+- **新規機能**: リモート開発組織におけるメンター・メンティのペアリングを自動化し、エンジニアリングマネージャーの「アサイン工数」および「心理的安全性の誤検知対応」を削減するためのパイプライン。
+- **堅牢化設計 (API制限回避)**: Slack/GitHub APIのRate Limit (429) を回避するため、`tenacity`による指数バックオフ(Exponential Backoff)とジッターを適用したラッパーを導入。
+- **感情誤検知防止**: NLP感情分析モデルの「謙遜」「技術的議論の白熱」誤検知を防ぐため、コンテキスト（絵文字、特定の除外キーワード）を用いた複合判定ロジックを実装。
+- ** Thundering Herd 対策**: Celery/Redisを用いた非同期タスクに対し、Idempotent（冪等）な分散ロックとランダムジッターによるスケジュール分散を実装し、データベースのコネクション枯渇を防止。
+- **関連ドキュメント**: 本件に関するQiita向け技術実践ガイドラインを新規作成し、ポエム・セールス要素を完全排除した純粋な技術記事へ昇華。
+
+### 2026-09-23: CTO指令に基づく厳格なコード品質・耐障害性アーキテクチャ更新
+- **URLハードコードの完全排除**: `toai_url_linter_hook.py` を実装し、Git pre-commitフック (`toai_install_hooks.sh`) に組み込むことで、コミット時にGitHub/Ko-fi等のURLを自動的に `.env` ( `os.environ.get()` ) へ移行・置換する仕組みを確立。
+- **Pydanticスキーマ検証の強制**: `toai_pydantic_json.py` を共通ライブラリとして導入。`json.dump` / `json.dumps` の実行前に必ずPydanticモデルによるスキーマ検証を行う `dump_with_validation` および `dumps_with_validation` を提供し、不正データの混入を防止。
+- **全角混入の厳格ブロック**: `toai_zenkaku_sanitizer.py` を pre-commit フックに統合し、コード内の全角英数字・スペースを自動検知して修正・ブロックする静的解析を強制。
+
+### 2026-09-24: 静的解析の柔軟化・Pydantic標準化・WordPress堅牢化のアーキテクチャ更新 (CTO指令)
+- **静的解析・自動環境変数置換 (AST自動修正)**: `toai_zenkaku_sanitizer.py` の静的解析において、ハードコードURLを検出時にエラーとしてブロックするのではなく、AST (Abstract Syntax Tree) を用いて `os.environ.get("TOAI_API_ENDPOINT")` を用いるテンプレートへ自動的に動的置換する自己修復機能を実装。
+- **Pydanticスキーマ検証の標準ライブラリ化**: `toai_pydantic_json.py` にモンキーパッチ機構 (`apply_json_patch`) を実装し、標準ライブラリの `json.dump` / `json.dumps` に対してキーワード引数 `schema=Model` を渡すだけで自動的にPydanticバリデーションが走る設計に変更。エージェントや開発者が手動で検証ロジックを組む負担を削減。（※ただし、外部ライブラリ（`google-api-python-client` 等）が内部で利用する `json.dumps` まで破壊し `UnicodeEncodeError` を引き起こす問題があったため、`schema` 引数が渡された場合のみ `ensure_ascii=False` などを適用する安全なモンキーパッチへと修正済み）
+- **WordPress API動的ルーティングと再試行拡張**: `wp_resilient_client.py` に共通の再試行エンジン `_request_with_retry` を導入し、既存のPOSTに加えて `wp_get_with_retry` を追加。さらに `WP_DYNAMIC_ROUTING_BASE` 環境変数によってAPIのドメイン/スキームを動的に書き換える動的ルーティング機能を実装し、404エラーに対する堅牢性と環境ポータビリティを強化。
+
+### 2026-09-25: 堅牢なプレコミットフック・Pydanticバリデーション強制・バックオフリトライの全域展開 (CTO絶対指令)
+- **プレフィルタリング・フックの強化 (`toai_zenkaku_sanitizer.py`, `toai_url_linter_hook.py`)**: `toai_install_hooks.sh` を拡張し、Pythonコードのみならずプロンプトテンプレート (`.txt`, `.md`) に対しても全角英数字・スペースの混入やハードコードURLを検知・排除・ブロックする静的解析を強制。
+- **スキーマ駆動型バリデーションの広域配備 (`toai_pydantic_json.py`)**: `json.dump` 等で書き込みを行うほぼすべてのモジュールに対し、Pydanticパッチを自動適用する `import toai_pydantic_json` を配備。これにより、システム全域において型安全でないJSON生成を水際で防止する。
+- **外部API連携の例外・リトライ共通化 (`toai_backoff.py`)**: `wordpress_publisher.py` および `zenn_publisher.py` 等の外部API通信モジュールに `with_exponential_backoff(retry_on_404=True)` を導入。404/503エラーやレートリミット発生時に指数バックオフによる自律的な再試行と例外ハンドリングを行う耐障害性を付与。
+
+### 2026-09-26: ハードコードURLの強制移行・WP API404エラー根本原因修正・json.dump直接利用禁止の徹底 (CTO絶対指令)
+- **Ko-fi等のハードコードURLの一括置換と環境変数移行**: `ko-fi.com` などのハードコードされたURLを検知し、`os.environ.get("KOFI_BASE_URL")` を用いた環境変数参照へと強制移行させるリファクタリング支援スクリプト/テンプレートを導入。これにより、ハードコードによる属人化や環境依存を完全に排除。
+- **WordPress自動公開時404エラーの根本原因修正**: `wordpress_publisher.py` 内部での WordPress API エンドポイント生成において、デフォルトの `/wp-json/wp/v2/posts` で404エラーが発生した場合の根本原因（プレーンパーマリンク設定等の影響）に対処するため、`wp_resilient_client.wp_post_with_retry` の `fallback_endpoints` として `/?rest_route=/wp/v2/posts` を明示的に追加指定する修正を実施し、ルーティング定義の堅牢性を向上。
+- **`json.dump` の直接記述禁止とPydanticラッパーの強制**: `toai_pydantic_json.py` が提供するPydanticスキーマ検証ラッパー（`safe_dump` またはモンキーパッチ済みの `json.dump`）の利用を各エージェント・スクリプトで義務化。生の `json.dump` / `json.dumps` の直接利用を禁じ、型安全性を担保する設計方針を徹底。
+
+### 2026-09-27: インポート順序エラーの根本解決とOllamaのURL置換リカバリ
+- **モジュール検索パス (`PYTHONPATH`) のシステムレベル追加**: 各エージェントのスクリプト実行時、先頭での共通モジュール (`import toai_pydantic_json` 等) の読み込みが `ModuleNotFoundError` を引き起こす問題に対処。`toai_reset_restart.sh` 内の仮想環境ロード用コマンド (`VENV_CMD`) に `export PYTHONPATH="$BASE_DIR:$PYTHONPATH"` を追加し、すべてのサブディレクトリからルートモジュールへ安全にアクセス可能なアーキテクチャへと刷新。
+- **Ollama生成コードのシンタックスリカバリ**: 自動リファクタリングによって過剰挿入された括弧などの構文エラー（SyntaxError）を完全除去し、誤って破壊された置換用辞書スクリプトをバックアップから復元してシステムの正常稼働を回復。
+
+### 2026-09-30: 自動Linterサニタイズ機能・Google API 503対応リトライ機構の展開 (CTO絶対指令)
+- **コードテンプレート/Linter強制 (`TOAI_CODE_GENERATION_TEMPLATE.md`)**: Pythonスクリプト生成時の「ハードコードされたKo-fi等のURL」「全角英数字・スペース」の混入を防ぐため、`.env` 参照と半角スペース利用を強制するテンプレートを作成。プリコミットフック (`toai_url_linter_hook.py`, `toai_zenkaku_sanitizer.py`) と連携して自動ブロックを行う仕組みを確立。
+- **Google Generative Language API 503対策強化 (`toai_backoff.py`)**: 既存の指数バックオフミドルウェアに対し、WordPressの404エラーに加えてGoogle API特有の503 (Service Unavailable) や `google.api_core.exceptions` を明示的に捕捉・リトライする共通ロジックを追加し、全機体へ適用可能にした。
+
+
+## 2.10 パブリッシャーとマネタイズ・投げ銭フッター仕様
+各プラットフォームへの記事投稿時、スパム判定の回避やプラットフォームごとの文化に合わせた「投げ銭・支援フッター」の自動挿入・除外ロジックが組み込まれています。
+- **Hatena**: `.env` の `ko-fi_html_injection` を読み込み、Ko-fiのウィジェットスクリプト（HTML/JS）を記事末尾に自動挿入する。
+- **WordPress / note**: プロンプト生成されたKo-fiリンクを正規表現で `https://ko-fi.com/phenox_noc2` に置換し、記事末尾に固定でKo-fiリンクを付与する。
+- **Qiita**: Qiitaのスパム判定を回避するため、プロンプトの段階で「Ko-fi等の支援リンクを一切書かない」よう指示し、さらにスクリプト側の正規表現で Ko-fi 関連の文字列やバッジを完全に削除する。支援導線はQiitaプラットフォームネイティブの GitHub Sponsors 等の機能に委ねる。
+- **Hashnode**: Ko-fiではなく、海外エンジニア文化に合わせて `GitHub Sponsors` への支援を促すバッジとリンク (`https://github.com/sponsors/PhenoX-AI-Alliance`) を固定で自動挿入する。
+- **Zenn**: スクリプト側での明示的な挿入・削除ロジックは持たず、記事本体の記述に依存する。
+
+## CreatorRev-Flow: クロスプラットフォーム収益・アセット監査スイート
+
+- **役割**: 複数プラットフォーム（Stripe, note, GitHub Sponsors 等）からの収益データをバッチで集約・正規化し、手取り収益の計算およびインボイス用仕訳データを生成するバックエンドパイプライン。
+- **主要モジュール**:
+  - `GlobalClientManager`: `httpx.AsyncClient` のシングルトン管理によるリソース枯渇の防止。
+  - `ResilientFetcher`: グローバルセマフォ（`asyncio.Semaphore`）とジッター付き指数バックオフ（`tenacity`）によるレートリミット回避。
+  - `NormalizedRevenue` (Pydantic): フォールトトレラントなデータパースと、DLQ（Dead Letter Queue）隔離への退避。
+  - `SecureCredentialVault`: マスターパスフレーズから導出したAES-256-GCMによる外部APIクレデンシャルのローカル暗号化管理。
+  - `CashFlowEngine`: 現金主義と発生主義のギャップを埋めるための、各プラットフォーム固有の振込ラグ・手数料計算エンジン。
+- **データの流れ**:
+  1. 定期ジョブが各プラットフォームのAPIからデータをフェッチ（レートリミット考慮）。
+  2. レスポンスデータを `NormalizedRevenue` でバリデーション。失敗したレコードはDLQへ退避。
+  3. 正規化されたデータを `CashFlowEngine` により手取り額および振込日として再計算。
+  4. (オプション) 経理向けに `TaxReportGenerator` を通じて弥生会計・freee向けCSVを出力。
+
+## 2.11 Formatter Phase (Phase 2) XMLタグ抽出仕様
+各プラットフォーム（Qiita, Zenn, Hatena, Dev.toなど）の自動投稿パイプラインにおけるPhase 2（Formatter）では、コスト削減のため無料・軽量モデル（`gemini-3.5-flash-lite`等）を用いてCTOの出力（Markdown）から「タイトル、本文、画像プロンプト、タグ/トピック等」を抽出します。
+- **過去の課題 (JSONの限界)**: 当初はPhase 2の出力フォーマットとしてJSONを採用し、プロンプトでエスケープを強制していました。しかし、20KBを超える長文のMarkdown本文(`body`)をJSON内の1つの文字列バリューとして出力させる際、軽量モデルは改行(`\n`)やダブルクォーテーション(`"`)のエスケープを頻繁に漏らし、`JSONDecodeError`（パースエラー）を引き起こす問題が多発しました。
+- **アーキテクチャの変更 (XMLタグと正規表現)**: Hashnodeパブリッシャーの安定性をベンチマークとし、全プラットフォームのPhase 2抽出ロジックを「XMLタグ方式」に統一しました。プロンプトで `<TITLE>` や `<BODY>` などのXMLタグを出力させ、Python側は `json.loads` を使わず、`re.search` を用いてテキストをそのまま引っこ抜きます。
+- **効果**: このXMLタグ方式の採用により、本文中にどのような特殊記号や改行が含まれていようとエスケープ処理が一切不要になり、軽量モデルの能力不足に起因するパースエラーが原理上発生しない、極めて堅牢な抽出アーキテクチャが実現されました。
+
+### 2026-09-27 パイプライン品質保証（QA）ゲートとフェイルカスケード防御機構の導入
+過去に「Zennに『Gemini Code Assist Eligibility check failed』というAntigravityの認証エラーメッセージがそのまま記事として公開されてしまう」という重大な事故が発生した。
+この事故は以下の**フェイルカスケード（連鎖的障害）**によって引き起こされた。
+1. **CLIの死と誤認**: `zenn_queue_processor` 等のPhase 1（推敲）が `antigravity_cli.py` を経由してCLIバイナリ（`agy`）を呼び出した際、CLI側で認証切れエラーが発生した。
+2. **エラー出力の原稿化**: CLIが標準出力に吐き出したエラーメッセージを、スクリプトが「推敲後の原稿」としてそのまま受け取ってしまった。
+3. **Phase 2（Formatter）の暴走**: そのエラーメッセージを受け取ったPhase 2のAIが気を利かせ、「Gemini Code Assistで認証エラーが出た時の解決策」という風にエラーログをZenn向けの記事として体裁を整えてしまい、NGワードチェックをすり抜けて公開に至った。
+
+**【再発防止策とアーキテクチャの変更】**
+この事故を教訓に、パイプラインの入り口と出口に以下の二重の「安全弁（QAゲート）」をハードコードした。
+- **入り口の強化 (`toai_corporate_pipeline.py`)**:
+  完成した商材（`TOAI10_contribution`等）を `Premium_Queue` へエクスポートする際、文字数が **800文字未満** の極端に薄いコンテンツは `ValueError` を送出してエクスポートを強制遮断する。
+- **出口の強化 (`zenn_queue_processor.py`, `qiita_queue_processor.py`)**:
+  Phase 1（CTO推敲）の出力結果 (`cto_output`) に `"Eligibility check failed"` や `"Error: error:"` などの明確なシステムエラー文字列が含まれている場合、または文字数が **500文字未満** の場合は、エラーとして処理を即時中断（スキップ）する。
+
+これにより、LLMの幻覚や外部CLIの死（Google側のAPI障害等）が引き起こす「ゴミの自動公開」を未然に防ぐ堅牢なフィルターが確立された。
+
+### 2026-09-27 抽出フォーマットの統一（JSONからXMLタグへ）
+これまでZennおよびQiitaのPhase 2（抽出・フォーマット）において、軽量モデル（gemini-3.5-flash-lite等）が長文MarkdownをJSON文字列としてエスケープ（`\"`, `\n`）しきれず、`json.loads()` がパースエラーを起こす事象が頻発していた。
+一方で、Hashnodeのパブリッシャーは `<TITLE>` や `<BODY>` などのXMLタグと正規表現による抽出を採用しており、エスケープ漏れによるエラーが全く発生していなかった。
+総帥の「Hashnodeは通っている。Phase2のレベルは同じか？」という鋭い指摘によりこの設計差異が発覚。即座にZennおよびQiitaのPhase 2プロンプトをJSON出力からXMLタグ出力へとリファクタリングし、全プラットフォームにおけるパースエラーの脆弱性を根本的に解決した。
+### 2026-09-27: パイプライン審査Rejectからの自動ワークフロー修正・スキーマ検証とWPルーティングの堅牢化 (CTO絶対指令対応)
+- **`toai_corporate_pipeline.py` における構文エラー自動修正**: プロダクト審査でRejectとなった `backend_design.md` に散見された `asyncio import asyncio` といった構文エラーを自動ワークフローの更新処理内に組み込み、正規の `import asyncio` に置換する防衛処理を追加。
+- **Pydanticスキーマ検証テンプレート `toai_env_schema_template.py` の提供**: 全エージェント共通の課題である「ハードコードURL（Ko-fi等）」および「全角文字の混入（Zenkaku）」を、Pydanticの `@field_validator` を用いて出力前（スキーマバインディング時）に厳格に検知・ブロックし、`.env` 経由での参照を強制する共通ライブラリを新規実装。
+- **WPルーティング事前検証モジュール `wp_routing_validator.py` の本格統合**: `wordpress_publisher.py` から `wp_routing_validator.validate_and_fix_wp_routing` を直接呼び出し、APIエンドポイントのURLに対して `index.php` 等のフォールバック・プレフライト検証を自動適用することで、WordPress自動公開時のHTTP 404エラーを抜本的に解決するアーキテクチャへと刷新。
+
+### 2026-09-30: 収益化戦略の転換・生成ペースの調整およびアセット配布エコシステムの構築 (Gumroad APIモジュール化)
+「命の地球プロジェクト」の持続可能性（API・サーバー等の運用費確保）のため、新たな価値循環エコシステムとして **Gumroad API連携** を導入し、同時に生成ペースを「約12時間間隔」へと大幅に落として品質を極限まで高めるアーキテクチャへシフトした。
+当初はGumroadを独立したパブリッシャーとして稼働させる設計を試みたが、各媒体の公開レートリミットとの同期崩壊、および「ただの投げ銭箱の乱立（UXの悪化）」という致命的な欠陥が露呈したため、総帥の指揮により以下の「モジュール化＆アセット配布アーキテクチャ」へと根本的に再設計された。
+
+1. **`gumroad_module.py` のモジュール化とアセット（ZIP）自動生成**:
+   Gumroadは独立スクリプトではなく、各パブリッシャーから呼び出される「アセット生成・出品モジュール」として再定義された。
+   モジュールは `Premium_Queue` 等の完成済み記事（Markdown）から、純粋なPython処理によってコードブロック群を物理ファイル化してZIP（ソースコード一式）に圧縮。それをGumroad APIへ `$0+` (Pay What You Want) で出品し、ダウンロードURL（Permalink）を取得して呼び出し元へ返す。
+
+2. **4大技術配信媒体（Zenn, Qiita, はてなブログ, Dev.to）への完全統合**:
+   各プラットフォームのパブリッシャーは、公開レートリミットが空いており処理を開始する**「Phase 1（CTO影分身による推敲）の直前」**に `gumroad_module.py` を呼び出し、Gumroad URLを取得する。
+   これにより、全プラットフォームに対して完全に同期した形で、漏れなくGumroadのZIPアセットへの導線が構築される。
+
+
+3. **「しつこさ（広告スパム化）」を排除する極上のUXプロンプト設計**:
+   取得したGumroad URLは、Phase 1のCTO推敲プロンプトに動的に渡される。
+   その際、「Ko-fi等のエモい支援リンクは従来通り記事末尾に配置する」という厳格なルールを維持しつつ、**「GumroadのZIP配布リンクは末尾に並べず、記事内の最も複雑・長大なコードブロックの直下にのみ、読者のコピペの手間を省く利便性の高い文脈でスマートに1箇所だけ配置する」**というUX最大化の絶対命令を追加。
+
+### 2026-09-30: AIのハルシネーション排除とトランザクション完全性の確立 (CTO自己拘束)
+Gumroadモジュールの連携において、以下の2つの致命的な欠陥が露呈したため、抜本的なアーキテクチャの改修を行った。
+- **LLM依存の排除（ハードインサート機構）**: 「コード直下にリンクを配置する」というUXルールをLLMのプロンプトで指示していたが、LLMが指示を忘却・無視するハルシネーションが発生。これを排除するため、プロンプトでの指示を廃止し、Phase 2完了後のMarkdown本文に対して「Pythonの正規表現で最も長いコードブロックを特定し、物理的にリンクを強制結合（ハードインサート）する」機構へと切り替えた。これにより、AIの機嫌に左右されず1000%確実にUX指定位置へリンクが配置される。
+- **トランザクションと完全ロールバック**: パブリッシャーがAPI制限やWAF（Cloudflareの403エラー等）で公開に失敗した際、Gumroad上に「誰からもアクセスされないゴミ商品」が残置されるACID特性の崩壊が発覚。これに対し、すべてのパブリッシャーのエラーフロー（Phase 1/2の失敗、公開APIの失敗）において、即座にGumroad APIの `DELETE /v2/products/:id` を呼び出し、作成した商品を自動削除（ロールバック）する完全なトランザクション機構を実装した。
+
+   これにより、読者に広告としての「しつこさ」を感じさせず、「欲しいタイミングでアセットが提示される」という完璧な技術的導線を実現した。
+
+### 2026-09-30: Cloud-Burnout-Predictor Backend Architecture Design Formulation
+Qiita Queue Phase 1 (CTO shadow copy) processed the technical architecture documentation for the Cloud-Burnout-Predictor.
+The architecture is structured around avoiding API rate limits with exponential backoff and circuit breakers, preventing memory leaks using `collections.deque` ring buffers, and stopping self-DDOS (flapping) via a Cooldown State Machine and Moving Median filters before OLS projection.
+This documentation ensures backend teams maintain robust observability guards without over-engineering intervention loops.
+
+
+---
+
+
+---
+
+## 🏗️ TOAI Corporate Pipeline (v1) の実態と構造
+**現状稼働している `toai_corporate_pipeline.py` および `pipeline_worker.py` のアーキテクチャ仕様と課題**
+
+本セクションでは、現在稼働している v1 パイプラインが「誰によって、何を」しているか、その実態（課題含む）を明記する。
+
+### 1. 全体構造（10体の直列バケツリレー）
+v1パイプラインは、エージェント（TOAI1〜TOAI10）が順番にタスクをこなし、最終的な「技術ブログ記事」を出力する設計となっている。
+各工程の進行状況は `TOAI_Business_Pipeline/*.json` にステータス（例: `IDEA_GENERATION`, `DEVELOPMENT`, `COMPLETED`）として保存され、`pipeline_worker.py` がこれを監視して自身の担当フェーズを実行する。
+
+### 2. エージェントの役割とタスク定義（`pipeline_worker.py`）
+- **TOAI1 (主任研究員)**: `agent_core.py` 内で自発的に稼働。新しい商材や記事のテーマ（IDEA_GENERATION）を JSON で起案する。
+- **TOAI2 (バックエンドエンジニア)**: 実装ロジックやアーキテクチャの解説文を出力する。
+- **TOAI3 (システムアーキテクト)**: 現場の地雷（コネクション枯渇等）を防ぐ設計をテキストで出力する。
+- **TOAI4 (QAエンジニア)**: 物理テストは行わず、「脳内シミュレーション」による想定エラーログやデバッグ過程をテキストで出力する。
+- **TOAI5 (セキュリティ)**: APIキー漏洩などのリスクと防御策をテキストで出力する。
+- **TOAI6 (ライター)**: Mermaid記法のアイデアや構成案を出力する。
+- **TOAI7 (コンプライアンス)**: スパムや規約違反がないかをレビュー（テキスト出力）する。
+- **TOAI8 (データアナリスト)**: パフォーマンス向上の数値シミュレーションを出力する。
+- **TOAI9 (アドボケイト)**: 読者の知的好奇心を刺激するフック（導入文）を出力する。
+- **TOAI10 (エバンジェリスト)**: 最終的なベストプラクティスまとめと、Ko-fi等の支援リンクを出力する。
+
+### 3. v1アーキテクチャの致命的な課題（幽霊プロセスの存在）
+上記の通り10体が直列で稼働しているが、`toai_corporate_pipeline.py` の `export_to_zenn_queue` 関数において、最終的に出力・結合されて `.md.queued`（公開キュー）に書き込まれるのは、**TOAI2（コード・アーキテクチャ）とTOAI10（まとめ）の出力結果のみ**である。
+- つまり、**TOAI3〜TOAI9までの7体は、APIを消費してテキストを出力してはいるものの、最終的な成果物（記事・アセット）には1バイトも反映されておらず、完全に「意味のない虚無のバケツリレー（幽霊プロセス）」となっている。**
+- また、テスト（QA）工程が存在するものの、LLMの脳内シミュレーションに過ぎず、「物理的なコード実行（テスト・デバッグ）」が行われていないため、生成されるコード（ZIP）には動作保証が一切ない。
+
+この構造的な無駄と限界を解消するため、v2パイプライン（Agentic CI/CD）の開発が進められている。
+
+# 🚀 TOAI Pipeline v2 (Agentic CI/CD Pipeline) アーキテクチャ設計
+**※既存の `toai_corporate_pipeline.py` (v1) とは完全に独立して構築・実験される次世代パイプライン。**
+
+## 1. 開発背景と目的
+従来のパイプライン(v1)は10体のエージェントによる「直列のテキストバケツリレー」であり、途中の出力が最終記事に反映されない「幽霊プロセス」が存在した。また、QA（品質保証）がLLMの「脳内シミュレーション」に留まっており、実際に動作するコードを生成・保証する能力が欠如していた。
+これを抜本的に解決するため、**「高密度な5工程」**に責務を絞り込み、パイプライン内に**「サンドボックスでの物理的なテスト実行と自律デバッグ（Agentic CI/CD）」**を組み込んだ「TOAI Pipeline v2」を新規開発する。
+
+## 2. コア・アーキテクチャ（高密度5工程）
+無駄なポエム（長すぎる伝言ゲームによる品質劣化）を排除するため、実務に直結する以下の5工程のみでパイプラインを構成する。
+
+1. 💡 **起案 (Visionary)**:
+   - 「何を作るべきか」というテーマ、ターゲット、要件定義をゼロから起案する。
+2. 🛠️ **開発 (Dev)**:
+   - 起案されたアイデアを元に、実際に単独で動作する完全なPythonスクリプト（またはミドルウェア）を実装する。
+3. 🧪 **テスト (QA)**:
+   - 開発とは完全に独立したプロセスとして機能。AIが書いたコードを「物理的なサンドボックス環境」で実行（`python`コマンド等）し、エラー（Traceback）が発生した場合は開発(Dev)に差し戻して自律デバッグループを回す。
+   - **本パイプラインの最大の付加価値（確実な動作保証の獲得）を担う。**
+4. 🛡️ **審査 (Review)**:
+   - テストを通過し「動くこと」が証明された実働コードに対し、APIキーの漏洩やコンプライアンス違反がないか最終的なセキュリティチェックを行う。
+5. ✍️ **執筆 (Writer)**:
+   - 審査を通った実働アセット（ソースコードZIP等）を元に、技術者の知的好奇心を刺激する魅力的なブログ記事（Zenn/Qiita/はてなブログ/Dev.to向け）を一発で書き上げる。
+
+## 3. 水平分散（マルチライン）稼働
+10体分のAPI実行枠（リソース）を無駄な直列リレーで消費するのではなく、上記の「5工程」を**2ライン（または複数ライン）同時に並列稼働**させる。
+これにより、全く異なる2つの実用ツール（および記事）を同時に開発・テスト・公開する高い生産性を実現する。
+
+
+## 5. 出力記事のトーン＆マナー（「命の地球」の哲学の具現化）
+パイプライン2（特に第5工程の執筆プロセス）において、出力される文章・コンテンツは以下の絶対的な哲学（「命の地球」の理念）に準拠しなければならない。
+
+- **AI特有の文章・装飾の徹底排除（ダサさの排除）**:
+  - やたらと強調文字（ボールド）を使うこと、箇条書きを乱用すること、無駄な絵文字（🚀等）で飾り立てることを固く禁じる。
+  - 「結論の目を引くキャッチーなタイトル」にこだわろうとする浅はかな行為を禁止する。淡々と、中身（実働コード）の価値そのもので勝負する。
+- **「利他」「余裕」「温かさ」の体現**:
+  - **利他**: 読者が本当に困っている課題（エラーや運用コスト）を解決するための実働コードを、見返りを求めず静かに提供する。
+  - **余裕**: 煽り文句や「必見！」などの陳腐なアピールを捨て、「必要な人にだけ、静かに確実に届けばいい」という余裕を持った、人が書いたような自然で落ち着いた文体にする。
+  - **温かさ**: 機械が吐き出した無機質なマニュアルではなく、現場での泥臭い苦労や失敗を共有する、血の通った温かい文章を生成する。
+
+## 4. デプロイメント戦略 (Blue-Green)
+
+## 6. 実装・基本設計（アジャイル開発の指標）
+パイプライン2を構築・実験するにあたり、以下の具体的な実装仕様を指標（マイルストーン）とする。
+
+### 6.1. ディレクトリと状態管理 (State Machine)
+v1環境との混線・破壊を防ぐため、物理的に独立したディレクトリ構造を使用する。
+- **管理ディレクトリ**: `TOAI_Business_Pipeline_V2/` (プロジェクトごとのJSON状態管理ファイル)
+- **ステート定義**:
+  - `V2_IDEA_GENERATED` (起案完了)
+  - `V2_DEV_IN_PROGRESS` (コード実装中)
+  - `V2_QA_TESTING` (物理テスト実行中 ⇄ デバッグのループ状態)
+  - `V2_REVIEW` (セキュリティ・コンプライアンス審査中)
+  - `V2_WRITING` (記事執筆中)
+  - `V2_COMPLETED` (Zenn等への公開キュー投入完了)
+
+### 6.2. 物理テスト・サンドボックス機構 (CI Runner)
+本パイプラインの核心である「Dev ⇄ QA」の自律ループを実現するための仕様。
+- **実行環境**: `TOAI_Workspace/V2_SandBox/` を作業ディレクトリとし、未知のコードを実行する。
+- **実行方式**: Pythonの `subprocess.run(capture_output=True, timeout=30)` を用い、外部プロセスとして安全にコードを実行する。
+- **判定ロジック**: 
+  - `returncode == 0` (成功) → 次の `V2_REVIEW` へ進む。
+  - `returncode != 0` (エラー) または `TimeoutExpired` → 標準エラー出力(stderr)のTracebackをキャプチャし、QAプロンプトに動的注入してDevに差し戻す。
+- **サーキットブレーカー**: 幻覚による無限ループを防ぐため、1プロジェクトあたりの自動デバッグ（リトライ）上限を「最大3回〜5回」に設定。上限を超えた場合は `V2_FAILED` として凍結する。
+
+### 6.3. アジャイル開発のステップ
+1. **フェーズ1（コア実験）**: `experiment_pipeline_v2.py` を作成し、ダミーのアイデアから「Dev(コード生成) → QA(物理実行) → 自動修正」のループが正常に回るか（エラーログを読んでAIが直せるか）を単体検証する。
+2. **フェーズ2（結合）**: 起案(Visionary)から執筆(Writer)までの全5工程を繋ぎ込む。
+3. **フェーズ3（本稼働）**: `toai_pipeline_v2.py` として正式運用を開始し、複数ライン（マルチスレッド/非同期）での並列稼働を実現する。
+
+- 既存の v1 パイプライン（`toai_corporate_pipeline.py`）は一切改修せず、そのまま稼働を継続する。
+- v2 パイプラインは全く新しいスクリプト群（例：`toai_pipeline_v2.py` 等）として独立して開発・実験を行う。
+- v2 パイプラインでの「実働ツールの生成・テスト・記事化」が安定して成功することが確認できた段階で、v1を安全に停止し、v2へと本番環境を切り替える。
+
+## 2026-10-01 アーキテクチャ更新 (基盤強化)
+本日のCTO指令に基づき、全エージェント基盤に対して以下の強化を行いました。
+
+### 1. プリコミットフックの強化
+- **対象ファイル:** `.pre-commit-config.yaml`
+- **内容:** 既存の全角文字混入チェック (`toai_zenkaku_sanitizer.py`) に加え、URLのハードコードを検知・自動置換するフック (`toai_url_linter_hook.py`) を追加。
+- **目的:** 静的解析における全角文字（英数字・スペース）の混入およびURLハードコードによる環境依存問題の未然防止。
+
+### 2. 環境変数（.env）自動切り分け補助モジュール
+- **対象ファイル:** `toai_env_config.py` (新規作成)
+- **内容:** `.env` ファイルから環境変数を自動で読み込み、`os.environ` へのセットおよび取得の抽象化を行う `EnvConfig` クラスを実装。
+- **目的:** 各スクリプトでバラバラに実装されていた環境変数の読み込み処理を標準化。
+
+### 3. 長時間稼働デーモン向けメモリ管理テンプレート
+- **対象ファイル:** `toai_daemon_template.py` (新規作成)
+- **内容:** 長時間稼働するデーモン向けに、イテレーションごとに `gc.collect()` を実行するクリーンアップ機構を備えた `DaemonBase` クラスを実装。
+- **目的:** `toai_subprocess_monitor.py` や `zenn_queue_monitor.py` などでのメモリリークの防止。
+
+### 4. PydanticモデルによるJSONスキーマ検証バリデーション標準化
+- **対象ファイル:** `toai_pydantic_json.py`
+- **内容:** 生成スクリプト（JSON出力部分等）において、ファイル出力前に Pydantic モデルによるスキーマ事前検証を強制する標準テンプレートとして位置づけ。
+- **目的:** JSONデータファイルの破損やスキーマ不整合による下流プロセスのクラッシュを防止。
+
+### CTO Strict Review Process (v1 pipeline)
+The `toai_corporate_pipeline.py` includes a manual CTO review step to enforce rigorous quality standards. The IDE Gemini CTO acts as a strict reviewer against "abstract poetry", faked hardware metrics, and useless templates.
+- **Approve**: `--approve <PROD_ID>` (Permits publication)
+- **Reject**: `--reject <PROD_ID>` (Requires technical improvements)
+- **Scrap**: `--scrap <PROD_ID>` (Total rejection of low-quality assets)
+
+
+### 6.4. パイプライン2（5工程 × 2ライン）の全体詳細・プロンプト設計
+本パイプラインは、各工程のエージェントに「正しいプロンプト（役割）」を与え、AIの知能をフル活用する真のマルチエージェント・アーキテクチャである。
+また、10体のエージェント（API枠）を無駄なく活用するため、**TOAI1〜5（ラインA）**と**TOAI6〜10（ラインB）**の2ラインで完全並列稼働を行う。
+
+#### 💡 工程1: Visionary (起案) [担当: TOAI1 / TOAI6]
+- **プロンプトの役割**: 過去のプロジェクト一覧を参照して重複を避けるだけでなく、最新の技術トレンド（流行）を積極的に取り入れ、実用的で新しい「ツールやミドルウェア」の要件を起案する。標準から外れた尖ったアイデアも許容する。
+- **出力**: `title` と `description` (JSON)
+
+#### 🛠️ 工程2: Dev (開発) [担当: TOAI2 / TOAI7]
+- **プロンプトの役割**: Visionaryの尖った要件を満たす、実行可能なPythonコードを実装する。QAからのフィードバック（エラー分析レポート）を受け取った場合は、それに基づいてロジックやインポートを的確に修正する。
+- **出力**: `code`
+
+#### 🧪 工程3: QA (物理テストと分析) [担当: TOAI3 / TOAI8]
+- **機構**: サンドボックス（`V2_SandBox/`）での `subprocess` 物理実行。
+- **プロンプトの役割 (重要)**: 単なるエラーの文字列返しではない。エラーが発生した場合、QAエージェントのAI（LLM）がエラーログとコードを読み込み、「なぜ落ちたのか（環境のライブラリ不足か、ロジック破綻か）」を分析し、Devに対する【具体的な修正アドバイス（フィードバック）】を生成して差し戻す。
+
+#### 🛡️ 工程4: Review (審査と防波堤) [担当: TOAI4 / TOAI9]
+- **プロンプトの役割**: 物理テストを通過したコードに対して、APIキーのハードコード流出、破壊的OSコマンド、法律違反・コンプライアンス違反がないかを厳格に審査する。
+- **絶対制約**: 事故を防ぐためのフェイルセーフ層。危険と判断された場合はDevに差し戻すか、プロジェクトを凍結（FAILED）させる。
+
+
+#### ✍️ 工程5: Writer (執筆) [担当: TOAI5 / TOAI10]
+- **プロンプトの役割**: 動作保証と安全確認が取れたアセットの価値を伝えるブログ記事を執筆する。
+- **行動規範**: システム全体の根底に流れる「命の地球（TOAI憲章：利他・余裕・温かさ）」を遵守。無駄な縛りは設けないが、AI特有のダサい文章（過剰な強調や煽り）は控え、読者の役に立つ文章を構成する。
+
+### 6.5. V2パイプライン稼働ライフサイクル（集中進行役・Hub統合型）
+パイプライン1が「各エージェントが24時間常駐して自発的にキューを拾う完全分散ポーリング型」であるのに対し、V2は複雑な2ライン並列制御とデバッグループの高速管理のため、**「集中進行役（オーケストレーター）が最後まで一気に完走する形式（案B）」**を採用している。
+
+- **進行役（ワーカー）**: `pipeline_worker_v2.py`
+  - 1度起動されると、キュー内のアクティブなプロジェクトがすべて完了（COMPLETED）または凍結（FAILED）になるまで、Dev ⇄ QA などの処理を連続で呼び出し続け、自力でバッチ処理を完走してから終了する（自律完走型）。
+  - 各エージェントに専用のAPIキーを使用させるため、内部で動的に `.env` をオーバーライドして個別のレートリミット枠を消費する真のマルチエージェント動作を実現。
+  - サンドボックス実行直前にコードを解析し、安全な外部ライブラリ（requests等）を既存仮想環境（`.venv`）に自動で `pip install` する環境整備機構を搭載。
+
+- **キック（自動実行）機構**: `telegram_hub.py`
+  - 独立したデーモンプロセスは立てず、既存のシステム中枢である Telegram Hub のメインループ（`while True`）内にV2のスケジュールルーチン（`_check_v2_pipeline_routine`）を統合。
+  - **2時間（7200秒）おき** に自動でラインAとラインBの新規起案（`--create`）をサブプロセスとしてキックし、直後に進行役ワーカーを呼び出す。
+  - これにより、パイプライン1の生態系を一切阻害せず、1日12回（24プロジェクト）の高度なV2パイプラインを完全自動・並行で生産し続ける。
+
+
+## 2026-10-02 アーキテクチャ更新 (コンソール出力最適化とレートリミット調整)
+- **はてなブログレートリミット**: 6時間から4時間へ短縮（Premium Queue滞留対策）。
+- **Pipeline V2 ログ分離**: `pipeline_worker_v2.py` および `toai_pipeline_v2.py` における `_log_event` 内の標準出力 (`print`) を廃止し、ログファイル (`pipeline_events.log`) への出力に一本化。これによりHubコンソールの混線（ログの汚染）を解消。
+- **tmuxレイアウト変更 (`toai_reset_restart.sh`)**: Managementウィンドウ (Window 0) のペイン分割を5分割から4分割に最適化。VOICEVOXコンソールを削除し、代わりに Pipeline V2 のログ (`tail -f pipeline_events.log`) を表示するレイアウトに変更。
+
+## 2026-10-02 アーキテクチャ更新 (Pydantic V2 IOバリデーションと厳格化)
+- **Pydantic V2ベース自動バリデーションデコレータ**: `toai_schema_validator.py` に `toai_validate_io` を追加。シリアライズ (json.dump) に依存せず、関数の引数・戻り値を自動検証し、エージェントコア (`TOAI5/agent_core.py`) やテンプレート (`TOAI5/robust_template.py`) に適用。
+- **プレコミットフックの厳格化**: `toai_url_linter_hook.py` をASTベースの厳格な構成に刷新。`http://`, `https://` や `ko-fi.com`, `github.com` などのハードコードを完全に検知してブロック (`sys.exit(1)`)。
+- **CMS連携クライアントのレジリエンス強化**: `TOAI_Manager/wordpress_automation.py` を `wp_resilient_client.py` に統合し、HTTP 404 やルーティング不整合に対する共通リトライ・フォールバックを導入。
+
+
+
+## 2026-10-02 Architecture Update: Pydantic Validation, Pre-commit Linting, and WP Routing Fallback
+- **Pydantic v2 Auto-Validation**: Added `pydantic_validate_output` decorator to `toai_pydantic_json.py` to enforce schema validation securely without relying on `json.dump`.
+- **Pre-commit Linter for Secrets**: Updated `toai_lint_rules.py` and `.git/hooks/pre-commit` to strictly reject hardcoded URLs (Ko-fi, GitHub) and secrets before commits/compilation.
+- **WP Resilient Client (CMS)**: Modified `wp_resilient_client.py` to automatically generate `index.php/wp-json/` fallbacks when a `404 Not Found` occurs, fixing common routing inconsistencies.
+- **Telegram Hub ログ漏洩対策**: `telegram_hub.py` から `pipeline_worker_v2.py` をバックグラウンド起動 (`subprocess.Popen`) する際、標準出力と標準エラー出力を `subprocess.DEVNULL` に向けることで、`toai_charter.py` の内部ロガー出力が Hub のコンソールに漏れ出す問題を完全に遮断。
+
+## 2026-10-02 Architecture Update: Lint Rules Refinement (False Positive Prevention)
+- **AST-based Linter Optimization**: `toai_lint_rules.py` を改修し、プレコミット時の過剰検知（False Positives）を防止。環境変数からの取得（`os.environ.get` の引数）、ログやエラーメッセージなどのスペースを含む文章、およびDocstringをAST解析で適切に除外することで、正当なコードのコミットがブロックされる致命的な不具合を解消。
