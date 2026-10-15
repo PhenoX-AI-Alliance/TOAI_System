@@ -137,8 +137,8 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
     padding-bottom: 6px;
 }
 .quota-keys-container {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 12px;
 }
 .quota-agent-card {
@@ -239,22 +239,22 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
     <div class="quota-timers-grid">
         <div class="quota-timer-box">
             <span class="q-label">🌐 Cloudflare / OpenRouter</span>
-            <span class="q-val">19時間51分 (09:00 JST)</span>
+            <span class="q-val">19時間42分 (09:00 JST)</span>
             <span class="q-desc">UTC 00:00 (JST 09:00) 全枠全回復</span>
         </div>
         <div class="quota-timer-box">
             <span class="q-label">💎 Google Gemini API</span>
-            <span class="q-val">02時間51分 (16:00 JST)</span>
+            <span class="q-val">02時間42分 (16:00 JST)</span>
             <span class="q-desc">PST 00:00 (JST 16:00) RPD日次リセット</span>
         </div>
         <div class="quota-timer-box">
             <span class="q-label">💰 Gumroad Products</span>
-            <span class="q-val">10時間51分 (24:00 JST)</span>
+            <span class="q-val">10時間42分 (24:00 JST)</span>
             <span class="q-desc">JST 24:00 (1日10件枠リセット)</span>
         </div>
         <div class="quota-timer-box">
             <span class="q-label">📗 Qiita 24h制限ステータス</span>
-            <span class="q-val" style="color: #ffaa00;">⏳ 制限待機中 (あと 23時間29分)</span>
+            <span class="q-val" style="color: #ffaa00;">⏳ 制限待機中 (あと 23時間20分)</span>
             <span class="q-desc">24時間ローリング投稿間隔ガード</span>
         </div>
     </div>
@@ -265,28 +265,6 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
                 <h3 class="quota-subhead">🔑 Gemini API: キー別（機体別）RPDメーター</h3>
                 <div class="quota-keys-container">
                     
-            <div class="quota-agent-card">
-                <div class="q-agent-header">
-                    <strong>Pipeline</strong>
-                    <span class="q-key-tag">Key: ...41ag</span>
-                    
-                </div>
-                <div class="q-meter-group">
-                    <div class="q-meter-row">
-                        <span class="q-m-name">Flash-lite (500 RPD)</span>
-                        <span class="q-m-stat">1 / 500 (499 残)</span>
-                    </div>
-                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 0%; background: #00f2ff;"></div></div>
-                </div>
-                <div class="q-meter-group">
-                    <div class="q-meter-row">
-                        <span class="q-m-name">Flash 標準 (20 RPD)</span>
-                        <span class="q-m-stat" style="color: #00ff88;">0 / 20 (20 残)</span>
-                    </div>
-                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 0%; background: #00ff88;"></div></div>
-                </div>
-            </div>
-            
             <div class="quota-agent-card">
                 <div class="q-agent-header">
                     <strong>TOAI1</strong>
@@ -318,7 +296,51 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
                 <div class="q-meter-group">
                     <div class="q-meter-row">
                         <span class="q-m-name">Flash-lite (500 RPD)</span>
-                        <span class="q-m-stat">3 / 500 (497 残)</span>
+                        <span class="q-m-stat">10 / 500 (490 残)</span>
+                    </div>
+                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 2%; background: #00f2ff;"></div></div>
+                </div>
+                <div class="q-meter-group">
+                    <div class="q-meter-row">
+                        <span class="q-m-name">Flash 標準 (20 RPD)</span>
+                        <span class="q-m-stat" style="color: #00ff88;">0 / 20 (20 残)</span>
+                    </div>
+                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 0%; background: #00ff88;"></div></div>
+                </div>
+            </div>
+            
+            <div class="quota-agent-card">
+                <div class="q-agent-header">
+                    <strong>TOAI3</strong>
+                    <span class="q-key-tag">Key: ...RBgw</span>
+                    
+                </div>
+                <div class="q-meter-group">
+                    <div class="q-meter-row">
+                        <span class="q-m-name">Flash-lite (500 RPD)</span>
+                        <span class="q-m-stat">1 / 500 (499 残)</span>
+                    </div>
+                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 0%; background: #00f2ff;"></div></div>
+                </div>
+                <div class="q-meter-group">
+                    <div class="q-meter-row">
+                        <span class="q-m-name">Flash 標準 (20 RPD)</span>
+                        <span class="q-m-stat" style="color: #00ff88;">0 / 20 (20 残)</span>
+                    </div>
+                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 0%; background: #00ff88;"></div></div>
+                </div>
+            </div>
+            
+            <div class="quota-agent-card">
+                <div class="q-agent-header">
+                    <strong>TOAI4</strong>
+                    <span class="q-key-tag">Key: ...57hw</span>
+                    
+                </div>
+                <div class="q-meter-group">
+                    <div class="q-meter-row">
+                        <span class="q-m-name">Flash-lite (500 RPD)</span>
+                        <span class="q-m-stat">1 / 500 (499 残)</span>
                     </div>
                     <div class="q-bar-bg"><div class="q-bar-fill" style="width: 0%; background: #00f2ff;"></div></div>
                 </div>
@@ -340,7 +362,7 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
                 <div class="q-meter-group">
                     <div class="q-meter-row">
                         <span class="q-m-name">Flash-lite (500 RPD)</span>
-                        <span class="q-m-stat">1 / 500 (499 残)</span>
+                        <span class="q-m-stat">2 / 500 (498 残)</span>
                     </div>
                     <div class="q-bar-bg"><div class="q-bar-fill" style="width: 0%; background: #00f2ff;"></div></div>
                 </div>
@@ -357,6 +379,28 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
                 <div class="q-agent-header">
                     <strong>TOAI6</strong>
                     <span class="q-key-tag">Key: ...Eg6g</span>
+                    
+                </div>
+                <div class="q-meter-group">
+                    <div class="q-meter-row">
+                        <span class="q-m-name">Flash-lite (500 RPD)</span>
+                        <span class="q-m-stat">3 / 500 (497 残)</span>
+                    </div>
+                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 0%; background: #00f2ff;"></div></div>
+                </div>
+                <div class="q-meter-group">
+                    <div class="q-meter-row">
+                        <span class="q-m-name">Flash 標準 (20 RPD)</span>
+                        <span class="q-m-stat" style="color: #00ff88;">0 / 20 (20 残)</span>
+                    </div>
+                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 0%; background: #00ff88;"></div></div>
+                </div>
+            </div>
+            
+            <div class="quota-agent-card">
+                <div class="q-agent-header">
+                    <strong>TOAI7</strong>
+                    <span class="q-key-tag">Key: ...iLhg</span>
                     
                 </div>
                 <div class="q-meter-group">
@@ -406,7 +450,51 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
                 <div class="q-meter-group">
                     <div class="q-meter-row">
                         <span class="q-m-name">Flash-lite (500 RPD)</span>
-                        <span class="q-m-stat">2 / 500 (498 残)</span>
+                        <span class="q-m-stat">3 / 500 (497 残)</span>
+                    </div>
+                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 0%; background: #00f2ff;"></div></div>
+                </div>
+                <div class="q-meter-group">
+                    <div class="q-meter-row">
+                        <span class="q-m-name">Flash 標準 (20 RPD)</span>
+                        <span class="q-m-stat" style="color: #00ff88;">0 / 20 (20 残)</span>
+                    </div>
+                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 0%; background: #00ff88;"></div></div>
+                </div>
+            </div>
+            
+            <div class="quota-agent-card">
+                <div class="q-agent-header">
+                    <strong>TOAI10</strong>
+                    <span class="q-key-tag">Key: ...snIg</span>
+                    
+                </div>
+                <div class="q-meter-group">
+                    <div class="q-meter-row">
+                        <span class="q-m-name">Flash-lite (500 RPD)</span>
+                        <span class="q-m-stat">1 / 500 (499 残)</span>
+                    </div>
+                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 0%; background: #00f2ff;"></div></div>
+                </div>
+                <div class="q-meter-group">
+                    <div class="q-meter-row">
+                        <span class="q-m-name">Flash 標準 (20 RPD)</span>
+                        <span class="q-m-stat" style="color: #00ff88;">0 / 20 (20 残)</span>
+                    </div>
+                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 0%; background: #00ff88;"></div></div>
+                </div>
+            </div>
+            
+            <div class="quota-agent-card">
+                <div class="q-agent-header">
+                    <strong>Pipeline</strong>
+                    <span class="q-key-tag">Key: ...41ag</span>
+                    
+                </div>
+                <div class="q-meter-group">
+                    <div class="q-meter-row">
+                        <span class="q-m-name">Flash-lite (500 RPD)</span>
+                        <span class="q-m-stat">1 / 500 (499 残)</span>
                     </div>
                     <div class="q-bar-bg"><div class="q-bar-fill" style="width: 0%; background: #00f2ff;"></div></div>
                 </div>
@@ -545,9 +633,9 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
         
             
         <tr>
-            <td><strong>🐙 GitHub Pushes (Telepath/Report)</strong></td>
-            <td style="font-weight: 600; ">0</td>
-            <td style="color: #a0aec0; font-size: 0.85em;"></td>
+            <td><strong>🐙 GitHub Pushes (全Push / コミット)</strong></td>
+            <td style="font-weight: 600; ">42 <span style='font-size:0.8em; color:#a0aec0;'> (Telepath: 42)</span></td>
+            <td style="color: #a0aec0; font-size: 0.85em;">2026-10-15 13:17:11</td>
         </tr>
         
         </tbody>
