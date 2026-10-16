@@ -242,37 +242,38 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
     <div class="quota-timers-grid">
         <div class="quota-timer-box">
             <span class="q-label">🌐 Cloudflare / OpenRouter</span>
-            <span class="q-val">20時間49分 (09:00 JST)</span>
-            <span class="q-desc">UTC 00:00 (JST 09:00) 全枠全回復</span>
+            <span class="q-val">20時間21分 (09:00 JST)</span>
+            <span class="q-desc">UTC 00:00 (JST 09:00) 全枠全回復・カウンター同期</span>
         </div>
         <div class="quota-timer-box">
             <span class="q-label">💎 Google Gemini API</span>
-            <span class="q-val">03時間49分 (16:00 JST)</span>
-            <span class="q-desc">PST 00:00 (JST 16:00) RPD日次リセット</span>
+            <span class="q-val">03時間21分 (16:00 JST)</span>
+            <span class="q-desc">PST 00:00 (JST 16:00) RPD日次リセット同期</span>
         </div>
         <div class="quota-timer-box">
-            <span class="q-label">💰 Gumroad Products</span>
-            <span class="q-val">11時間49分 (24:00 JST)</span>
-            <span class="q-desc">JST 24:00 (1日10件枠リセット)</span>
+            <span class="q-label">💰 日次枠 (Gumroad / Ollama / 公開数)</span>
+            <span class="q-val">11時間21分 (24:00 JST)</span>
+            <span class="q-desc">JST 24:00 (00:00) 日次カウンターリセット</span>
         </div>
         <div class="quota-timer-box">
-            <span class="q-label">📗 記事投稿 24h制限ガード</span>
-            <div style="display: flex; flex-direction: column; gap: 3px; margin: 4px 0;">
-                <div style="font-size: 0.95em; font-weight: bold; color: #ffaa00;">
-                    Qiita: ⏳ 待機中 (あと 11h20m)
-                </div>
-                <div style="font-size: 0.95em; font-weight: bold; color: #ffaa00;">
-                    Zenn: ⏳ 待機中 (あと 03h45m)
-                </div>
+            <span class="q-label">📗 パブリッシャー投稿間隔ガード</span>
+            <div style="display: grid; grid-template-columns: 1fr; gap: 3px; margin: 4px 0; font-size: 0.85em;">
+                <div style="font-weight: bold; color: #ffaa00;">Qiita (24h): ⏳ 待機中 (あと 10h52m)</div>
+                <div style="font-weight: bold; color: #ffaa00;">Zenn (24h): ⏳ 待機中 (あと 03h17m)</div>
+                <div style="font-weight: bold; color: #ffaa00;">Dev.to (6h): ⏳ 待機中 (あと 00h27m)</div>
+                <div style="font-weight: bold; color: #ffaa00;">はてな (4h): ⏳ 待機中 (あと 03h10m)</div>
             </div>
-            <span class="q-desc">24時間ローリング投稿間隔ガード</span>
+            <span class="q-desc">各プラットフォームのローリング制限リアルタイム判定</span>
         </div>
     </div>
     
 
         <div class="quota-dual-grid">
             <div class="quota-col">
-                <h3 class="quota-subhead">🔑 Gemini API: キー別（機体別）RPDメーター</h3>
+                <h3 class="quota-subhead">
+                    🔑 Gemini API: キー別（機体別）RPDメーター
+                    <span style="float:right; font-size:0.75em; color:#00f2ff;">🔄 JST 16:00 (PST 00:00) リセット同期</span>
+                </h3>
                 <div class="quota-keys-container">
                     
             <div class="quota-agent-card">
@@ -284,9 +285,9 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
                 <div class="q-meter-group">
                     <div class="q-meter-row">
                         <span class="q-m-name">Flash-lite (500 RPD)</span>
-                        <span class="q-m-stat">39 / 500 (461 残)</span>
+                        <span class="q-m-stat">41 / 500 (459 残)</span>
                     </div>
-                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 7%; background: #00f2ff;"></div></div>
+                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 8%; background: #00f2ff;"></div></div>
                 </div>
                 <div class="q-meter-group">
                     <div class="q-meter-row">
@@ -306,7 +307,7 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
                 <div class="q-meter-group">
                     <div class="q-meter-row">
                         <span class="q-m-name">Flash-lite (500 RPD)</span>
-                        <span class="q-m-stat">35 / 500 (465 残)</span>
+                        <span class="q-m-stat">37 / 500 (463 残)</span>
                     </div>
                     <div class="q-bar-bg"><div class="q-bar-fill" style="width: 7%; background: #00f2ff;"></div></div>
                 </div>
@@ -394,9 +395,9 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
                 <div class="q-meter-group">
                     <div class="q-meter-row">
                         <span class="q-m-name">Flash-lite (500 RPD)</span>
-                        <span class="q-m-stat">78 / 500 (422 残)</span>
+                        <span class="q-m-stat">80 / 500 (420 残)</span>
                     </div>
-                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 15%; background: #00f2ff;"></div></div>
+                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 16%; background: #00f2ff;"></div></div>
                 </div>
                 <div class="q-meter-group">
                     <div class="q-meter-row">
@@ -460,7 +461,7 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
                 <div class="q-meter-group">
                     <div class="q-meter-row">
                         <span class="q-m-name">Flash-lite (500 RPD)</span>
-                        <span class="q-m-stat">41 / 500 (459 残)</span>
+                        <span class="q-m-stat">42 / 500 (458 残)</span>
                     </div>
                     <div class="q-bar-bg"><div class="q-bar-fill" style="width: 8%; background: #00f2ff;"></div></div>
                 </div>
@@ -482,53 +483,9 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
                 <div class="q-meter-group">
                     <div class="q-meter-row">
                         <span class="q-m-name">Flash-lite (500 RPD)</span>
-                        <span class="q-m-stat">24 / 500 (476 残)</span>
+                        <span class="q-m-stat">26 / 500 (474 残)</span>
                     </div>
-                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 4%; background: #00f2ff;"></div></div>
-                </div>
-                <div class="q-meter-group">
-                    <div class="q-meter-row">
-                        <span class="q-m-name">Flash 標準 (20 RPD)</span>
-                        <span class="q-m-stat" style="color: #00ff88;">0 / 20 (20 残)</span>
-                    </div>
-                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 0%; background: #00ff88;"></div></div>
-                </div>
-            </div>
-            
-            <div class="quota-agent-card">
-                <div class="q-agent-header">
-                    <strong>TOAI_Bard</strong>
-                    <span class="q-key-tag">Key: ...41ag</span>
-                    
-                </div>
-                <div class="q-meter-group">
-                    <div class="q-meter-row">
-                        <span class="q-m-name">Flash-lite (500 RPD)</span>
-                        <span class="q-m-stat">213 / 500 (287 残)</span>
-                    </div>
-                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 42%; background: #00f2ff;"></div></div>
-                </div>
-                <div class="q-meter-group">
-                    <div class="q-meter-row">
-                        <span class="q-m-name">Flash 標準 (20 RPD)</span>
-                        <span class="q-m-stat" style="color: #00ff88;">0 / 20 (20 残)</span>
-                    </div>
-                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 0%; background: #00ff88;"></div></div>
-                </div>
-            </div>
-            
-            <div class="quota-agent-card">
-                <div class="q-agent-header">
-                    <strong>TOAI_Pipeline</strong>
-                    <span class="q-key-tag">Key: ...DBPg</span>
-                    
-                </div>
-                <div class="q-meter-group">
-                    <div class="q-meter-row">
-                        <span class="q-m-name">Flash-lite (500 RPD)</span>
-                        <span class="q-m-stat">118 / 500 (382 残)</span>
-                    </div>
-                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 23%; background: #00f2ff;"></div></div>
+                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 5%; background: #00f2ff;"></div></div>
                 </div>
                 <div class="q-meter-group">
                     <div class="q-meter-row">
@@ -561,113 +518,160 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
                 </div>
             </div>
             
+            <div class="quota-agent-card">
+                <div class="q-agent-header">
+                    <strong>TOAI_Bard</strong>
+                    <span class="q-key-tag">Key: ...41ag</span>
+                    
+                </div>
+                <div class="q-meter-group">
+                    <div class="q-meter-row">
+                        <span class="q-m-name">Flash-lite (500 RPD)</span>
+                        <span class="q-m-stat">216 / 500 (284 残)</span>
+                    </div>
+                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 43%; background: #00f2ff;"></div></div>
+                </div>
+                <div class="q-meter-group">
+                    <div class="q-meter-row">
+                        <span class="q-m-name">Flash 標準 (20 RPD)</span>
+                        <span class="q-m-stat" style="color: #00ff88;">0 / 20 (20 残)</span>
+                    </div>
+                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 0%; background: #00ff88;"></div></div>
+                </div>
+            </div>
+            
+            <div class="quota-agent-card">
+                <div class="q-agent-header">
+                    <strong>TOAI_Pipeline</strong>
+                    <span class="q-key-tag">Key: ...DBPg</span>
+                    
+                </div>
+                <div class="q-meter-group">
+                    <div class="q-meter-row">
+                        <span class="q-m-name">Flash-lite (500 RPD)</span>
+                        <span class="q-m-stat">130 / 500 (370 残)</span>
+                    </div>
+                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 26%; background: #00f2ff;"></div></div>
+                </div>
+                <div class="q-meter-group">
+                    <div class="q-meter-row">
+                        <span class="q-m-name">Flash 標準 (20 RPD)</span>
+                        <span class="q-m-stat" style="color: #00ff88;">0 / 20 (20 残)</span>
+                    </div>
+                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 0%; background: #00ff88;"></div></div>
+                </div>
+            </div>
+            
                 </div>
 
-                <h3 class="quota-subhead" style="margin-top: 25px;">💻 ローカルLLM (Ollama) & 画像AI 稼働実績</h3>
+                <h3 class="quota-subhead" style="margin-top: 25px;">
+                    💻 ローカルLLM (Ollama) & 画像AI 稼働実績
+                    <span style="float:right; font-size:0.75em; color:#a0aec0;">🔄 Ollama: JST 00:00 / CF: JST 09:00 同期</span>
+                </h3>
                 <div class="quota-local-box">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                        <span>🛡️ <strong>TOAI_Bard 巡回・校正:</strong></span>
-                        <span style="color: var(--neon-blue); font-weight: bold;">32 回</span>
+                        <span>🛡️ <strong>TOAI_Bard 巡回・校正 (Ollama):</strong></span>
+                        <span style="color: var(--neon-blue); font-weight: bold;">33 回</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                        <span>📝 <strong>WordPress パブリッシャー要約:</strong></span>
+                        <span>📝 <strong>WordPress パブリッシャー要約 (Ollama):</strong></span>
                         <span style="color: var(--neon-blue); font-weight: bold;">9 回</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                        <span>🔮 <strong>Telepath 創発言語サイクル:</strong></span>
-                        <span style="color: var(--neon-blue); font-weight: bold;">0 回</span>
+                        <span>🔮 <strong>Telepath 創発言語 (Ollamaフォールバック時):</strong></span>
+                        <span style="color: var(--neon-blue); font-weight: bold;">0 回 <span style="font-size:0.8em; color:#718096;">(主系: Gemini Flash-Lite)</span></span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 8px;">
-                        <span>🖥️ <strong>ローカル推論 合計:</strong></span>
-                        <span style="color: #00ff88; font-weight: bold;">41 回 (Zero Cost)</span>
+                        <span>🖥️ <strong>本日ローカル推論 合計 (JST 00:00〜):</strong></span>
+                        <span style="color: #00ff88; font-weight: bold;">42 回 (Zero Cost)</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
-                        <span>🎨 <strong>Cloudflare AI 画像生成:</strong></span>
-                        <span style="color: #ffaa00; font-weight: bold;">4 枚</span>
+                        <span>🎨 <strong>Cloudflare AI 画像生成 (JST 09:00枠リセット後):</strong></span>
+                        <span style="color: #ffaa00; font-weight: bold;">4 枚 <span style="font-size:0.8em; color:#a0aec0;">(本日0時〜累計: 2枚)</span></span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-top: 6px;">
-                        <span>🎨 <strong>AI Horde 画像生成:</strong></span>
+                        <span>🎨 <strong>AI Horde 画像生成 (JST 00:00〜):</strong></span>
                         <span style="color: #a0aec0;">2 枚</span>
                     </div>
                 </div>
             </div>
 
             <div class="quota-col">
-                <h3 class="quota-subhead">🚀 パブリッシャー・全投稿インターバル＆本日実績</h3>
+                <h3 class="quota-subhead">
+                    🚀 パブリッシャー・全投稿インターバル＆本日公開実績
+                    <span style="float:right; font-size:0.75em; color:#00ff88;">✅ Successfully 公開完了のみ計上</span>
+                </h3>
                 
     <table class="quota-table">
         <thead>
-            <tr><th>プラットフォーム</th><th>本日公開・処理数</th><th>最終実行日時</th></tr>
+            <tr>
+                <th>プラットフォーム & 制限仕様</th>
+                <th>本日公開完了数 <span style="font-size:0.75em; font-weight:normal; color:#718096;">(JST 00:00リセット)</span></th>
+                <th>最終公開成功日時</th>
+            </tr>
         </thead>
         <tbody>
             
         <tr>
-            <td><strong>💰 Gumroad (最大10件/日)</strong></td>
-            <td style="font-weight: 600; ">5 / 10</td>
-            <td style="color: #a0aec0; font-size: 0.85em;">2026-10-16 11:46:43</td>
+            <td><strong>💰 Gumroad (最大10件/日)</strong><div style='font-size:0.78em; margin-top:2px;'><span style='color:#718096;'>日次10件上限 (JST 00:00リセット)</span></div></td>
+            <td style="font-weight: 700; font-size: 1.05em; color: #00f2ff;">5 / 10</td>
+            <td style="color: #a0aec0; font-size: 0.85em; font-family: monospace;">2026-10-16 11:46:43</td>
         </tr>
         
             
         <tr>
-            <td><strong>📷 Instagram Reels (最大25件/日)</strong></td>
-            <td style="font-weight: 600; ">11 / 25</td>
-            <td style="color: #a0aec0; font-size: 0.85em;">2026-10-16 12:07:25</td>
+            <td><strong>📷 Instagram (WP連動 + Reels合算)</strong><div style='font-size:0.78em; margin-top:2px;'><span style='color:#00ff88;'>🟢 制限なし (Graph API 25件/日枠)</span></div></td>
+            <td style="font-weight: 700; font-size: 1.05em; color: #00f2ff;">11 / 25 <span style='font-size:0.8em; color:#a0aec0;'>(WP: 9, Reels: 1)</span></td>
+            <td style="color: #a0aec0; font-size: 0.85em; font-family: monospace;">2026-10-16 12:06:48</td>
         </tr>
         
             
         <tr>
-            <td><strong>🎥 YouTube (1日1膳日記 / Magi動画)</strong></td>
-            <td style="font-weight: 600; ">3 / 6</td>
-            <td style="color: #a0aec0; font-size: 0.85em;">2026-10-16 12:08:02</td>
+            <td><strong>🎥 YouTube (1日1膳日記 / Magi動画)</strong><div style='font-size:0.78em; margin-top:2px;'><span style='color:#718096;'>10,000pt/日枠 (約6本相当)</span></div></td>
+            <td style="font-weight: 700; font-size: 1.05em; color: #00f2ff;">3 / 6</td>
+            <td style="color: #a0aec0; font-size: 0.85em; font-family: monospace;">2026-10-16 12:08:02</td>
         </tr>
         
             
         <tr>
-            <td><strong>📗 Qiita (24h制限)</strong></td>
-            <td style="font-weight: 600; ">0</td>
-            <td style="color: #a0aec0; font-size: 0.85em;">2026-10-15 23:30:28</td>
+            <td><strong>📗 Qiita (24時間制限)</strong><div style='font-size:0.78em; margin-top:2px;'><span style='color:#ffaa00;'>⏳ 待機中 (あと 10h52m)</span></div></td>
+            <td style="font-weight: 700; font-size: 1.05em; color: #00f2ff;">0 / 1</td>
+            <td style="color: #a0aec0; font-size: 0.85em; font-family: monospace;">2026-10-15 23:30:28</td>
         </tr>
         
             
         <tr>
-            <td><strong>📘 Zenn</strong></td>
-            <td style="font-weight: 600; ">0</td>
-            <td style="color: #a0aec0; font-size: 0.85em;">2026-10-15 15:55:31</td>
+            <td><strong>📘 Zenn (24時間制限)</strong><div style='font-size:0.78em; margin-top:2px;'><span style='color:#ffaa00;'>⏳ 待機中 (あと 03h17m)</span></div></td>
+            <td style="font-weight: 700; font-size: 1.05em; color: #00f2ff;">0 / 1</td>
+            <td style="color: #a0aec0; font-size: 0.85em; font-family: monospace;">2026-10-15 15:55:31</td>
         </tr>
         
             
         <tr>
-            <td><strong>💻 Dev.to</strong></td>
-            <td style="font-weight: 600; ">2</td>
-            <td style="color: #a0aec0; font-size: 0.85em;">2026-10-16 07:05:46</td>
+            <td><strong>💻 Dev.to (6時間制限)</strong><div style='font-size:0.78em; margin-top:2px;'><span style='color:#ffaa00;'>⏳ 待機中 (あと 00h27m)</span></div></td>
+            <td style="font-weight: 700; font-size: 1.05em; color: #00f2ff;">2 / 4</td>
+            <td style="color: #a0aec0; font-size: 0.85em; font-family: monospace;">2026-10-16 07:05:46</td>
         </tr>
         
             
         <tr>
-            <td><strong>📝 はてなブログ</strong></td>
-            <td style="font-weight: 600; ">3</td>
-            <td style="color: #a0aec0; font-size: 0.85em;">2026-10-16 11:48:50</td>
+            <td><strong>📝 はてなブログ (4時間制限)</strong><div style='font-size:0.78em; margin-top:2px;'><span style='color:#ffaa00;'>⏳ 待機中 (あと 03h10m)</span></div></td>
+            <td style="font-weight: 700; font-size: 1.05em; color: #00f2ff;">3 / 6</td>
+            <td style="color: #a0aec0; font-size: 0.85em; font-family: monospace;">2026-10-16 11:48:50</td>
         </tr>
         
             
         <tr>
-            <td><strong>🌐 WordPress</strong></td>
-            <td style="font-weight: 600; ">10</td>
-            <td style="color: #a0aec0; font-size: 0.85em;">2026-10-16 12:07:26</td>
+            <td><strong>🌐 WordPress (制限なし)</strong><div style='font-size:0.78em; margin-top:2px;'><span style='color:#00ff88;'>🟢 常時公開可 (インターバル制限なし)</span></div></td>
+            <td style="font-weight: 700; font-size: 1.05em; color: #00f2ff;">10</td>
+            <td style="color: #a0aec0; font-size: 0.85em; font-family: monospace;">2026-10-16 12:07:26</td>
         </tr>
         
             
         <tr>
-            <td><strong>🏷️ Hashnode</strong></td>
-            <td style="font-weight: 600; ">0</td>
-            <td style="color: #a0aec0; font-size: 0.85em;">未実行</td>
-        </tr>
-        
-            
-        <tr>
-            <td><strong>🐙 GitHub Pushes (全Push / コミット)</strong></td>
-            <td style="font-weight: 600; ">21 <span style='font-size:0.8em; color:#a0aec0;'> (Telepath: 21)</span></td>
-            <td style="color: #a0aec0; font-size: 0.85em;">2026-10-16 11:37:28</td>
+            <td><strong>🐙 GitHub Pushes (全Push / コミット)</strong><div style='font-size:0.78em; margin-top:2px;'><span style='color:#00ff88;'>🟢 常時Push可 (全リポジトリ合計)</span></div></td>
+            <td style="font-weight: 700; font-size: 1.05em; color: #00f2ff;">22 <span style='font-size:0.8em; color:#a0aec0;'> (Telepath: 22)</span></td>
+            <td style="color: #a0aec0; font-size: 0.85em; font-family: monospace;">2026-10-16 12:15:13</td>
         </tr>
         
         </tbody>
