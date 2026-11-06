@@ -178,6 +178,47 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
     padding: 1px 6px;
     border-radius: 3px;
 }
+.q-badge-wrap {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.q-badge-auth {
+    font-size: 0.75em;
+    background: #e53e3e;
+    color: #fff;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+    box-shadow: 0 0 6px rgba(229, 62, 62, 0.6);
+}
+.q-badge-busy {
+    font-size: 0.75em;
+    background: #dd6b20;
+    color: #fff;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 500;
+}
+.q-badge-other {
+    font-size: 0.75em;
+    background: #4a5568;
+    color: #e2e8f0;
+    padding: 1px 6px;
+    border-radius: 3px;
+}
+.q-legend-bar {
+    display: flex;
+    gap: 12px;
+    font-size: 0.8em;
+    color: #a0aec0;
+    margin-bottom: 10px;
+    padding: 4px 8px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 4px;
+    flex-wrap: wrap;
+}
 .q-meter-group {
     margin-bottom: 8px;
 }
@@ -248,26 +289,26 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
     <div class="quota-timers-grid">
         <div class="quota-timer-box">
             <span class="q-label">🌐 Cloudflare / OpenRouter</span>
-            <span class="q-val">08時間44分 (09:00 JST)</span>
+            <span class="q-val">08時間28分 (09:00 JST)</span>
             <span class="q-desc">UTC 00:00 (JST 09:00) 全枠全回復・カウンター同期</span>
         </div>
         <div class="quota-timer-box">
             <span class="q-label">💎 Google Gemini API</span>
-            <span class="q-val">15時間44分 (16:00 JST)</span>
+            <span class="q-val">15時間28分 (16:00 JST)</span>
             <span class="q-desc">PST 00:00 (JST 16:00) RPD日次リセット同期</span>
         </div>
         <div class="quota-timer-box">
             <span class="q-label">💰 日次枠 (Gumroad / Ollama / 公開数)</span>
-            <span class="q-val">23時間44分 (24:00 JST)</span>
+            <span class="q-val">23時間28分 (24:00 JST)</span>
             <span class="q-desc">JST 24:00 (00:00) 日次カウンターリセット</span>
         </div>
         <div class="quota-timer-box">
             <span class="q-label">📗 パブリッシャー投稿間隔ガード</span>
             <div style="display: grid; grid-template-columns: 1fr; gap: 3px; margin: 4px 0; font-size: 0.85em;">
-                <div style="font-weight: bold; color: #ffaa00;">Qiita (24h): ⏳ 待機中 (あと 12h25m)</div>
-                <div style="font-weight: bold; color: #ffaa00;">Zenn (24h): ⏳ 待機中 (あと 21h38m)</div>
-                <div style="font-weight: bold; color: #00ff88;">Dev.to (6h): 🟢 投稿可能 (6h経過)</div>
-                <div style="font-weight: bold; color: #ffaa00;">はてな (4h): ⏳ 待機中 (あと 02h57m)</div>
+                <div style="font-weight: bold; color: #ffaa00;">Qiita (24h): ⏳ 待機中 (あと 12h10m)</div>
+                <div style="font-weight: bold; color: #ffaa00;">Zenn (24h): ⏳ 待機中 (あと 21h23m)</div>
+                <div style="font-weight: bold; color: #ffaa00;">Dev.to (6h): ⏳ 待機中 (あと 05h49m)</div>
+                <div style="font-weight: bold; color: #ffaa00;">はてな (4h): ⏳ 待機中 (あと 02h42m)</div>
             </div>
             <span class="q-desc">各プラットフォームのローリング制限リアルタイム判定</span>
         </div>
@@ -280,18 +321,26 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
                     🔑 Gemini API: キー別（機体別）RPDメーター
                     <span style="float:right; font-size:0.75em; color:#00f2ff;">🔄 JST 16:00 (PST 00:00) リセット同期</span>
                 </h3>
+                <div class="q-legend-bar">
+                    <span>💡 <strong>エラーバッジ凡例:</strong></span>
+                    <span><span class='q-badge-auth'>🔑 Auth</span> 認証エラー（キー無効・権限不足）</span>
+                    <span><span class='q-badge-busy'>⚡ 503/Busy</span> 一時過負荷（HTTP 503/429・自動リトライ対象）</span>
+                    <span><span class='q-badge-other'>⚠️ Other</span> その他（構文バリデーション等）</span>
+                </div>
                 <div class="quota-keys-container">
                     
             <div class="quota-agent-card">
                 <div class="q-agent-header">
-                    <strong>TOAI1</strong>
-                    <span class="q-key-tag">Key: ...Rhuw</span>
-                    
+                    <div>
+                        <strong>TOAI1</strong>
+                        <span class="q-key-tag">Key: ...Rhuw</span>
+                    </div>
+                    <div class='q-badge-wrap'><span class='q-badge-busy' title='一時過負荷・ビジー（HTTP 503/429）'>⚡ 503/Busy: 34</span></div>
                 </div>
                 <div class="q-meter-group">
                     <div class="q-meter-row">
                         <span class="q-m-name">Flash-lite (500 RPD)</span>
-                        <span class="q-m-stat">27 / 500 (473 残)</span>
+                        <span class="q-m-stat">28 / 500 (472 残)</span>
                     </div>
                     <div class="q-bar-bg"><div class="q-bar-fill" style="width: 5%; background: #00f2ff;"></div></div>
                 </div>
@@ -306,16 +355,18 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
             
             <div class="quota-agent-card">
                 <div class="q-agent-header">
-                    <strong>TOAI2</strong>
-                    <span class="q-key-tag">Key: ...JyHw</span>
-                    <span class='q-badge-err'>Err: 1</span>
+                    <div>
+                        <strong>TOAI2</strong>
+                        <span class="q-key-tag">Key: ...JyHw</span>
+                    </div>
+                    <div class='q-badge-wrap'><span class='q-badge-busy' title='一時過負荷・ビジー（HTTP 503/429）'>⚡ 503/Busy: 59</span></div>
                 </div>
                 <div class="q-meter-group">
                     <div class="q-meter-row">
                         <span class="q-m-name">Flash-lite (500 RPD)</span>
-                        <span class="q-m-stat">59 / 500 (441 残)</span>
+                        <span class="q-m-stat">60 / 500 (440 残)</span>
                     </div>
-                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 11%; background: #00f2ff;"></div></div>
+                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 12%; background: #00f2ff;"></div></div>
                 </div>
                 <div class="q-meter-group">
                     <div class="q-meter-row">
@@ -328,14 +379,16 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
             
             <div class="quota-agent-card">
                 <div class="q-agent-header">
-                    <strong>TOAI3</strong>
-                    <span class="q-key-tag">Key: ...RBgw</span>
-                    <span class='q-badge-err'>Err: 1</span>
+                    <div>
+                        <strong>TOAI3</strong>
+                        <span class="q-key-tag">Key: ...RBgw</span>
+                    </div>
+                    <div class='q-badge-wrap'><span class='q-badge-busy' title='一時過負荷・ビジー（HTTP 503/429）'>⚡ 503/Busy: 70</span></div>
                 </div>
                 <div class="q-meter-group">
                     <div class="q-meter-row">
                         <span class="q-m-name">Flash-lite (500 RPD)</span>
-                        <span class="q-m-stat">70 / 500 (430 残)</span>
+                        <span class="q-m-stat">71 / 500 (429 残)</span>
                     </div>
                     <div class="q-bar-bg"><div class="q-bar-fill" style="width: 14%; background: #00f2ff;"></div></div>
                 </div>
@@ -350,14 +403,16 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
             
             <div class="quota-agent-card">
                 <div class="q-agent-header">
-                    <strong>TOAI4</strong>
-                    <span class="q-key-tag">Key: ...57hw</span>
-                    <span class='q-badge-err'>Err: 1</span>
+                    <div>
+                        <strong>TOAI4</strong>
+                        <span class="q-key-tag">Key: ...57hw</span>
+                    </div>
+                    <div class='q-badge-wrap'><span class='q-badge-busy' title='一時過負荷・ビジー（HTTP 503/429）'>⚡ 503/Busy: 36</span></div>
                 </div>
                 <div class="q-meter-group">
                     <div class="q-meter-row">
                         <span class="q-m-name">Flash-lite (500 RPD)</span>
-                        <span class="q-m-stat">32 / 500 (468 残)</span>
+                        <span class="q-m-stat">34 / 500 (466 残)</span>
                     </div>
                     <div class="q-bar-bg"><div class="q-bar-fill" style="width: 6%; background: #00f2ff;"></div></div>
                 </div>
@@ -372,14 +427,16 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
             
             <div class="quota-agent-card">
                 <div class="q-agent-header">
-                    <strong>TOAI5</strong>
-                    <span class="q-key-tag">Key: ...a8Nw</span>
-                    <span class='q-badge-err'>Err: 1</span>
+                    <div>
+                        <strong>TOAI5</strong>
+                        <span class="q-key-tag">Key: ...a8Nw</span>
+                    </div>
+                    <div class='q-badge-wrap'><span class='q-badge-busy' title='一時過負荷・ビジー（HTTP 503/429）'>⚡ 503/Busy: 54</span></div>
                 </div>
                 <div class="q-meter-group">
                     <div class="q-meter-row">
                         <span class="q-m-name">Flash-lite (500 RPD)</span>
-                        <span class="q-m-stat">50 / 500 (450 残)</span>
+                        <span class="q-m-stat">51 / 500 (449 残)</span>
                     </div>
                     <div class="q-bar-bg"><div class="q-bar-fill" style="width: 10%; background: #00f2ff;"></div></div>
                 </div>
@@ -394,9 +451,11 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
             
             <div class="quota-agent-card">
                 <div class="q-agent-header">
-                    <strong>TOAI6</strong>
-                    <span class="q-key-tag">Key: ...Eg6g</span>
-                    <span class='q-badge-err'>Err: 3</span>
+                    <div>
+                        <strong>TOAI6</strong>
+                        <span class="q-key-tag">Key: ...Eg6g</span>
+                    </div>
+                    <div class='q-badge-wrap'><span class='q-badge-busy' title='一時過負荷・ビジー（HTTP 503/429）'>⚡ 503/Busy: 70</span></div>
                 </div>
                 <div class="q-meter-group">
                     <div class="q-meter-row">
@@ -416,9 +475,11 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
             
             <div class="quota-agent-card">
                 <div class="q-agent-header">
-                    <strong>TOAI7</strong>
-                    <span class="q-key-tag">Key: ...iLhg</span>
-                    
+                    <div>
+                        <strong>TOAI7</strong>
+                        <span class="q-key-tag">Key: ...iLhg</span>
+                    </div>
+                    <div class='q-badge-wrap'><span class='q-badge-busy' title='一時過負荷・ビジー（HTTP 503/429）'>⚡ 503/Busy: 57</span></div>
                 </div>
                 <div class="q-meter-group">
                     <div class="q-meter-row">
@@ -438,9 +499,11 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
             
             <div class="quota-agent-card">
                 <div class="q-agent-header">
-                    <strong>TOAI8</strong>
-                    <span class="q-key-tag">Key: ...hW3Q</span>
-                    <span class='q-badge-err'>Err: 1</span>
+                    <div>
+                        <strong>TOAI8</strong>
+                        <span class="q-key-tag">Key: ...hW3Q</span>
+                    </div>
+                    <div class='q-badge-wrap'><span class='q-badge-busy' title='一時過負荷・ビジー（HTTP 503/429）'>⚡ 503/Busy: 51</span></div>
                 </div>
                 <div class="q-meter-group">
                     <div class="q-meter-row">
@@ -460,16 +523,18 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
             
             <div class="quota-agent-card">
                 <div class="q-agent-header">
-                    <strong>TOAI9</strong>
-                    <span class="q-key-tag">Key: ...RHiw</span>
-                    <span class='q-badge-err'>Err: 1</span>
+                    <div>
+                        <strong>TOAI9</strong>
+                        <span class="q-key-tag">Key: ...RHiw</span>
+                    </div>
+                    <div class='q-badge-wrap'><span class='q-badge-busy' title='一時過負荷・ビジー（HTTP 503/429）'>⚡ 503/Busy: 97</span></div>
                 </div>
                 <div class="q-meter-group">
                     <div class="q-meter-row">
                         <span class="q-m-name">Flash-lite (500 RPD)</span>
-                        <span class="q-m-stat">61 / 500 (439 残)</span>
+                        <span class="q-m-stat">65 / 500 (435 残)</span>
                     </div>
-                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 12%; background: #00f2ff;"></div></div>
+                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 13%; background: #00f2ff;"></div></div>
                 </div>
                 <div class="q-meter-group">
                     <div class="q-meter-row">
@@ -482,14 +547,16 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
             
             <div class="quota-agent-card">
                 <div class="q-agent-header">
-                    <strong>TOAI10</strong>
-                    <span class="q-key-tag">Key: ...snIg</span>
-                    <span class='q-badge-err'>Err: 1</span>
+                    <div>
+                        <strong>TOAI10</strong>
+                        <span class="q-key-tag">Key: ...snIg</span>
+                    </div>
+                    <div class='q-badge-wrap'><span class='q-badge-busy' title='一時過負荷・ビジー（HTTP 503/429）'>⚡ 503/Busy: 48</span></div>
                 </div>
                 <div class="q-meter-group">
                     <div class="q-meter-row">
                         <span class="q-m-name">Flash-lite (500 RPD)</span>
-                        <span class="q-m-stat">35 / 500 (465 残)</span>
+                        <span class="q-m-stat">37 / 500 (463 残)</span>
                     </div>
                     <div class="q-bar-bg"><div class="q-bar-fill" style="width: 7%; background: #00f2ff;"></div></div>
                 </div>
@@ -504,9 +571,11 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
             
             <div class="quota-agent-card">
                 <div class="q-agent-header">
-                    <strong>TOAI_Manager</strong>
-                    <span class="q-key-tag">Key: ...udlA</span>
-                    
+                    <div>
+                        <strong>TOAI_Manager</strong>
+                        <span class="q-key-tag">Key: ...udlA</span>
+                    </div>
+                    <div class='q-badge-wrap'><span class='q-badge-busy' title='一時過負荷・ビジー（HTTP 503/429）'>⚡ 503/Busy: 7</span></div>
                 </div>
                 <div class="q-meter-group">
                     <div class="q-meter-row">
@@ -526,9 +595,11 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
             
             <div class="quota-agent-card">
                 <div class="q-agent-header">
-                    <strong>TOAI_Bard</strong>
-                    <span class="q-key-tag">Key: ...41ag</span>
-                    
+                    <div>
+                        <strong>TOAI_Bard</strong>
+                        <span class="q-key-tag">Key: ...41ag</span>
+                    </div>
+                    <div class='q-badge-wrap'><span class='q-badge-busy' title='一時過負荷・ビジー（HTTP 503/429）'>⚡ 503/Busy: 8</span></div>
                 </div>
                 <div class="q-meter-group">
                     <div class="q-meter-row">
@@ -548,16 +619,18 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
             
             <div class="quota-agent-card">
                 <div class="q-agent-header">
-                    <strong>TOAI_Pipeline</strong>
-                    <span class="q-key-tag">Key: ...DBPg</span>
-                    
+                    <div>
+                        <strong>TOAI_Pipeline</strong>
+                        <span class="q-key-tag">Key: ...DBPg</span>
+                    </div>
+                    <div class='q-badge-wrap'><span class='q-badge-busy' title='一時過負荷・ビジー（HTTP 503/429）'>⚡ 503/Busy: 4</span></div>
                 </div>
                 <div class="q-meter-group">
                     <div class="q-meter-row">
                         <span class="q-m-name">Flash-lite (500 RPD)</span>
-                        <span class="q-m-stat">4 / 500 (496 残)</span>
+                        <span class="q-m-stat">5 / 500 (495 残)</span>
                     </div>
-                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 0%; background: #00f2ff;"></div></div>
+                    <div class="q-bar-bg"><div class="q-bar-fill" style="width: 1%; background: #00f2ff;"></div></div>
                 </div>
                 <div class="q-meter-group">
                     <div class="q-meter-row">
@@ -581,7 +654,7 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                         <span>📝 <strong>WordPress パブリッシャー要約 (Ollama):</strong></span>
-                        <span style="color: var(--neon-blue); font-weight: bold;">0 回</span>
+                        <span style="color: var(--neon-blue); font-weight: bold;">1 回</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                         <span>🔮 <strong>Telepath 創発言語 (Ollamaフォールバック時):</strong></span>
@@ -593,11 +666,11 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 8px;">
                         <span>🖥️ <strong>本日ローカル推論 合計 (JST 00:00〜):</strong></span>
-                        <span style="color: #00ff88; font-weight: bold;">0 回 (Zero Cost)</span>
+                        <span style="color: #00ff88; font-weight: bold;">1 回 (Zero Cost)</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
                         <span>🎨 <strong>Cloudflare AI 画像生成 (JST 09:00枠リセット後):</strong></span>
-                        <span style="color: #ffaa00; font-weight: bold;">37 枚 <span style="font-size:0.8em; color:#a0aec0;">(本日0時〜累計: 0枚)</span></span>
+                        <span style="color: #ffaa00; font-weight: bold;">40 枚 <span style="font-size:0.8em; color:#a0aec0;">(本日0時〜累計: 3枚)</span></span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-top: 6px;">
                         <span>🎨 <strong>AI Horde 画像生成 (JST 00:00〜):</strong></span>
@@ -624,15 +697,15 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
             
         <tr>
             <td><strong>💰 Gumroad (最大10件/日)</strong><div style='font-size:0.78em; margin-top:2px;'><span style='color:#718096;'>日次10件上限 (JST 00:00リセット)</span></div></td>
-            <td style="font-weight: 700; font-size: 1.05em; color: #00f2ff;">0 / 10</td>
-            <td style="color: #a0aec0; font-size: 0.85em; font-family: monospace;">2026-11-06 23:11:13</td>
+            <td style="font-weight: 700; font-size: 1.05em; color: #00f2ff;">1 / 10</td>
+            <td style="color: #a0aec0; font-size: 0.85em; font-family: monospace;">2026-11-07 00:18:26</td>
         </tr>
         
             
         <tr>
             <td><strong>📷 Instagram (WP連動 + Reels合算)</strong><div style='font-size:0.78em; margin-top:2px;'><span style='color:#00ff88;'>🟢 制限なし (Graph API 25件/日枠)</span></div></td>
-            <td style="font-weight: 700; font-size: 1.05em; color: #00f2ff;">1 / 25 <span style='font-size:0.8em; color:#a0aec0;'>(WP: 0, Reels: 1)</span></td>
-            <td style="color: #a0aec0; font-size: 0.85em; font-family: monospace;">2026-11-07 00:01:20</td>
+            <td style="font-weight: 700; font-size: 1.05em; color: #00f2ff;">3 / 25 <span style='font-size:0.8em; color:#a0aec0;'>(WP: 1, Reels: 1)</span></td>
+            <td style="color: #a0aec0; font-size: 0.85em; font-family: monospace;">2026-11-07 00:21:23</td>
         </tr>
         
             
@@ -644,28 +717,28 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
         
             
         <tr>
-            <td><strong>📗 Qiita (24時間制限)</strong><div style='font-size:0.78em; margin-top:2px;'><span style='color:#ffaa00;'>⏳ 待機中 (あと 12h25m)</span></div></td>
+            <td><strong>📗 Qiita (24時間制限)</strong><div style='font-size:0.78em; margin-top:2px;'><span style='color:#ffaa00;'>⏳ 待機中 (あと 12h10m)</span></div></td>
             <td style="font-weight: 700; font-size: 1.05em; color: #00f2ff;">0 / 1</td>
             <td style="color: #a0aec0; font-size: 0.85em; font-family: monospace;">2026-11-06 12:41:28</td>
         </tr>
         
             
         <tr>
-            <td><strong>📘 Zenn (24時間制限)</strong><div style='font-size:0.78em; margin-top:2px;'><span style='color:#ffaa00;'>⏳ 待機中 (あと 21h38m)</span></div></td>
+            <td><strong>📘 Zenn (24時間制限)</strong><div style='font-size:0.78em; margin-top:2px;'><span style='color:#ffaa00;'>⏳ 待機中 (あと 21h23m)</span></div></td>
             <td style="font-weight: 700; font-size: 1.05em; color: #00f2ff;">0 / 1</td>
             <td style="color: #a0aec0; font-size: 0.85em; font-family: monospace;">2026-11-06 21:54:06</td>
         </tr>
         
             
         <tr>
-            <td><strong>💻 Dev.to (6時間制限)</strong><div style='font-size:0.78em; margin-top:2px;'><span style='color:#00ff88;'>🟢 投稿可能 (6h経過)</span></div></td>
-            <td style="font-weight: 700; font-size: 1.05em; color: #00f2ff;">0 / 4</td>
-            <td style="color: #a0aec0; font-size: 0.85em; font-family: monospace;">2026-11-06 18:04:52</td>
+            <td><strong>💻 Dev.to (6時間制限)</strong><div style='font-size:0.78em; margin-top:2px;'><span style='color:#ffaa00;'>⏳ 待機中 (あと 05h49m)</span></div></td>
+            <td style="font-weight: 700; font-size: 1.05em; color: #00f2ff;">1 / 4</td>
+            <td style="color: #a0aec0; font-size: 0.85em; font-family: monospace;">2026-11-07 00:20:11</td>
         </tr>
         
             
         <tr>
-            <td><strong>📝 はてなブログ (4時間制限)</strong><div style='font-size:0.78em; margin-top:2px;'><span style='color:#ffaa00;'>⏳ 待機中 (あと 02h57m)</span></div></td>
+            <td><strong>📝 はてなブログ (4時間制限)</strong><div style='font-size:0.78em; margin-top:2px;'><span style='color:#ffaa00;'>⏳ 待機中 (あと 02h42m)</span></div></td>
             <td style="font-weight: 700; font-size: 1.05em; color: #00f2ff;">0 / 6</td>
             <td style="color: #a0aec0; font-size: 0.85em; font-family: monospace;">2026-11-06 23:13:39</td>
         </tr>
@@ -673,15 +746,15 @@ h1 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 4px; bo
             
         <tr>
             <td><strong>🌐 WordPress (制限なし)</strong><div style='font-size:0.78em; margin-top:2px;'><span style='color:#00ff88;'>🟢 常時公開可 (インターバル制限なし)</span></div></td>
-            <td style="font-weight: 700; font-size: 1.05em; color: #00f2ff;">0</td>
-            <td style="color: #a0aec0; font-size: 0.85em; font-family: monospace;">2026-11-06 23:22:35</td>
+            <td style="font-weight: 700; font-size: 1.05em; color: #00f2ff;">1</td>
+            <td style="color: #a0aec0; font-size: 0.85em; font-family: monospace;">2026-11-07 00:22:02</td>
         </tr>
         
             
         <tr>
             <td><strong>🐙 GitHub Pushes (全Push / コミット)</strong><div style='font-size:0.78em; margin-top:2px;'><span style='color:#00ff88;'>🟢 常時Push可 (全リポジトリ合計)</span></div></td>
-            <td style="font-weight: 700; font-size: 1.05em; color: #00f2ff;">0</td>
-            <td style="color: #a0aec0; font-size: 0.85em; font-family: monospace;">2026-11-06 23:50:51</td>
+            <td style="font-weight: 700; font-size: 1.05em; color: #00f2ff;">1 <span style='font-size:0.8em; color:#a0aec0;'> (Telepath: 1)</span></td>
+            <td style="color: #a0aec0; font-size: 0.85em; font-family: monospace;">2026-11-07 00:22:45</td>
         </tr>
         
         </tbody>
