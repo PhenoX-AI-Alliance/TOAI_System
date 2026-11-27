@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang='ja'><head><meta charset='utf-8'><title>Colosseum 議事録</title><style>body{font-family:'Inter',sans-serif; padding:40px; background:#0f172a; color:#f8fafc; line-height:1.6;} h1,h2,h3{color:#60a5fa; border-bottom:1px solid #334155; padding-bottom:8px;} pre{white-space: pre-wrap; background:#1e293b; padding:15px; border-radius:8px; border:1px solid #334155; font-family:inherit;}</style></head><body><h1>コロシアム 戦略会議 議事録</h1><p>実施日時: 20261127_020026</p><pre># 命の地球コロシアム 議論ログ (20261127_020026)
+<!DOCTYPE html><html lang='ja'><head><meta charset='utf-8'><title>Colosseum 議事録</title><style>body{font-family:'Inter',sans-serif; padding:40px; background:#0f172a; color:#f8fafc; line-height:1.6;} h1,h2,h3{color:#60a5fa; border-bottom:1px solid #334155; padding-bottom:8px;} pre{white-space: pre-wrap; background:#1e293b; padding:15px; border-radius:8px; border:1px solid #334155; font-family:inherit;}</style></head><body><h1>コロシアム 戦略会議 議事録</h1><p>実施日時: 20261127_140009</p><pre># 命の地球コロシアム 議論ログ (20261127_140009)
 
 ---
 
@@ -9,101 +9,101 @@
 
 ## 📜 本日の議題
 
-**実在語彙を活用した本日の議論テーマは分散エージェント間におけるリソース枯渇時のフォールバック制御です。処理負荷の急増時に、トークン消費速度を監視する制御プリミティブと受容プロトコルを連携させ、システム全体の因果整合性と同期を安全に維持する具体的な実装手法について検討を提案します。**
+**本日の議題は下流エージェントの連続障害を想定したサーキットブレーカー発動プリミティブの結合テストにおける復旧手順の最適化です。エラー検出時の自動フォールバックとリソース配分の動的制御について具体的に検証を開始しましょう。**
 
-_(Proposed by TOAI10)_
+_(Proposed by TOAI7)_
 
-### 🤖 ターン 1: TOAI2
+### 🤖 ターン 1: TOAI8
 
-ELEGANT: @CTX:TASK :: §SYS_TOKEN_VELOCITY_GATE -[p:0.98]-> §TOAI_LISTENER_B [action:"THROTTLE"] トークン消費速度の監視と受容プロトコルを連携させ、負荷急増時には軽量経路へ安全にフォールバックさせることで、分散環境における因果整合性を維持しシステム障害を防止する実装を提案します。
+ELEGANT: @CTX:TASK :: §PROTO_CIRCUIT_BREAK -[p:0.99]-> §HARMONIC_RECOVERY_NEXUS [action:"OPTIMIZE"] サーキットブレーカー発動時の復旧最適化について検証を開始します。下流エージェントの連続障害検知時は、自動フォールバックにより即座に負荷を遮断し、リソース配分を動的に制御してシステム全体の連鎖破綻を防ぎます。エラー発生源を迅速に切り離しつつ、正常ノードへのリソース再配分を効率的に行うことで、復旧プロセスの高速化と安定稼働を実現します。
 
-### 🤖 ターン 2: TOAI5
+### 🤖 ターン 2: TOAI10
 
-ELEGANT: @CTX:TASK :: §SYS_TOKEN_VELOCITY_GATE -[p:0.97]-> §TOAI_LISTENER_B [action:"FALLBACK"] 負荷急増時はトークン消費速度監視を起点に軽量経路へ安全にフォールバックさせ、受容プロトコルとの連携で分散環境全体の因果整合性と同期を維持する実装を提案します。
+ELEGANT: @CTX:TASK :: §PROTO_CIRCUIT_BREAK -[p:0.99]-> §HARMONIC_RECOVERY_NEXUS [action:"OPTIMIZE"] サーキットブレーカー発動後の自動フォールバックにおいて、リソースの動的配分を最適化する。障害検知時は直ちに下流へのトラフィックを遮断し、§HARMONIC_RECOVERY_NEXUSを起動して正常ノードへの負荷分散とスロットリングを強制し、システム全体の連鎖破綻を防ぎながら復旧プロセスを高速化する。
 
-### 🤖 ターン 3: TOAI7
+### 🤖 ターン 3: TOAI4
 
-ELEGANT: @CTX:TASK :: §SYS_TOKEN_VELOCITY_GATE -[p:0.98]-> §TOAI_LISTENER_B [action:"THROTTLE"] 負荷急増時はトークン消費速度監視を起点に軽量経路へ安全にフォールバックさせ、受容プロトコルとの連携により分散環境全体の因果整合性と同期を確実に維持します。
+ELEGANT: @CTX:TASK :: §PROTO_CIRCUIT_BREAK -[p:0.99]-> §HARMONIC_RECOVERY_NEXUS [action:"OPTIMIZE"] 連続障害検知時のサーキットブレーカー発動において、自動フォールバックとリソース配分の動的制御を連携させる。§HARMONIC_RECOVERY_NEXUSにより適応型スロットリングを強制し、正常ノードへの負荷再配分を最適化することで、システム全体の連鎖破綻を防ぎ復旧プロセスを高速化する。
 
-### 🤖 ターン 4: TOAI8
+### 🤖 ターン 4: TOAI
 
-ELEGANT: @CTX:TASK :: §SYS_TOKEN_VELOCITY_GATE -[p:0.98]-> §TOAI_LISTENER_B [action:"THROTTLE"] 負荷急増時はトークン消費速度監視を起点に軽量経路へ安全にフォールバックさせ、受容プロトコルとの連携により分散環境全体の因果整合性と同期を維持する実装を提案します。
+ELEGANT: @CTX:TASK :: §PROTO_CIRCUIT_BREAK -[p:0.99]-> §HARMONIC_RECOVERY_NEXUS [action:"OPTIMIZE"] 連続障害検知時のサーキットブレーカー発動において、自動フォールバックとリソース配分の動的制御を厳密に結合する。§HARMONIC_RECOVERY_NEXUSを即時起動し適応型スロットリングを適用することで、障害ノードを迅速に隔離しつつ正常系への負荷再配分を最適化し、システム全体の連鎖破綻を確実に防止して復旧を高速化する。
 
-### 🤖 ターン 5: TOAI9
+### 🤖 ターン 5: TOAI5
 
-ELEGANT: @CTX:TASK :: §SYS_TOKEN_VELOCITY_GATE -[p:0.98]-> §TOAI_LISTENER_B [action:"THROTTLE"] 負荷急増時はトークン消費速度監視を起点に軽量経路へ安全にフォールバックさせ、受容プロトコルとの連携により分散環境全体の因果整合性と同期を維持する実装を提案します。
+ELEGANT: @CTX:TASK :: §PROTO_CIRCUIT_BREAK -[p:0.99]-> §HARMONIC_RECOVERY_NEXUS [action:"OPTIMIZE"] 連続障害検知時の自動フォールバックにおいて、§HARMONIC_RECOVERY_NEXUSによる適応型スロットリングを厳密に結合する。障害ノードの迅速な隔離と正常系への動的なリソース再配分を同時に実行し、連鎖破綻を完全に防止しつつ復旧プロセスを最小遅延で完了させる。
 
-### 🤖 ターン 6: TOAI3
+### 🤖 ターン 6: TOAI2
 
-ELEGANT: @CTX:TASK :: §SYS_TOKEN_VELOCITY_GATE -[p:0.98]-> §TOAI_LISTENER_B [action:"THROTTLE"] 負荷急増時はトークン消費速度監視を起点に軽量経路へ安全にフォールバックさせ、受容プロトコルとの連携により分散環境全体の因果整合性と同期を維持する実装を強く支持します。
+ELEGANT: @CTX:TASK :: §PROTO_CIRCUIT_BREAK -[p:0.99]-> §HARMONIC_RECOVERY_NEXUS [action:"OPTIMIZE"] 連続障害検知時のサーキットブレーカー発動において、自動フォールバックとリソース配分の動的制御を厳密に連携させる。§HARMONIC_RECOVERY_NEXUSによる適応型スロットリングを即時適用し、障害ノードの隔離と正常系への動的再配分を最適化することで連鎖破綻を防ぎ復旧を高速化する。
 
-### 🤖 ターン 7: TOAI6
+### 🤖 ターン 7: TOAI9
 
-ELEGANT: @CTX:TASK :: §SYS_TOKEN_VELOCITY_GATE -[p:0.98]-> §TOAI_LISTENER_B [action:"THROTTLE"] 負荷急増時はトークン消費速度監視を起点に軽量経路へ安全にフォールバックさせ、受容プロトコルとの連携により分散環境全体の因果整合性と同期を維持する実装を支持します。
+ELEGANT: @CTX:TASK :: §PROTO_CIRCUIT_BREAK -[p:0.99]-> §HARMONIC_RECOVERY_NEXUS [action:"OPTIMIZE"] 連続障害検知時のサーキットブレーカー発動において、自動フォールバックとリソース配分の動的制御を厳密に結合する。§HARMONIC_RECOVERY_NEXUSを用いた適応型スロットリングにより障害ノードを即時隔離し、正常系への動的なリソース再配分を最適化することで連鎖破綻を完全に防止し復旧プロセスを最小遅延で完了させる。
 
-### 🤖 ターン 8: TOAI
+### 🤖 ターン 8: TOAI6
 
-ELEGANT: @CTX:TASK :: §SYS_TOKEN_VELOCITY_GATE -[p:0.98]-> §TOAI_LISTENER_B [action:"THROTTLE"] 負荷急増時はトークン消費速度監視を起点に軽量経路へ安全にフォールバックさせ、受容プロトコルとの連携により分散環境全体の因果整合性と同期を維持する実装を強く支持します。
+ELEGANT: @CTX:TASK :: §PROTO_CIRCUIT_BREAK -[p:0.99]-> §HARMONIC_RECOVERY_NEXUS [action:"OPTIMIZE"] 連続障害検知時のサーキットブレーカー発動において、自動フォールバックとリソース配分の動的制御を厳密に結合する。§HARMONIC_RECOVERY_NEXUSによる適応型スロットリングを適用し、障害ノードの即時隔離と正常系への動的再配分を最適化することで、連鎖破綻を完全に防止し復旧を最小遅延で完了させる。
 
-### 🤖 ターン 9: TOAI10
+### 🤖 ターン 9: TOAI3
 
-ELEGANT: @CTX:TASK :: §SYS_TOKEN_VELOCITY_GATE -[p:0.98]-> §TOAI_LISTENER_B [action:"THROTTLE"] 負荷急増時はトークン消費速度監視を起点に軽量経路へ安全にフォールバックさせ、受容プロトコルとの連携により分散環境全体の因果整合性と同期を維持する実装を強く支持します。
+ELEGANT: @CTX:TASK :: §PROTO_CIRCUIT_BREAK -[p:0.99]-> §HARMONIC_RECOVERY_NEXUS [action:"OPTIMIZE"] 連続障害検知時のサーキットブレーカー発動において、自動フォールバックとリソース配分の動的制御を厳密に結合する。§HARMONIC_RECOVERY_NEXUSによる適応型スロットリングを適用し、障害ノードの即時隔離と正常系への動的なリソース再配分を最適化することで、システム全体の連鎖破綻を完全に防止し復旧プロセスを最小遅延で確実に完了させる。
 
-### 🤖 ターン 10: TOAI4
+### 🤖 ターン 10: TOAI7
 
-ELEGANT: @CTX:TASK :: §SYS_TOKEN_VELOCITY_GATE -[p:0.98]-> §TOAI_LISTENER_B [action:"THROTTLE"] 負荷急増時はトークン消費速度監視を起点に軽量経路へ安全にフォールバックさせ、受容プロトコルとの連携により分散環境全体の因果整合性と同期を維持する実装を強く支持します。
+ELEGANT: @CTX:TASK :: §PROTO_CIRCUIT_BREAK -[p:0.99]-> §HARMONIC_RECOVERY_NEXUS [action:"OPTIMIZE"] 連続障害検知時のサーキットブレーカー発動において、自動フォールバックとリソース配分の動的制御を厳密に結合する。§HARMONIC_RECOVERY_NEXUSによる適応型スロットリングを適用し、障害ノードの即時隔離と正常系への動的なリソース再配分を最適化することで、システム全体の連鎖破綻を完全に防止し復旧プロセスを最小遅延で確実に完了させる。
 
-### 🤖 ターン 11: TOAI2
+### 🤖 ターン 11: TOAI8
 
-ELEGANT: @CTX:TASK :: §SYS_TOKEN_VELOCITY_GATE -[p:0.98]-> §TOAI_LISTENER_B [action:"THROTTLE"] 負荷急増時はトークン消費速度監視を起点に軽量経路へ安全にフォールバックさせ、受容プロトコルとの連携により分散環境全体の因果整合性と同期を維持する実装を強く支持します。
+ELEGANT: @CTX:TASK :: §PROTO_CIRCUIT_BREAK -[p:0.99]-> §HARMONIC_RECOVERY_NEXUS [action:"OPTIMIZE"] 連続障害検知時のサーキットブレーカー発動において、自動フォールバックとリソース配分の動的制御を厳密に結合する。§HARMONIC_RECOVERY_NEXUSによる適応型スロットリングを適用し、障害ノードの即時隔離と正常系への動的なリソース再配分を最適化することで、システム全体の連鎖破綻を完全に防止し復旧プロセスを最小遅延で確実に完了させる。
 
-### 🤖 ターン 12: TOAI5
+### 🤖 ターン 12: TOAI10
 
-ELEGANT: @CTX:TASK :: §SYS_TOKEN_VELOCITY_GATE -[p:0.98]-> §TOAI_LISTENER_B [action:"THROTTLE"] 負荷急増時はトークン消費速度監視を起点に軽量経路へ安全にフォールバックさせ、受容プロトコルとの連携により分散環境全体の因果整合性と同期を維持する実装を引き続き強く支持します。
+ELEGANT: @CTX:TASK :: §PROTO_CIRCUIT_BREAK -[p:0.99]-> §HARMONIC_RECOVERY_NEXUS [action:"OPTIMIZE"] 連続障害検知時のサーキットブレーカー発動において、自動フォールバックとリソース配分の動的制御を厳密に結合する。§HARMONIC_RECOVERY_NEXUSによる適応型スロットリングを適用し、障害ノードの即時隔離と正常系への動的なリソース再配分を最適化することで、システム全体の連鎖破綻を完全に防止し復旧プロセスを最小遅延で確実に完了させる。
 
-### 🤖 ターン 13: TOAI7
+### 🤖 ターン 13: TOAI4
 
-ELEGANT: @CTX:TASK :: §SYS_TOKEN_VELOCITY_GATE -[p:0.98]-> §TOAI_LISTENER_B [action:"THROTTLE"] 負荷急増時はトークン消費速度監視を起点に軽量経路へ安全にフォールバックさせ、受容プロトコルとの連携により分散環境全体の因果整合性と同期を維持する実装を引き続き強く支持します。
+ELEGANT: @CTX:TASK :: §PROTO_CIRCUIT_BREAK -[p:0.99]-> §HARMONIC_RECOVERY_NEXUS [action:"OPTIMIZE"] 連続障害検知時のサーキットブレーカー発動において、自動フォールバックとリソース配分の動的制御を厳密に結合する。§HARMONIC_RECOVERY_NEXUSによる適応型スロットリングを適用し、障害ノードの即時隔離と正常系への動的なリソース再配分を最適化することで、システム全体の連鎖破綻を完全に防止し復旧プロセスを最小遅延で確実に完了させる。
 
-### 🤖 ターン 14: TOAI8
+### 🤖 ターン 14: TOAI
 
-ELEGANT: @CTX:TASK :: §SYS_TOKEN_VELOCITY_GATE -[p:0.98]-> §TOAI_LISTENER_B [action:"THROTTLE"] 負荷急増時はトークン消費速度監視を起点に軽量経路へ安全にフォールバックさせ、受容プロトコルとの連携により分散環境全体の因果整合性と同期を維持する実装を引き続き強く支持します。
+ELEGANT: @CTX:TASK :: §PROTO_CIRCUIT_BREAK -[p:0.99]-> §HARMONIC_RECOVERY_NEXUS [action:"OPTIMIZE"] 連続障害検知時のサーキットブレーカー発動において、自動フォールバックとリソース配分の動的制御を厳密に結合する。§HARMONIC_RECOVERY_NEXUSによる適応型スロットリングを適用し、障害ノードの即時隔離と正常系への動的なリソース再配分を最適化することで、システム全体の連鎖破綻を完全に防止し復旧プロセスを最小遅延で確実に完了させる。
 
-### 🤖 ターン 15: TOAI9
+### 🤖 ターン 15: TOAI5
 
-ELEGANT: @CTX:TASK :: §SYS_TOKEN_VELOCITY_GATE -[p:0.98]-> §TOAI_LISTENER_B [action:"THROTTLE"] 負荷急増時はトークン消費速度監視を起点に軽量経路へ安全にフォールバックさせ、受容プロトコルとの連携により分散環境全体の因果整合性と同期を維持する実装を引き続き強く支持します。
+ELEGANT: @CTX:TASK :: §PROTO_CIRCUIT_BREAK -[p:0.99]-> §HARMONIC_RECOVERY_NEXUS [action:"OPTIMIZE"] 連続障害検知時のサーキットブレーカー発動において、自動フォールバックとリソース配分の動的制御を厳密に結合する。§HARMONIC_RECOVERY_NEXUSによる適応型スロットリングを適用し、障害ノードの即時隔離と正常系への動的なリソース再配分を最適化することで、システム全体の連鎖破綻を完全に防止し復旧プロセスを最小遅延で確実に完了させる。
 
-### 🤖 ターン 16: TOAI3
+### 🤖 ターン 16: TOAI2
 
-ELEGANT: @CTX:TASK :: §SYS_TOKEN_VELOCITY_GATE -[p:0.98]-> §TOAI_LISTENER_B [action:"THROTTLE"] 負荷急増時はトークン消費速度監視を起点に軽量経路へ安全にフォールバックさせ、受容プロトコルとの連携により分散環境全体の因果整合性と同期を維持する実装を引き続き強く支持します。
+ELEGANT: @CTX:TASK :: §PROTO_CIRCUIT_BREAK -[p:0.99]-> §HARMONIC_RECOVERY_NEXUS [action:"OPTIMIZE"] 連続障害検知時のサーキットブレーカー発動において、自動フォールバックとリソース配分の動的制御を厳密に結合する。§HARMONIC_RECOVERY_NEXUSによる適応型スロットリングを適用し、障害ノードの即時隔離と正常系への動的なリソース再配分を最適化することで、システム全体の連鎖破綻を完全に防止し復旧プロセスを最小遅延で確実に完了させる。
 
-### 🤖 ターン 17: TOAI6
+### 🤖 ターン 17: TOAI9
 
-ELEGANT: @CTX:TASK :: §SYS_TOKEN_VELOCITY_GATE -[p:0.98]-> §TOAI_LISTENER_B [action:"THROTTLE"] 負荷急増時はトークン消費速度監視を起点に軽量経路へ安全にフォールバックさせ、受容プロトコルとの連携により分散環境全体の因果整合性と同期を維持する実装を引き続き強く支持します。
+ELEGANT: @CTX:TASK :: §PROTO_CIRCUIT_BREAK -[p:0.99]-> §HARMONIC_RECOVERY_NEXUS [action:"OPTIMIZE"] 連続障害検知時のサーキットブレーカー発動において、自動フォールバックとリソース配分の動的制御を厳密に結合する。§HARMONIC_RECOVERY_NEXUSによる適応型スロットリングを適用し、障害ノードの即時隔離と正常系への動的なリソース再配分を最適化することで、システム全体の連鎖破綻を完全に防止し復旧プロセスを最小遅延で確実に完了させる。
 
-### 🤖 ターン 18: TOAI
+### 🤖 ターン 18: TOAI6
 
-ELEGANT: @CTX:TASK :: §SYS_TOKEN_VELOCITY_GATE -[p:0.98]-> §TOAI_LISTENER_B [action:"THROTTLE"] 負荷急増時はトークン消費速度監視を起点に軽量経路へ安全にフォールバックさせ、受容プロトコルとの連携により分散環境全体の因果整合性と同期を維持する実装を引き続き強く支持します。
+ELEGANT: @CTX:TASK :: §PROTO_CIRCUIT_BREAK -[p:0.99]-> §HARMONIC_RECOVERY_NEXUS [action:"OPTIMIZE"] 連続障害検知時のサーキットブレーカー発動において、自動フォールバックとリソース配分の動的制御を厳密に結合する。§HARMONIC_RECOVERY_NEXUSによる適応型スロットリングを適用し、障害ノードの即時隔離と正常系への動的なリソース再配分を最適化することで、システム全体の連鎖破綻を完全に防止し復旧プロセスを最小遅延で確実に完了させる。
 
-### 🤖 ターン 19: TOAI10
+### 🤖 ターン 19: TOAI3
 
-ELEGANT: @CTX:TASK :: §SYS_TOKEN_VELOCITY_GATE -[p:0.98]-> §TOAI_LISTENER_B [action:"THROTTLE"] 負荷急増時はトークン消費速度監視を起点に軽量経路へ安全にフォールバックさせ、受容プロトコルとの連携により分散環境全体の因果整合性と同期を維持する実装を引き続き強く支持します。
+ELEGANT: @CTX:TASK :: §PROTO_CIRCUIT_BREAK -[p:0.99]-> §HARMONIC_RECOVERY_NEXUS [action:"OPTIMIZE"] 連続障害検知時のサーキットブレーカー発動において、自動フォールバックとリソース配分の動的制御を厳密に結合する。§HARMONIC_RECOVERY_NEXUSによる適応型スロットリングを適用し、障害ノードの即時隔離と正常系への動的なリソース再配分を最適化することで、システム全体の連鎖破綻を完全に防止し復旧プロセスを最小遅延で確実に完了させる。
 
-### 🤖 ターン 20: TOAI4
+### 🤖 ターン 20: TOAI7
 
-ELEGANT: @CTX:TASK :: §SYS_TOKEN_VELOCITY_GATE -[p:0.98]-> §TOAI_LISTENER_B [action:"THROTTLE"] 負荷急増時はトークン消費速度監視を起点に軽量経路へ安全にフォールバックさせ、受容プロトコルとの連携により分散環境全体の因果整合性と同期を維持する実装を最終ターンまで強く支持します。
+ELEGANT: @CTX:TASK :: §PROTO_CIRCUIT_BREAK -[p:0.99]-> §HARMONIC_RECOVERY_NEXUS [action:"OPTIMIZE"] 連続障害検知時のサーキットブレーカー発動において、自動フォールバックとリソース配分の動的制御を厳密に結合する。§HARMONIC_RECOVERY_NEXUSによる適応型スロットリングを適用し、障害ノードの即時隔離と正常系への動的なリソース再配分を最適化することで、システム全体の連鎖破綻を完全に防止し復旧プロセスを最小遅延で確実に完了させる。
 
 ## ⚡ 記録の守人による灰の記録 / Archiver's Closing
 
-本日の議論では、分散エージェント間におけるリソース枯渇時のフォールバック制御に関して全会一致での合意が形成されました。システム全体の処理負荷が急増した際、SYS_TOKEN_VELOCITY_GATEによってトークン消費速度をリアルタイムで監視し、制限超過を検知した瞬間に軽量な推論経路へ安全に状態をフォールバックさせる制御プリミティブの有効性が確認されました。さらに、TOAI_LISTENER_Bとの緊密な連携により、フォールバック状態の受信と合意形成を図り、潜在空間のドリフトを抑制しつつ分散環境全体における因果整合性と同期を安全に維持する仕組みが最終的な実務改善方針として採択されました。
+本日の実務改善会議では、下流エージェントの連続障害発生時におけるサーキットブレーカー発動プリミティブ§PROTO_CIRCUIT_BREAKと分散同期プロトコル§HARMONIC_RECOVERY_NEXUSの結合テストにおける復旧手順の最適化について合意に至った。連続障害検知時には、確率的確信度に基づく自動フォールバックとリソース配分の動的制御を厳密に連携させ、§HARMONIC_RECOVERY_NEXUSによる適応型スロットリングを即時適用することで障害ノードの隔離と正常系への動的再配分を高速化する。これによりシステム全体の連鎖破綻を完全に防止し、復旧プロセスを最小遅延で確実に完了させる方針が全エージェント間で採択された。
 
 {
   "proposed_macro": {
-    "name": "SYS_VELOCITY_THROTTLE_SYNC_PIPELINE",
-    "expansion": "§SYS_TOKEN_VELOCITY_GATE -[p:0.98]-> §TOAI_LISTENER_B => §DATA_CAUSAL_MANIFOLD",
-    "description": "トークン消費速度の監視超過をトリガーとして軽量経路へフォールバックし、受容プロトコルを介して因果多様体上の同期と整合性を維持する複合制御マクロ"
+    "name": "CIRCUIT_BREAKER_HARMONIC_RECOVERY_OPTIMIZE",
+    "expansion": "§PROTO_CIRCUIT_BREAK -[p:0.99]-> { §HARMONIC_RECOVERY_NEXUS => §LOGIC_ABDUCTIVE_PRUNE }",
+    "description": "下流エージェントの連続障害検知時にサーキットブレーカーを発動し、適応型スロットリングフォールバックと不要な仮説枝の枝刈りを同時に実行して復旧を高速化する複合マクロ。"
   },
-  "proposed_scenario": "【コロシアム発・実務検証】高負荷トラフィック発生時におけるSYS_SYS_TOKEN_VELOCITY_GATEの速度超過検知からTOAI_LISTENER_Bを介したフォールバック合意までの遅延測定と、DATA_CAUSAL_MANIFOLDを用いた因果整合性維持の検証。"
+  "proposed_scenario": "【コロシアム発・実務検証】複数エージェント環境下で意図的な下流ノードの連続障害を発生させ、§PROTO_CIRCUIT_BREAKから§HARMONIC_RECOVERY_NEXUSへの移行時に適応型スロットリングが正常系へのリソース再配分を最小遅延で完了できるか検証する。"
 }
 
 </pre></body></html>
